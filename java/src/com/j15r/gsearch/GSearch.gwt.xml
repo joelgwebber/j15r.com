@@ -1,0 +1,9 @@
+<module rename-to='GSearch'>
+  <inherits name='com.j15r.common.Common'/>
+  <inherits name='com.google.gwt.layout.Layout'/>
+  <inherits name='com.google.gwt.uibinder.UiBinder' />
+  <inherits name='com.google.gwt.resources.Resources' />
+  <inherits name='com.google.gwt.jsonp.Jsonp' />
+
+  <entry-point class='com.j15r.gsearch.client.GSearch'/>
+</module>

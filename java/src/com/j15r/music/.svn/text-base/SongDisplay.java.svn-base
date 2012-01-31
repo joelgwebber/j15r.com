@@ -1,0 +1,6 @@
+package org.grimpo.music;
+
+public interface SongDisplay {
+
+  void display(Song song, int position);
+}

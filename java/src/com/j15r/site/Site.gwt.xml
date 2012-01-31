@@ -1,0 +1,11 @@
+<module rename-to='site'>
+  <inherits name='com.google.gwt.topspin.TopSpin' />
+  <inherits name='com.google.gwt.topspin.desktop.Desktop' />
+  <inherits name='com.j15r.common.Common' />
+  <inherits name='com.google.gwt.uibinder.UiBinder' />
+  <inherits name='com.google.gwt.resources.Resources' />
+  <inherits name='com.google.gwt.jsonp.Jsonp' />
+
+  <source path="client" />
+  <entry-point class="com.j15r.site.client.Site" />
+</module>

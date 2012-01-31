@@ -1,0 +1,4 @@
+<module>
+  <inherits name='com.google.gwt.topspin.TopSpin'/>
+  <inherits name='com.google.gwt.layout.Layout'/>
+</module>

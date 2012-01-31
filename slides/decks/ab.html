@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'/>
+  <meta http-equiv='X-UA-Compatible' content='IE=Edge;chrome=1'/>
+  <link rel='stylesheet' href='/slides/static/slides.css'/>
+  <title>Angry Birds on HTML5</title>
+
+  <!-- syntax highlighting -->
+  <script type='text/javascript' src='syntax/scripts/shCore.js'></script>
+  <script type='text/javascript' src='syntax/scripts/shBrushJScript.js'></script>
+  <script type='text/javascript' src='syntax/scripts/shBrushJava.js'></script>
+  <script type='text/javascript' src='syntax/scripts/shBrushXml.js'></script>
+  <script type='text/javascript' src='syntax/scripts/shBrushCss.js'></script>
+  <link type='text/css' rel='stylesheet' href='syntax/styles/shCoreEclipse.css'/>
+  <script type='text/javascript'>
+  SyntaxHighlighter.defaults['gutter'] = false;
+  SyntaxHighlighter.all();
+  </script>
+
+  <style>
+  .slide.html5 header {
+    background-image: url(ab/html5.png);
+    background-repeat: no-repeat;
+    background-position: top right;
+  }
+
+  .slide.parts header {
+    background-image: url(ab/bird0.png);
+    background-repeat: no-repeat;
+    background-position: top right;
+  }
+
+  .slide.challenges header {
+    background-image: url(ab/pig1.png);
+    background-repeat: no-repeat;
+    background-position: top right;
+  }
+
+  .slide.playn header {
+    background-image: url(ab/playn-icon.png);
+    background-repeat: no-repeat;
+    background-position: top right;
+  }
+  </style>
+</head>
+
+<body>
+  <div class='slides'>
+
+    <div class='slide' id='slide0'>
+    <div class='content segue blue'>
+      <section class='intro'>
+        <h2>Angry Birds on HTML5</h2>
+        <hr> <br>
+        <div>Joel Webber  &lt;jgw@google.com&gt;</div>
+      </section>
+      <section class='intro'>
+        <div>goto conference</div>
+        <div>aarhus</div>
+        <div>2011</div>
+      </section>
+    </div>
+    </div>
+
+    <div class='slide' id='slide1'>
+    <script>
+    function slide1_onShow(slide) {
+      var placeholder = slide.querySelector('.content .placeholder');
+      var demo = slide.querySelector('.content .demo');
+      var frame = demo.querySelector('iframe');
+
+      placeholder.style.display = 'none';
+      demo.style.display = '';
+      frame.src = frame.getAttribute('_src');
+    }
+
+    function slide1_onHide(slide) {
+      var placeholder = slide.querySelector('.content .placeholder');
+      var demo = slide.querySelector('.content .demo');
+      var frame = demo.querySelector('iframe');
+
+      placeholder.style.display = '';
+      demo.style.display = 'none';
+      frame.src = 'about:blank';
+    }
+    </script>
+    <style>
+      .demo {
+        position: absolute;
+        left: -10px; top: 0px;
+        right: -10px; bottom: 0px;
+      }
+      .demo iframe {
+        border: 0px;
+      }
+    </style>
+    <div class='content'>
+      <img class='placeholder' src='ab/demo.png'>
+      <div class='demo' style='display:none'>
+        <iframe width='100%' height='100%' scrolling='no' _src='http://chrome.angrybirds.com/'></iframe>
+      </div>
+    </div>
+    <div class='notes'>
+      These are notes for the demo slide...
+    </div>
+    </div>
+
+    <div class='slide' id='slide2'>
+    <div class='content html5'>
+      <header> <h1>Why the web?</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>No install</li>
+          <li>Reach</li>
+          <li>Seamless update</li>
+          <li>Embeddable and linkable</li>
+        </ul>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide3'>
+    <div class='content parts'>
+      <header> <h1>Goals</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>Fast startup</li>
+          <li>Smooth 60 frame/s</li>
+          <li>Cross-browser support</li>
+        </ul>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide4'>
+    <div class='content segue green'>
+      <section class='intro'>
+        <h2>Moving Parts</h2>
+        <hr> <br>
+      </section>
+    </div>
+    </div>
+
+    <div class='slide' id='slide5'>
+    <div class='content parts'>
+      <header> <h1>Game Loop</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>Games are simply simulations:
+            <ul>
+              <li>Get user input</li>
+              <li>Update the world</li>
+              <li>Render the world</li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide6'>
+    <div class='content parts'>
+      <header> <h1>World Model</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>Static objects
+            <ul>
+              <li>Ground and slingshot</li>
+            </ul>
+          </li>
+          <li>Dynamic objects
+            <ul>
+              <li>Pigs, birds, blocks, and so forth</li>
+            </ul>
+          </li>
+          <li>Physics simulated using Box2D</li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li>User state
+            <ul>
+              <li>Score, birds available, levels played, ...</li>
+              <li>View position, scale</li>
+              <li>Slingshot state</li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide7'>
+    <style>
+    .game-container {
+      position: absolute;
+      width: 900px; top: 154px;
+      -webkit-perspective: 1000;
+    }
+
+    .game-inner {
+      -webkit-transform-style: preserve-3d;
+      -webkit-transition: all 1.0s ease;
+    }
+
+    .game-image {
+      position: absolute;
+      -webkit-transition: all 1.0s ease;
+    }
+
+    .game-inner:hover { -webkit-transform: rotateY(-60deg); }
+    .game-inner:hover .depth0 { -webkit-transform: translateZ(  0px); }
+    .game-inner:hover .depth1 { -webkit-transform: translateZ( 64px); }
+    .game-inner:hover .depth2 { -webkit-transform: translateZ(128px); }
+    .game-inner:hover .depth3 { -webkit-transform: translateZ(196px); }
+    .game-inner:hover .depth4 { -webkit-transform: translateZ(256px); }
+    </style>
+    <div class='content parts'>
+      <header> <h1>Rendering the world: Backgrounds</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>Several layers, scaled and repeated</li>
+          <li>Fill-rate is a challenge</li>
+        </ul>
+      </section>
+      <div class='game-container'>
+        <div class='game-inner'>
+          <div class='game-image depth0' style='background:url(ab/bg1.png) repeat-x; width:900px; height:318px; top: 72px'></div>
+          <div class='game-image depth1' style='background:url(ab/bg2.png) repeat-x; width:900px; height:152px; top:198px'></div>
+          <div class='game-image depth2' style='background:url(ab/bg3.png) repeat-x; width:900px; height: 99px; top:251px'></div>
+          <div class='game-image depth3' style='background:url(ab/bg4.png) repeat-x; width:900px; height:197px; top:350px'></div>
+          <div class='game-image depth4' style='background:url(ab/bg5.png) repeat-x; width:900px; height: 36px; top:314px'></div>
+        </div>
+      </div>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide8'>
+    <div class='content parts'>
+      <header> <h1>Rendering the world: Sprites</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>Lots of dynamic objects
+            <ul>
+              <li>Blocks, blocks, and pigs</li>
+              <li>Smoke trails and explosions</li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+      <div class='game-container'>
+        <div class='game-inner'>
+          <div class='game-image depth0' style='background:url(ab/bg.png) repeat-x; width:900px; height:450px; top: 100px'></div>
+          <div class='game-image depth1' style='background:url(ab/block0.png) no-repeat; width:86px; height:43px; left:300px; top:330px;'></div>
+          <div class='game-image depth1' style='background:url(ab/circle0.png) no-repeat; width:75px; height:75px; left:400px; top:300px;'></div>
+          <div class='game-image depth1' style='background:url(ab/block0.png) no-repeat; width:86px; height:43px; left:480px; top:330px;'></div>
+          <div class='game-image depth1' style='background:url(ab/slingshot.png) no-repeat; width:80px; height:194px; left:100px; top:280px;'></div>
+          <div class='game-image depth1' style='background:url(ab/bird0.png) no-repeat; width:44px; height:44px; left:150px; top:200px;'></div>
+          <div class='game-image depth1' style='background:url(ab/pig0.png) no-repeat; width:40px; height:40px; left:320px; top:288px;'></div>
+          <div class='game-image depth1' style='background:url(ab/pig1.png) no-repeat; width:52px; height:44px; left:500px; top:286px;'></div>
+          <div class='game-image depth1' style='background:url(ab/explosion.png) no-repeat; width:90px; height:90px; left:435px; top:220px;'></div>
+        </div>
+      </div>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide9'>
+    <div class='content parts'>
+      <header> <h1>Rendering the world: UI</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>Layered on top of everything else</li>
+        </ul>
+      </section>
+      <div class='game-container'>
+        <div class='game-inner'>
+          <div class='game-image depth0' style='background:url(ab/bg.png) repeat-x; width:900px; height:450px; top: 100px'></div>
+          <div class='game-image depth1' style='background:url(ab/block0.png) no-repeat; width:86px; height:43px; left:300px; top:330px;'></div>
+          <div class='game-image depth1' style='background:url(ab/circle0.png) no-repeat; width:75px; height:75px; left:400px; top:300px;'></div>
+          <div class='game-image depth1' style='background:url(ab/block0.png) no-repeat; width:86px; height:43px; left:480px; top:330px;'></div>
+          <div class='game-image depth1' style='background:url(ab/slingshot.png) no-repeat; width:80px; height:194px; left:100px; top:280px;'></div>
+          <div class='game-image depth1' style='background:url(ab/bird0.png) no-repeat; width:44px; height:44px; left:150px; top:200px;'></div>
+          <div class='game-image depth1' style='background:url(ab/pig0.png) no-repeat; width:40px; height:40px; left:320px; top:288px;'></div>
+          <div class='game-image depth1' style='background:url(ab/pig1.png) no-repeat; width:52px; height:44px; left:500px; top:286px;'></div>
+          <div class='game-image depth1' style='background:url(ab/explosion.png) no-repeat; width:90px; height:90px; left:435px; top:220px;'></div>
+          <div class='game-image depth3' style='background:url(ab/pause.png) no-repeat; width:100px; height:100px; left:4px; top:104px;'></div>
+          <div class='game-image depth3' style='background:url(ab/restart.png) no-repeat; width:100px; height:100px; left:104px; top:104px;'></div>
+          <div class='game-image depth3' style='background:url(ab/score.png) no-repeat; width:158px; height:59px; left:700px; top:120px;'></div>
+          <div class='game-image depth3' style='background:url(ab/oops.png) no-repeat; width:390px; height:180px; left:220px; top:220px;'></div>
+        </div>
+      </div>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide10'>
+    <div class='content parts'>
+      <header> <h1>Resources</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>Images
+            <ul>
+              <li>Backgrounds, sprites, and UI</li>
+              <li>
+                <img src='ab/bird0.png' style='width:64px;height:64px;'>
+                <img src='ab/bird1.png' style='width:64px;height:64px;'>
+                <img src='ab/bird2.png' style='width:64px;height:64px;'>
+                <img src='ab/pig0.png' style='width:64px;height:64px;'>
+                <img src='ab/pig1.png' style='width:64px;height:64px;'>
+                <img src='ab/pig2.png' style='width:64px;height:64px;'>
+                <img src='ab/pig3.png' style='width:64px;height:64px;'>
+                <img src='ab/explosion.png' style='width:64px;height:64px;'>
+                <img src='ab/pause.png' style='width:64px;height:64px;'>
+                <img src='ab/restart.png' style='width:64px;height:64px;'>
+              </li>
+            </ul>
+          </li>
+          <li>Audio
+            <ul>
+              <li>Music, ambient backgrounds, squawks and snorts</li>
+              <li>
+                <img src='ab/audio.png' style='width:64px;height:64px;'>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide11'>
+    <div class='content parts'>
+      <header> <h1>Resources</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>Object definitions and level data
+            <pre class='brush:js'>
+            {
+              theme: 'BACKGROUND_CLOUDS',
+                world: {
+                  bird_1: {
+                    angle:0, id:'BIRD_YELLOW', x:58.472, // ...
+            </pre>
+          </li>
+          <li>Sprite definitions
+            <pre class='brush:js'>
+            {
+              image: 'INGAME_PIGS.png',
+              spriteCount: 54,
+              sprite_0: { id:'PIG_KING_03', x:2, 'y':2, width:131, // ...
+            </pre>
+          </li>
+        </ul>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide12'>
+    <div class='content segue green'>
+      <section class='intro'>
+        <h2>Challenges</h2>
+        <hr> <br>
+      </section>
+    </div>
+    </div>
+
+    <div class='slide' id='slide13'>
+    <div class='content challenges'>
+      <header> <h1>Performance</h1> <hr> </header>
+      <section>
+        <ul class='buildup'>
+          <li>How much time do we have?
+            <svg width='800' height='50'>
+              <line x1='20' y1='10' x2='780' y2='10'/>
+              <polygon points='780,10 770,15 770,5'/>
+
+              <line x1='20' y1='5' x2='20' y2='15'/>
+              <text  x='20'  y='40' text-anchor='middle'>0s</text>
+
+              <line x1='780' y1='5' x2='780' y2='15'/>
+              <text  x='780'  y='40' text-anchor='middle'>1s</text>
+            </svg>
+          </li>
+          <li>60 frames/s
+            <svg width='800' height='50'>
+              <line x1='20' y1='10' x2='780' y2='10'/>
+              <polygon points='780,10 770,15 770,5'/>
+
+              <line x1='20' y1='5' x2='20' y2='15'/>
+              <text  x='20'  y='40' text-anchor='middle'>0s</text>
+
+              <line x1='33' y1='5' x2='33' y2='15'/>
+              <line x1='46' y1='5' x2='46' y2='15'/>
+              <line x1='59' y1='5' x2='59' y2='15'/>
+              <line x1='72' y1='5' x2='72' y2='15'/>
+              <line x1='85' y1='5' x2='85' y2='15'/>
+              <line x1='98' y1='5' x2='98' y2='15'/>
+              <line x1='111' y1='5' x2='111' y2='15'/>
+              <line x1='124' y1='5' x2='124' y2='15'/>
+              <line x1='137' y1='5' x2='137' y2='15'/>
+
+              <line x1='780' y1='5' x2='780' y2='15'/>
+              <text  x='780'  y='40' text-anchor='middle'>1s</text>
+            </svg>
+          </li>
+          <li>~16 ms
+            <svg width='800' height='50'>
+              <line x1='20' y1='10' x2='780' y2='10'/>
+              <polygon points='780,10 770,15 770,5'/>
+
+              <line x1='20' y1='5' x2='20' y2='15'/>
+              <text  x='20'  y='40' text-anchor='middle'>0s</text>
+
+              <line x1='780' y1='5' x2='780' y2='15'/>
+              <text  x='770'  y='40' text-anchor='middle'>16ms</text>
+            </svg>
+          </li>
+          <li>User input, game logic, physics, rendering, garbage collection, ...</li>
+          <li>And you only get one thread!</li>
+        </ul>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide14'>
+    <div class='content challenges'>
+      <header> <h1>Performance: Threads...</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>... or the lack thereof</li>
+          <li>Modern game engines separate simulation from rendering</li>
+            <ul>
+              <li>Take advantage of multiple cores</li>
+              <li>Run simulation and rendering at different rates</li>
+            </ul>
+          </li>
+          <li>Javascript is single-threaded</li>
+          <li>Could use HTML5 Web Workers in theory
+            <ul> <li>(but this is very complex)</li> </ul>
+          </li>
+          <li>WebGL mitigates this to some extent in Chrome
+            <ul> <li>GPU babysitting happens in another process</li> </ul>
+          </li>
+        </ul>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide15'>
+    <div class='content challenges'>
+      <header> <h1>Performance: Rendering</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>DOM
+            <ul>
+              <li>Use the browser's built-in element model</li>
+              <li>Use CSS to control transforms</li>
+              <li>Not as bad as you might expect, if you stay on the rails</li>
+            </ul>
+          </li>
+          <li>
+            <pre class='brush:html'>
+&lt;div style='
+    background: url(pig.png) no-repeat;
+    -webkit-transform: matrix3d(
+      m00, m10,  0, tx,
+      m01, m11,  0, ty,
+        0,   0,  1,  0,
+        0,   0,  0,  1
+    );
+  '
+/&gt;
+            </pre>
+          </li>
+        </ul>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide16'>
+    <div class='content challenges'>
+      <header> <h1>Performance: Rendering</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>HTML5 Canvas
+            <ul>
+              <li>Immediate-mode 2D API, similar to Apple's CoreGraphics</li>
+              <li>Hardware-accelerated on many browsers</li>
+            </ul>
+          </li>
+          <li>
+            <pre class='brush:js'>
+var ctx = canvas.getContext('2d');
+ctx.save();
+ctx.transform(m00, m01, m10, m11, tx, ty);
+ctx.drawImage(pigImg, 0, 0);
+ctx.restor();
+            </pre>
+          </li>
+        </ul>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide17'>
+    <div class='content challenges'>
+      <header> <h1>Performance: Rendering</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>WebGL
+            <ul>
+              <li>Hardware-accelerated 3D API, modeled on OpenGL ES 2</li>
+              <li>By far the fastest approach...</li>
+              <li>...but not supported everywhere yet</li>
+            </ul>
+          </li>
+          <li>
+            <pre class='brush:js'>
+var positions = new Float32Array([0, 0, 0, 1, 1, 1, 1, 0]);
+gl.bufferSubData(gl.ARRAY_BUFFER, 0, positions);
+
+var texCoords = new Float32Array([0, 0, 0, 1, 1, 1, 1, 0]);
+gl.bufferSubData(gl.ARRAY_BUFFER, 0, texCoords);
+
+gl.bindTexture(gl.TEXTURE_2D, tex);
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, pig);
+
+gl.vertexAttribPointer(posAttr, 3, gl.FLOAT, false, 0, 0);
+gl.vertexAttribPointer(texAttr, 2, gl.FLOAT, false, 0, 12 * 4);
+
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+            </pre>
+          </li>
+        </ul>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide18'>
+    <div class='content challenges'>
+      <header> <h1>Performance: Physics</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>Box2D does enormous amounts of matrix math
+            <pre class='brush:js'>
+function mul(A, v, out) {      
+  out.x = v.x * A.m00 + v.y * A.m10;
+  out.y = v.x * A.m01 + v.y * A.m11;
+}
+
+var A = new Mat(1, 0, 0, 1);
+var v = new Vec(0, 0);
+mul(A, v, out);
+            </pre>
+          </li>
+          <li>V8 generates <em>875</em> instructions for this mul() function</li>
+        </ul>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide19'>
+    <div class='content challenges'>
+      <header> <h1>Performance: Physics</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>TypedArrays to the rescue!
+            <pre class='brush:js'>
+function mul(A, v, out) {
+  out[0] = v[0] * A[0] + v[1] * A[2];
+  out[1] = v[0] * A[1] + v[1] * A[3];
+}
+
+var A = new Float32Array(1, 0, 0, 1);
+var v = new Float32Array(0, 0);
+mul(A, v, out);
+            </pre>
+          </li>
+          <li>V8 generates <em>376</em> instructions for this mul() function</li>
+          <li>Translates to roughly 30% performance improvement</li>
+        </ul>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide20'>
+    <div class='content challenges'>
+      <header> <h1>Performance: Garbage-collection</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>Fast, except when it's not</li>
+          <li>Predictability is more important than raw overall speed
+            <ul>
+              <li>Remember: 16ms per frame</li>
+              <li>One pause can cause a frame skip</li>
+            </ul>
+          </li>
+          <li>Strategy
+            <ul>
+              <li>Pre-allocate world objects</li>
+              <li>Object pooling</li>
+            </ul>
+          </li>
+          <li>V8 gets a new garbage collector!</li>
+        </ul>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide21'>
+    <div class='content challenges'>
+      <header> <h1>Startup time</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>The web's unique challenges
+            <ul>
+              <li>The good news: You can make web apps start nearly instantly</li>
+              <li>The bad news: Your users expect them to <em>actually</em> start instantly</li>
+              <li>The worse news: The network's always slower than you think it is</li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide22'>
+    <div class='content challenges'>
+      <header> <h1>Startup time: Caching</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>The cache can be your friend:
+            <ul>
+              <li>The browser cache is a good start
+                <ul><li>Careful with those headers!</li></ul>
+              </li>
+              <li>The HTML5 AppCache is much more powerful</li>
+            </ul>
+          </li>
+          <li>Much easier to perform incremental updates than with installed packages</li>
+        </ul>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide23'>
+    <div class='content challenges'>
+      <header> <h1>Startup time: Sprites</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>Individual images are natural on the web
+            <pre class='brush:html'>
+&lt;img src='bird0.png'&gt;
+            </pre>
+          <li>But HTTP requests are expensive!</li>
+          <li>Solution: sprite sheets</li>
+        </ul>
+        <div style='text-align:center;'>
+          <br>
+          <img src='ab/bird_sheet.png' style='width:320px; height:320px;'>
+          &nbsp; &nbsp; &nbsp; &nbsp;
+          <img src='ab/pig_sheet.png' style='width:320px; height:320px;'>
+        </div>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide24'>
+    <div class='content challenges'>
+      <header> <h1>Startup time: Cheating</h1> <hr> </header>
+      <section>
+        <li>Pay no attention to the man behind the curtain
+          <ul>
+            <li>You can't fix the network, but you can cheat!</li>
+            <li>Only load what you need</li>
+            <li>Whenever possible, hide loading where the user won't notice</li>
+          </ul>
+        </li>
+        <div style='text-align:center;'>
+          <br>
+          <br>
+          <img src='ab/splash.png' style='width:240px; height:160px;'>
+          &nbsp; &nbsp;
+          <img src='ab/intro.png' style='width:240px; height:160px;'>
+          &nbsp; &nbsp;
+          <img src='ab/story.png' style='width:240px; height:160px;'>
+        </div>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide25'>
+    <div class='content challenges'>
+      <header> <h1>Audio</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>Two approaches:
+            <ul>
+              <li>The one that's deprecated
+                <ul>
+                  <li>HTML5 &lt;audio&gt; tag is woefully inadequate for games<li>
+                  <li>Particularly bad for low-latency audio</li>
+                </ul>
+              </li>
+              <li>The one that doesn't work yet
+                <ul>
+                  <li>The new Web Audio API isn't available everywhere yet</lI>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>How Web Audio will fix the problem
+            <ul>
+              <li>Explicit buffer management</li>
+              <li>Precise scheduling</li>
+              <li>Convolutions and other effects</li>
+              <li>Spatialization</li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide26'>
+    <div class='content segue green'>
+      <section class='intro'>
+        <h2>PlayN</h2>
+        <hr> <br>
+      </section>
+    </div>
+    </div>
+
+    <div class='slide' id='slide27'>
+    <div class='content playn'>
+      <header> <h1>What is PlayN?</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>Java library for casual games
+            <ul>
+              <li>Introduced as 'ForPlay' at Google I/O 2011</li>
+            </ul>
+          </li>
+          <li>Targets: HTML5, Flash, Android</li>
+          <li>Desktop JVM used for development and debugging</li>
+          <li>developers.google.com/playn
+            <ul>
+              <li>Open source</li>
+              <li>Already seeing significant contributions</li>
+              <li>Early days: contributions welcome!</li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide28'>
+    <div class='content segue blue'>
+      <section class='intro'>
+        <h2>Stop: Demo Time</h2>
+        <hr> <br>
+      </section>
+    </div>
+    </div>
+
+    <div class='slide' id='slide29'>
+    <div class='content playn'>
+      <header> <h1>PlayN: Goals</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>Simple</li>
+          <li>Reductionist</li>
+          <li>Cross-platform</li>
+          <li>Focused on the 'middle of the bell-curve'</li>
+        </ul>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide30'>
+    <div class='content playn'>
+      <header> <h1>Components: Game Loop</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>Simply implement playn.core.Game</li>
+          <li>Ensures update() and paint() happen at the right time</li>
+        </ul>
+        <pre class='brush:java'>
+public class MyGame implements Game {
+
+  public void init() {
+    // initialize game.
+  }
+
+  public void update(float delta) {
+    // update world:
+    //   delta indicates the time-step
+  }
+
+  public void paint(float alpha) {
+    // render world:
+    //   alpha indicates time in the range [0, 1) between world frames
+  }
+}
+        </pre>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide31'>
+    <div class='content playn'>
+      <header> <h1>Components: Input</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>Simple abstractions for input devices
+            <ul>
+              <li>Pointer, Mouse, Touch</li>
+              <li>Keyboard</li>
+            </ul>
+          </li>
+        </ul>
+        <pre class='brush:java'>
+pointer().setListener(new Pointer.Adapter() {
+  public void onPointerStart(Pointer.Event event) {
+    // Handle mouse down event.
+  }
+});
+
+keyboard().setListener(new Keyboard.Adapter() {
+  public void onKeyDown(Event event) {
+    // Handle key down event.
+  }
+});
+        </pre>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide32'>
+    <div class='content playn'>
+      <header> <h1>Components: Graphics</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>Two main concepts
+            <ul>
+              <li>Layers: retained structures (similar to DOM)</li>
+              <li>Surfaces: immediate rendering (similar to Canvas)</li>
+            </ul>
+          </li>
+          <li>Implemented using a combination of DOM, Canvas, <em>and</em> WebGL</li>
+        </ul>
+        <pre class='brush:java'>
+public void init() {
+  bg = graphics().createSurfaceLayer();
+  graphics.rootLayer().add(bg);
+
+  Layer catGirl = graphics().createImageLayer('catGirl.png');
+  graphics.rootLayer().add(catGirl);
+}
+
+public void paint(float alpha) {
+  Surface surf = bg.surf();
+  surf.clear();
+  surf.drawImage(cloud, cloudX, cloudY);
+}
+        </pre>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide33'>
+    <div class='content playn'>
+      <header> <h1>Components: Audio</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>Simple audio API</li>
+        </ul>
+        <pre class='brush:java'>
+public void init() {
+  Sound music = assetManager().getSound('ambient.mp3');
+  music.setLooping(true);
+  music.play();
+
+  squawk = assetManager().getSound('squawk.mp3');
+}
+
+public void somethingHappened() {
+  squawk.play();
+}
+        </pre>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide34'>
+    <div class='content playn'>
+      <header> <h1>Components: Asset Management</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>Simple loading methods for images, sounds, and text</li>
+        </ul>
+        <pre class='brush:java'>
+public void init() {
+  Image image = assetManager().getImage('bird.png');
+  Sound sound = assetManager().getSound('squawk.mp3');
+
+  // Completion callbacks are available
+  image.addCallback(new ResourceCallback&lt;Image&gt;() {
+    public void done(Image resource) { imageReady = true; }
+    public void error(Throwable err) { imageFailed(); }
+  });
+
+  // Text is necessarily async
+  assetManager().getText('level.json', new ResourceCallback&lt;String&gt;() {
+    public void done(String resource) { loadLevel(json().parse(resource)); }
+    public void error(Throwable err) { gameOver(); }
+  });
+}
+        </pre>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide35'>
+    <div class='content playn'>
+      <header> <h1>Components: Network</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>Some network access already handled by AssetManager</li>
+          <li>You can also make direct HTTP requests</li>
+        </ul>
+        <pre class='brush:java'>
+public void saveState() {
+  Writer json = json().newWriter();
+  json.key('id');    json.value(playerId);
+  json.key('score'); json.value(playerScore);
+
+  net().post('/saveState', json.write(), new Callback&lt;String&gt;() {
+    public void onSuccess(String result) { }
+    public void onFailure(Throwable cause) { tryAgain();}
+  });
+}
+        </pre>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide36'>
+    <div class='content playn'>
+      <header> <h1>Components: Box2D</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>Box2D baked into the library</li>
+          <li>Why embedded?
+            <ul>
+              <li>Somewhat tricky to do it yourself with JBox2D</li>
+              <li>We can do some platform-specific optimizations</li>
+            </ul>
+          </li>
+        </ul>
+        <pre class='brush:java'>
+public void init() {
+  world = new World(gravity, true);
+
+  Body ground = world.createBody(new BodyDef());
+  PolygonShape groundShape = new PolygonShape();
+  groundShape.setAsEdge(new Vec2(0, height), new Vec2(width, height));
+  ground.createFixture(groundShape, 0.0f);
+
+  world.setContactListener(new ContactListener() {
+    public void beginContact(Contact contact) { ... }
+    public void endContact(Contact contact) { ... }
+    // ...
+  }
+}
+
+public void update(float delta) {
+  // Fix physics at 30f/s for stability.
+  world.step(0.033f, 10, 10);
+}
+        </pre>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide37'>
+    <div class='content playn'>
+      <header> <h1>Future work</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>Input
+            <ul><li>Game pads and other input devices</li></ul>
+          </li>
+          <li>Rendering
+            <ul><li>3d graphics API</li></ul>
+          </li>
+          <li>Audio
+            <ul><li>Audio effects and spatialization</li></ul>
+          </li>
+          <li>Network
+            <ul><li>Streaming sockets</li></ul>
+          </li>
+          <li>C (or possibly LLVM) backend
+            <ul><li>Support for iOS and other platforms</li></ul>
+          </li>
+        </ul>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide38'>
+    <div class='content html5'>
+      <header> <h1>The future of web games</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>Advanced APIs for game developers
+            <ul>
+              <li>WebGL, multiple render targets, deferred shading</li>
+              <li>Low-latency audio, filters, and effects</li>
+              <li>Full-screen, mouse lock</li>
+            </ul>
+          </li>
+          <li>HTML5 Everywhere?
+            <ul><li>All about performance!</li></ul>
+          </li>
+        </ul>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide39'>
+    <div class='content'>
+      <header> <h1>Thanks</h1> <hr> </header>
+      <section>
+        <ul>
+          <li>Serdar Soganci (Rovio)</li>
+          <li>Philip Rogers, Seth Ladd, Lilli Thompson (Google)</li>
+          <li>Michael Bayne (Three Rings)</li>
+        </ul>
+      </section>
+    </div>
+    <div class='notes'>
+      Still more notes...
+    </div>
+    </div>
+
+    <div class='slide' id='slide40'>
+    <div class='content segue red'>
+      <section class='intro'>
+        <h2>Questions?</h2>
+        <hr>
+      </section>
+    </div>
+    </div>
+  </div>
+
+  <script src='/slides/client/slides.coffee'></script>
+</body>
+</html>

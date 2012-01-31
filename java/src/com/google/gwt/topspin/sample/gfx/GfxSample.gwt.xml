@@ -1,0 +1,6 @@
+<module rename-to='GfxSample'>
+  <inherits name='com.google.gwt.topspin.gfx.Gfx'/>
+  <inherits name='com.google.gwt.animation.Animation'/>
+
+  <entry-point class='com.google.gwt.topspin.sample.gfx.client.GfxSample'/>
+</module>

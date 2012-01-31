@@ -1,0 +1,11 @@
+<module rename-to="FriendFeed">
+  <inherits name='com.google.gwt.topspin.TopSpin'/>
+  <inherits name='com.google.gwt.topspin.desktop.Desktop'/>
+	<inherits name='com.j15r.common.Common' />
+  <inherits name='com.google.gwt.uibinder.UiBinder' />
+  <inherits name='com.google.gwt.resources.Resources' />
+  <inherits name='com.google.gwt.jsonp.Jsonp' />
+
+	<entry-point class='com.j15r.friendfeed.client.FriendFeed' />
+	<!--add-linker name="xs" /-->
+</module>

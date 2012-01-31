@@ -1,0 +1,29 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'>
+  <ui:style>
+  .resultView {
+    text-align: center;
+  }
+
+  .thumb {
+    border: 1px solid;
+  }
+
+  .domain {
+    color: #080;
+  }
+  </ui:style>
+
+	<div class='{style.resultView}'>
+    <div ui:field='display'>
+  		<a ui:field='anchor'>
+        <img ui:field='thumb' class='{style.thumb}'/>
+      </a>
+      <br/>
+  		<div ui:field='content'/>
+  		<div ui:field='size'/>
+  		<div ui:field='domain' class='{style.domain}'/>
+    </div>
+
+    <div ui:field='loading'><b> . . . </b></div>
+	</div>
+</ui:UiBinder>

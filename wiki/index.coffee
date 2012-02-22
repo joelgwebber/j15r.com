@@ -11,21 +11,19 @@ makeTemplate = (file) ->
     precompiled: (hb.precompile tmpl)
   }
 
-indexView = makeTemplate 'app/views/index.hb'
-itemView = makeTemplate 'app/views/item.hb'
-italicized = makeTemplate 'app/views/italicized.hb'
+indexView = makeTemplate 'wiki/views/index.hb'
+itemView = makeTemplate 'wiki/views/item.hb'
 
 module.exports.init = (app) ->
-  app.static [ 'app/static' ]
+  app.static [ 'wiki/static' ]
 
-  app.client 'app/client/app.coffee'
+  app.client 'wiki/client/index.coffee'
 
-  app.get '/app', (req, rsp, next) ->
+  app.get '/wiki', (req, rsp, next) ->
     data =
       templates: [
         { name: 'item', fn: itemView.precompiled }
       ]
       partials: [
-        { name: 'italicized', fn: italicized.precompiled }
       ]
     rsp.end (indexView.render data)

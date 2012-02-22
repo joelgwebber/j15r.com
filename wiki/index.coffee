@@ -4,15 +4,8 @@ hb = require 'handlebars'
 fs = require 'fs'
 
 # Import Views
-makeTemplate = (file) ->
-  tmpl = fs.readFileSync file, 'utf8'
-  return {
-    render: (hb.compile tmpl)
-    precompiled: (hb.precompile tmpl)
-  }
-
-indexView = makeTemplate 'wiki/views/index.hb'
-itemView = makeTemplate 'wiki/views/item.hb'
+indexView = require './views/index.coffee'
+itemView = require './views/item.coffee'
 
 module.exports.init = (app) ->
   app.static [ 'wiki/static' ]
@@ -20,10 +13,5 @@ module.exports.init = (app) ->
   app.client 'wiki/client/index.coffee'
 
   app.get '/wiki', (req, rsp, next) ->
-    data =
-      templates: [
-        { name: 'item', fn: itemView.precompiled }
-      ]
-      partials: [
-      ]
+    data = {}
     rsp.end (indexView.render data)

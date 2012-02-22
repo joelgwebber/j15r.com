@@ -4,22 +4,13 @@ reed = require 'reed'
 hb = require 'handlebars'
 fs = require 'fs'
 
+# Import Views
+indexView = require './client/views/index'
+postView = require './client/views/post'
+
 # Initialize reed
 reed.open 'blog/articles'
 reed.pages.open 'blog/pages'
-
-# Import Views
-makeTemplate = (file) ->
-  tmpl = fs.readFileSync file, 'utf8'
-  return {
-    render: (hb.compile tmpl)
-  }
-registerPartial = (name, file) ->
-  hb.registerPartial name, fs.readFileSync file, 'utf8'
-
-indexView = makeTemplate 'blog/views/index.hb'
-postView = makeTemplate 'blog/views/post.hb'
-registerPartial 'blog_nav', 'blog/views/nav.hb'
 
 makePosts = (ids) ->
   return ids.map (id) ->

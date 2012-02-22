@@ -1,10 +1,13 @@
 dom = require './dom'
 
+itemView = require './views/item'
+
 # template test.
 div = document.createElement 'div'
-div.innerHTML = templates.item
+div.innerHTML = itemView.render
   name: 'foo'
-  str: 'w00t!'
+  italicized:
+    str: 'w00t!'
 document.body.appendChild div
 
 # sharejs editor test.

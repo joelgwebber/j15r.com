@@ -4,16 +4,9 @@ hb = require 'handlebars'
 fs = require 'fs'
 
 # Import Views
-makeTemplate = (file) ->
-  tmpl = fs.readFileSync file, 'utf8'
-  return {
-    render: (hb.compile tmpl)
-    precompiled: (hb.precompile tmpl)
-  }
-
-indexView = makeTemplate 'app/views/index.hb'
-itemView = makeTemplate 'app/views/item.hb'
-italicized = makeTemplate 'app/views/italicized.hb'
+indexView = require './client/views/index'
+itemView = require './client/views/item'
+italicized = require './client/views/italicized'
 
 module.exports.init = (app) ->
   app.static [ 'app/static' ]
@@ -21,11 +14,5 @@ module.exports.init = (app) ->
   app.client 'app/client/index.coffee'
 
   app.get '/app', (req, rsp, next) ->
-    data =
-      templates: [
-        { name: 'item', fn: itemView.precompiled }
-      ]
-      partials: [
-        { name: 'italicized', fn: italicized.precompiled }
-      ]
+    data = {}
     rsp.end (indexView.render data)

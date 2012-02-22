@@ -1,3 +1,4 @@
+module.exports.render = (data) -> """
 <!DOCTYPE html>
 <html>
   <head>
@@ -8,19 +9,6 @@
     <div id='editor'>
       <div id='realeditor'></div>
     </div>
-
-    <!-- Handlebars template stuff -->
-    <script src='/static/handlebars.runtime.js'></script>
-    <script>
-    var templates = {
-      {{#each templates}}
-        {{name}} : Handlebars.template({{{fn}}})
-      {{/each}}
-    };
-    {{#each partials}}
-      Handlebars.registerPartial('{{name}}', Handlebars.template({{{fn}}}));
-    {{/each}}
-    </script>
 
     <form id='make'>
       <div>Name: <input type='text' id='objname'></input></div>
@@ -39,3 +27,4 @@
     <script src='/app/client/index.coffee'></script>
   </body>
 </html>
+"""

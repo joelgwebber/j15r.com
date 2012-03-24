@@ -35,11 +35,6 @@ svg polygon { fill:rgb(0, 0, 0); stroke-width:0; }
 
 /* slides and notes */
 .slides {
-  position: relative;
-  width: 900px;
-  height: 24px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .slide {
@@ -50,17 +45,16 @@ svg polygon { fill:rgb(0, 0, 0); stroke-width:0; }
 }
 
 .content {
-  width: 900px;
+  width: 960px;
   height: 700px;
   background-color: white;
   position: relative;
   padding: 1em;
-  margin-right: 1.5em;
   margin-bottom: 0.5em;
 }
 
 .notes {
-  width: 900px;
+  width: 960px;
   background-color: white;
   padding: 1em;
 }
@@ -98,11 +92,12 @@ li {
   text-shadow: rgba(0, 0, 0, 0.199219) 0px 2px 5px;
 }
 
-.content.segue.blue { background: url(g_background.png) bottom no-repeat, #2666cc; }
-.content.segue.dark-blue { background: url(g_background.png) bottom no-repeat, #1b4568; }
-.content.segue.green { background: url(g_background.png) bottom no-repeat, #419a0c; }
-.content.segue.yellow { background: url(g_background.png) bottom no-repeat, #f7cc22; }
-.content.segue.red { background: url(g_background.png) bottom no-repeat, #e21d1d; }
+/* TODO(jgw): separate goog-background from non-goog background*/
+.content.segue.blue { background: /*url(g_background.png) bottom no-repeat,*/ #2666cc; }
+.content.segue.dark-blue { background: /*url(g_background.png) bottom no-repeat,*/ #1b4568; }
+.content.segue.green { background: /*url(g_background.png) bottom no-repeat,*/ #419a0c; }
+.content.segue.yellow { background: /*url(g_background.png) bottom no-repeat,*/ #f7cc22; }
+.content.segue.red { background: /*url(g_background.png) bottom no-repeat,*/ #e21d1d; }
 
 /* headers and sections */
 header {

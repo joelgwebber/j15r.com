@@ -2,9 +2,11 @@ tmpl = require './tmpl'
 
 module.exports.render = (data) ->
   """
-  <a href='/blog/about'>About</a>
-  <hr>
-  #{tmpl.foreach renderPost, data}
+  <div class='nav'>
+    <a href='/blog/about'>About</a>
+    <hr>
+    #{tmpl.foreach renderPost, data}
+  </div>
   """
 
 renderPost = (post) ->

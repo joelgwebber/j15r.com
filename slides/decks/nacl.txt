@@ -1,0 +1,265 @@
+# General
+
+Why?
+  Google perf obsessed
+  3 yrs ago: What if we could run native code in the browser?
+  Retain good parts of the web -- portability, security ease, reach, etc.
+  Some stats suggest that, for some games, up to 90% of people who *want* to play abandon when prompted to install a plugin.
+
+Reality of game development
+  [devices.png]
+
+Performance
+  Box2D: NaCl roughly 10x faster than best Javascript
+    Often closer to 20x for hand-written JS
+    Oddly, best JS results are for C++ cross-compiled to JS (!)
+  Flocking Geese
+  [https://chrome.google.com/webstore/detail/hjoknlchfolpgpnehoelkgklihdipcmn]
+  [box2d.png]
+  [http://blog.j15r.com/2011/12/for-those-unfamiliar-with-it-box2d-is.html]
+
+Security
+  Same model as web
+  *Not* NPAPI or ActiveX
+
+Features:
+  Accelerated 3d rendering
+  Real-time stereo audio
+  Sandboxed local file storage
+  Full-screen, mouse-lock
+  Networking
+  URL loading
+  Async comm w/JS
+  Dynamic linking
+  GNU libc
+  Shared-memory threads
+
+Applications
+  Games
+  Media editing (photo/video/audio)
+  3D modeling, CAD
+  Scientific computing (any heavy number crunching)
+
+Support:
+  Chrome 14+
+  Not all machines support 3D rendering (see below)
+  Enabled when:
+    Command-line flag (for developers)
+    Triggered by Chrome Web Store
+
+Games & Apps
+  Bastion (Supergiant)
+  Mini Ninjas (Square Enix)
+  Cordy & Sleepy Jack (SilverTree Media)
+  Pirates of New Horizons & Planet Buster (Exit Strategy Entertainment)
+  Running Fred (Dedalord)
+  Various 3D Training tools (Heartwood Studios)
+  Lots of emulators -- MAME, DOSBox, etc.
+
+Middleware:
+  [middleware.png]
+  Unity:
+    90M browser plugin installs
+    Over 200M Chrome users, plus monetization through web store
+  Moai (game engine)
+  Mono (for porting C#/XNA games)
+  Bullet (physics engine)
+  FMod & WWise (audio engines)
+  Ogre
+  SDL
+
+Example: Star Legends
+  [starlegends.png]
+  3D MMO for Android 2.0
+  Ported to NaCl in 14 days
+    1 programmer, 600k lines of code
+  Runs across Android & NaCl
+
+Distribution:
+  [cws.png]
+  Through Chrome Web Store
+  Monetize with:
+    Ads
+    In-app purchase
+    Checkout
+  Or through Chrome Extension
+
+
+# Developing in NaCl
+
+Application and deployment structure
+  [structure.png]
+  [https://developers.google.com/native-client/devguide/coding/application-structure]
+
+Application lifecycle
+  [lifecycle.png]
+
+GCC/G++ compiler:
+  Make C++ code ISO/IEC 14882:1998 compliant
+    POSIX style coding / functions
+    OS specific calls not supported
+  Removes / tests any unsafe code
+  Produces safe compiled x86 code
+
+# APIs:
+
+Architecture
+  [arch.png]
+
+Rendering
+  OpenGL ES 2.0
+  Remember this is stricter than full OpenGL
+    Not all extensions available
+    But the same as most iOS and Android devices
+  Can use ANGLE to test on Windows
+  [sandboxrendering.png]
+
+Audio
+  Straightforward low-level audio API
+    Stereo
+    Real-time
+  [audio1.png]
+  [audio2.png]
+  [https://developers.google.com/native-client/devguide/coding/audio]
+
+Communication with Javascript
+  [https://developers.google.com/native-client/devguide/coding/message-system]
+
+  Send messages to NaCl:
+    myAppModule.postMessage('w00t?');
+
+  Receive messages from NaCl:
+    myAppModule.addEventListener('message', messageFunc, false);
+
+  Send messages to Javascript:
+    pp::Var var;
+    this->PostMessage(var);
+
+  Handle messages from Javascript:
+    void MyAppInstance::HandleMessage(const pp::Var& var_message) { ... }
+
+Loading resources
+
+
+# Threads
+
+Pepper thread
+  [pepperthread.png]
+  Do not call blocking functions on the main thread
+
+Pepper APIs
+  Pepper APIs calls are Asynchronous
+    ~1 'frame' to get results
+  Must be called from the main thread <will be fixed soon>
+
+  void fopen_mt(void* void_data, int32_t /* unused */) {
+    ASSERT_MAIN_THREAD();
+    FileIO::OpenParams* params =static_cast<FileIO::OpenParams*>(void_data);
+    file_io_->Open(*file_ref_, params->flags, pp::CompletionCallback(fopen_cb,params));
+  }
+  void fopen_cb(void* void_data, int32_t result) {
+    //Yay, do some stuff!
+  }
+
+Working around thread restrictions:
+  This is not how your game engine is designed
+  Best idea?
+    Run game logic on separate thread
+    Wrap platform functions to talk with main thread.
+  [logicthread.png]
+
+  static int32_t RequestAndWait(void (*function)(void*, int32_t), void* param) {
+    ASSERT_WORKER_THREAD()
+    pp::Module::Get()->core()->CallOnMainThread(0, pp::CompletionCallback(function, param), PP_OK);
+    pthread_cond_wait(&gData_.cond, &gData_.mutex);
+    return data_.result;
+  }
+  static void ReturnFromMainThread(void* void_data, int32_t result) {
+    ASSERT_MAIN_THREAD();
+    MainThreadData* data = static_cast<MainThreadData*>(void_data);
+    data->result = result;
+    pthread_cond_signal(&data->cond);
+  }
+
+
+# Development tricks
+
+Development tricks: Caching and Dev Tools
+  Disable caching for fast iteration
+  Chrome dev tools
+    Debugging network issues, HTML/JS parts of the game, console
+  [devtools.png]
+  [http://code.google.com/chrome/devtools/docs/console.html]
+
+Development tricks: about:tracing
+  about:tracing
+  Can emit events from user code!
+  [tracing.png]
+
+Development Tricks: Debugging
+  Possible to use GDB, though still tricky
+    [http://www.chromium.org/nativeclient/how-tos/debuggingtips]
+  Better debugging support and IDE integration coming soon
+
+
+# Deployment issues
+
+3D on the Web
+  3D APIs can be malicious in the web
+  WebGL has a 'blacklist' of 3d drivers
+    Failure to create a webgl context
+  Detect early and alert user!
+
+Blacklisted drivers
+  Detect in Javascript
+
+  // Has blacklisted hardware / feature sets?
+  function textureSizeTest(size) {
+    var canvas = document.createElement('canvas');
+    var gl = canvas.getContext('webgl') ||
+             canvas.getContext('experimental-webgl');
+    if (gl)
+      return gl.getParameter(gl.MAX_TEXTURE_SIZE) >= size;
+  }
+
+  [http://mainroach.blogspot.com/2011/11/nacl-detecting-user-setup-problems.html]
+
+NaCl Whitelisting
+  Nacl not enabled until :
+    Devs - enable via flags
+    Users - Install from Chrome Web Store
+  Origin of Location white listed
+    NMF and Nexe loc must match!
+
+Can the user run NaCl?
+  // Is using chrome?
+  var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+
+  // Is app installed?
+  if (window.chrome.app.isInstalled)
+    // You're running as an installed app, via the app launcher!
+  else
+    // You're running via a bookmark/link.
+
+  [http://mainroach.blogspot.com/2011/11/nacl-detecting-user-setup-problems.html]
+
+
+# Future
+
+APIs
+  Web sockets
+  Gamepad support
+  Memory-mapped files
+  Track all new web features as they're added to Chrome
+
+pNaCl
+  "Portable Native Client"
+  Already OS-neutral. pNaCl makes it instruction-set neutral
+  Just as portable as Javascript
+  Chrome Web Store restriction lifted
+
+
+# Further reading
+
+https://developers.google.com/native-client/
+https://developers.google.com/native-client/pepper18/video/gdc-2012

@@ -1,8 +1,6 @@
 # Dead-simple blog server, using Reed
 connect = require 'connect'
 reed = require 'reed'
-hb = require 'handlebars'
-fs = require 'fs'
 
 # Import Views
 indexView = require './client/views/index'
@@ -21,6 +19,7 @@ renderPost = (name, reedGetter, rsp) ->
   posts = null
   content = null
   title = null
+  date = null
 
   render = () ->
     if !posts || !content
@@ -29,6 +28,7 @@ renderPost = (name, reedGetter, rsp) ->
     rsp.end postView.render
       posts: posts
       title: title
+      date: date
       content: content
 
   reed.list (err, ids) ->
@@ -37,7 +37,8 @@ renderPost = (name, reedGetter, rsp) ->
 
   reedGetter name, (err, meta, html) ->
     content = if err then 'error...' else html
-    title = '...title...'
+    title = meta.title or ''
+    date = meta.date or ''
     render()
 
 module.exports.init = (app) ->

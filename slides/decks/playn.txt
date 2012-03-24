@@ -1,0 +1,325 @@
+# Background
+
+Angry Birds
+
+Why the Web?
+  No install
+  Reach
+  Seamless update
+  Embeddable and linkable
+
+State of HTML5 Gaming
+  Rendering
+  Audio
+  Input
+  Fullscreen
+  Mouse capture
+
+# PlayN
+
+What is PlayN?
+  Introduced as "ForPlay" at Google I/O 2011
+  Java VM (debugging)
+  Platforms: HTML5 Flash Android iOS
+  Open source; still early days!
+
+Goals
+  Simple
+  Reductionist
+  Cross-platform
+  Focused on "middle of the bell curve"
+
+Components: Game Loop
+  Simply implement playn.core.Game
+  Ensures update() and paint() happen at the right time
+    public class MyGame implements Game {
+      public void init() {
+        // initialize game
+      }
+
+      public void update(float delta) {
+        // update world:
+        //   delta indicates the time-step
+      }
+
+      public void paint(float alpha) {
+        // render world:
+        //    alpha indicates time in the range [0, 1) between world frames
+      }
+    }
+
+Components: Input
+  Simple abstractions for input devices
+    Pointer, Mouse, Touch
+    Keyboard
+
+    pointer().setListener(new Pointer.Adapter() {
+      public void onPointerStart(Pointer.Event event) {
+        // Handle mouse down event.
+      }
+    });
+
+    keyboard().setListener(new Keyboard.Adapter() {
+      public void onKeyDown(Event event) {
+        // Handle key down event.
+      }
+    });
+
+Components: Graphics
+  Two main concepts
+    Layers: retained structures (similar to DOM)
+    Surfaces: immediate rendering (similar to Canvas)
+  Implemented using a combination of DOM, Canvas, <em>and</em> WebGL
+
+    public void init() {
+      bg = graphics().createSurfaceLayer();
+      graphics.rootLayer().add(bg);
+
+      Layer catGirl = graphics().createImageLayer('catGirl.png');
+      graphics.rootLayer().add(catGirl);
+    }
+
+    public void paint(float alpha) {
+      Surface surf = bg.surf();
+      surf.clear();
+      surf.drawImage(cloud, cloudX, cloudY);
+    }
+
+Components: Audio
+  Simple Audio API
+
+    public void init() {
+      Sound music = assetManager().getSound('ambient.mp3');
+      music.setLooping(true);
+      music.play();
+
+      squawk = assetManager().getSound('squawk.mp3');
+    }
+
+    public void somethingHappened() {
+      squawk.play();
+    }  
+
+Components: Asset Management
+  Simple loading methods for images, sounds, and text
+
+    public void init() {
+      Image image = assetManager().getImage('bird.png');
+      Sound sound = assetManager().getSound('squawk.mp3');
+
+      // Completion callbacks are available
+      image.addCallback(new ResourceCallback&lt;Image&gt;() {
+        public void done(Image resource) { imageReady = true; }
+        public void error(Throwable err) { imageFailed(); }
+      });
+
+      // Text is necessarily async
+      assetManager().getText('level.json', new ResourceCallback&lt;String&gt;() {
+        public void done(String resource) { loadLevel(json().parse(resource)); }
+        public void error(Throwable err) { gameOver(); }
+      });
+    }
+
+Components: Network
+  Some network access already handled by AssetManager
+  You can also make direct HTTP requests
+
+    public void saveState() {
+      Writer json = json().newWriter();
+      json.key('id');    json.value(playerId);
+      json.key('score'); json.value(playerScore);
+
+      net().post('/saveState', json.write(), new Callback&lt;String&gt;() {
+        public void onSuccess(String result) { }
+        public void onFailure(Throwable cause) { tryAgain();}
+      });
+    }
+
+Components: Box2D
+  Box2D baked into the library
+  Why embedded?
+    Somewhat tricky to do it yourself with JBox2D
+    We can do some platform-specific optimizations
+
+    public void init() {
+      world = new World(gravity, true);
+
+      Body ground = world.createBody(new BodyDef());
+      PolygonShape groundShape = new PolygonShape();
+      groundShape.setAsEdge(new Vec2(0, height), new Vec2(width, height));
+      ground.createFixture(groundShape, 0.0f);
+
+      world.setContactListener(new ContactListener() {
+        public void beginContact(Contact contact) { ... }
+        public void endContact(Contact contact) { ... }
+        // ...
+      }
+    }
+
+    public void update(float delta) {
+      // Fix physics at 30f/s for stability.
+      world.step(0.033f, 10, 10);
+    }
+
+# PlayN 101
+
+Every game should start with a blue sky
+
+    public class MyGame implements Game {
+      public void init() {
+        int width = 640;
+        int height = 480;
+        CanvasImage bgImage = graphics().createImage(width, height);
+        Canvas canvas = bgImage.canvas();
+        canvas.setFillColor(0xff87ceeb);
+        canvas.fillRect(0, 0, width, height);
+        ImageLayer bg = graphics().createImageLayer(bgImage);
+        graphics().rootLayer().add(bg);
+      }
+    }
+
+And some white clouds
+
+    Image cloudImage = assets().getImage("images/cloud.png");
+    ImageLayer cloud = graphics().createImageLayer(cloudImage);
+    graphics().rootLayer().add(cloud);
+    float x = 24.0f;
+    float y = 3.0f;
+    cloud.setTranslation(x, y);
+
+The layer can be animated
+
+    public void paint(float delta) {
+      x += 0.1f * delta;
+      if (x > bgImage.width() + cloudImage.width()) {
+        x = -cloudImage.width();
+      }
+      cloud.setTranslation(x, y);
+    }
+
+You can hook on click event and create new layers
+
+    Image ballImage = assetManager().getImage("images/ball.png");
+    GroupLayer ballsLayer = graphics().createGroupLayer();
+    graphics().rootLayer().add(ballsLayer);
+    pointer().setListener(new Pointer.Adapter() {
+      @Override
+      public void onPointerEnd(Pointer.Event event) {
+        ImageLayer ball = graphics().createImageLayer(ballImage);
+        ball.setTranslation(event.x(), event.y());
+        ballsLayer.add(ball);
+      }
+    });
+
+Time to add some physics
+
+    float physUnitPerScreenUnit = 1 / 26.666667f;
+    Vec2 gravity = new Vec2(0.0f, 10.0f);
+    world = new World(gravity, true);
+    ballsLayer.setScale(1f / physUnitPerScreenUnit);
+
+Don't forget to add the ground!
+
+    float worldWidth = physUnitPerScreenUnit * width;
+    float worldHeight = physUnitPerScreenUnit * height;
+    Body ground = world.createBody(new BodyDef());
+    PolygonShape groundShape = new PolygonShape();
+    groundShape.setAsEdge(new Vec2(0, worldHeight), new Vec2(worldWidth, worldHeight));
+    ground.createFixture(groundShape, 0.0f);
+
+Let's add more blocks
+
+    Image blockImage = assetManager().getImage("images/block.png");    
+    float blockWidth = blockImage.width()*physUnitPerScreenUnit;
+    float blockHeight = blockImage.height()*physUnitPerScreenUnit;
+    GroupLayer blocksLayer = graphics().createGroupLayer();
+    blocksLayer.setScale(1f / physUnitPerScreenUnit);
+    Body blocksBody = world.createBody(new BodyDef());
+
+And some nails -- パチンコ!
+
+    public void initNails() {
+      for (int x = 100; x < bgImage.width() - 100; x += 50) {
+        for (int y = 150; y < 450; y+= 100) {
+          canvas.setFillColor(0xffaaaaaa);
+          canvas.fillCircle(x, y, radius);
+          CircleShape circleShape = new CircleShape();
+          circleShape.m_radius = 5f*physUnitPerScreenUnit;
+          circleShape.m_p.set(x*physUnitPerScreenUnit, y*physUnitPerScreenUnit);
+          FixtureDef fixtureDef = new FixtureDef();
+          fixtureDef.shape = circleShape;
+          fixtureDef.restitution = 0.6f;
+          ground.createFixture(fixtureDef);
+        }
+      }
+    }
+
+The only thing missing is a score
+
+    int[] pointsTable = {-10, 10, 50, 10, -10};
+    int points = 0;
+
+    public void update(float delta) {
+      for (Ball ball : balls) {
+        Vector pos = ball.layer.transform().translation();
+        if (pos.y() >= scoringHeight) {
+          int slot = (int)pos.x() / (int)scoringWidth;
+          points += pointsTable[slot];
+          points = Math.max(0, points);
+          ballsLayer.remove(ball.layer);
+          world.destroyBody(ball.body);
+          removeBalls.add(ball);
+        }
+      }
+    }
+
+Let's use a simple bitmap font
+
+  Image pointsFontImage;
+
+  void init() {
+    pointsLayer = graphics().createGroupLayer();
+    pointsLayer.setScale(3.0f, 3.0f);
+    pointsFontImage = assetManager().getImage("images/font.png");
+    graphics().rootLayer().add(pointsLayer);
+  }
+
+  void update {
+    float x = 0f;
+    pointsLayer.clear();
+    for (char c : Integer.toString(points).toCharArray()) {
+      ImageLayer digit = graphics().createImageLayer(pointsFontImage);
+      digit.setSourceRect((c - '0' + 9) % 10; * 16, 0, 16, 16);
+      pointsLayer.add(digit);      
+      digit.setTranslation(x, 0f);
+      x += 16f;
+    }
+  }
+
+Finally, let's run it on
+  HTML5
+  Flash
+  Android
+  iOS
+
+# Wrapping up
+
+Future work
+  Cleanup, especially build/deploy
+  Game pads and other input devices
+  Rendering
+    3d graphics API
+  Audio
+    Audio effects and spatialization
+  Network
+    Streaming sockets
+
+Links
+  http://code.google.com/p/playn
+  http://github.com/threerings/tripleplay
+  http://github.com/threerings/flashbang-playn
+  [TODO: Example Code]
+
+Thanks
+  Michael Bayne (Three Rings)
+  Johan Euphrosine (Google)

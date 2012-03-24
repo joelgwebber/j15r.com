@@ -4,12 +4,9 @@ http = require 'http'
 connect = require 'connect'
 browserify = require 'browserify'
 
-shareserver = require './shareserver'
-
 slides = require './slides'
 blog = require './blog'
 testapp = require './app'
-wiki = require './wiki'
 
 server = connect.createServer()
 
@@ -52,8 +49,6 @@ server.use connect.router (app) ->
   blog.init w
   slides.init w
   testapp.init w
-  wiki.init w
-  shareserver.init w, server
 
 # Start server
 server.listen 2112, '0.0.0.0'

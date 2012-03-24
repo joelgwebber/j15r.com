@@ -1,5 +1,5 @@
 title: Ajax Buzz
-meta: data
+date: 2000.01.01
 
 This wasn't intended to be the Google Maps blog. Really. But hey, since they
 just released the Keyhole mode, I thought it might be worth going over the

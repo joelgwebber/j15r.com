@@ -8,8 +8,10 @@ module.exports.render = (data) -> """
     <link rel="stylesheet" href="/blog/static/site.css">
   </head>
   <body>
-    <h1>As simple as possible, but no simpler</h1>
     #{navView.render data.posts}
+    <div class='body'>
+      <h1>As simple as possible, but no simpler</h1>
+    </div>
   </body>
 </html>
 """

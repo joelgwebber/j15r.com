@@ -125,11 +125,13 @@ switchPresentMode = (evt) ->
     hideAllNotes()
     hide bugDiv
     presentMode = true
+    document.body.style.overflow = 'hidden'
     updateNotes()
   else
     showAllNotes()
     show bugDiv
     notesWindow.close()
+    document.body.style.overflow = 'auto'
     presentMode = false
 
 initBugs = () ->

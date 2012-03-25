@@ -20,6 +20,7 @@ renderPost = (name, reedGetter, rsp) ->
   content = null
   title = null
   date = null
+  origurl = null
 
   render = () ->
     if !posts || !content
@@ -30,6 +31,7 @@ renderPost = (name, reedGetter, rsp) ->
       title: title
       date: date
       content: content
+      origurl: origurl
 
   reed.list (err, ids) ->
     posts = makePosts ids
@@ -39,6 +41,7 @@ renderPost = (name, reedGetter, rsp) ->
     content = if err then 'error...' else html
     title = meta.title or ''
     date = meta.date or ''
+    origurl = "http://blog.j15r.com#{meta.origurl}" if meta.origurl
     render()
 
 module.exports.init = (app) ->

@@ -1,5 +1,6 @@
-title: Ajax Buzz
-date: 2000.01.01
+title:Ajax Buzz
+date:2000.01.01
+origurl:/2011/12/for-those-unfamiliar-with-it-box2d-is.html
 
 This wasn't intended to be the Google Maps blog. Really. But hey, since they
 just released the Keyhole mode, I thought it might be worth going over the

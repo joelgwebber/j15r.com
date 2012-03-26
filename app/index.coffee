@@ -1,6 +1,5 @@
 # Test client-server app
 connect = require 'connect'
-hb = require 'handlebars'
 fs = require 'fs'
 
 # Import Views

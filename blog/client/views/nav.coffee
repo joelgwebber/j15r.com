@@ -5,7 +5,7 @@ module.exports.render = (data) ->
   <div class='nav'>
     <a href='/blog/about'>About</a>
     <hr>
-    #{tmpl.foreach renderPost, data}
+    #{tmpl.values renderPost, data}
   </div>
   """
 

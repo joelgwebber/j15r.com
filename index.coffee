@@ -3,6 +3,7 @@ fs = require 'fs'
 http = require 'http'
 connect = require 'connect'
 browserify = require 'browserify'
+router = require 'route66'
 
 slides = require './slides'
 blog = require './blog'
@@ -31,25 +32,25 @@ class Wrapper
       watch: true
     server.use bundle
 
-server.use connect.router (app) ->
-  w = new Wrapper(app, server)
+w = new Wrapper(router, server)
 
-  indexHandler = (req, rsp, next) ->
-    fs.readFile __dirname + '/index.html', 'utf8', (err, data) ->
-      if err
-        rsp.statusCode = 500
-        rsp.end err
-      else
-        rsp.statusCode = 200
-        rsp.end data
+indexHandler = (req, rsp, next) ->
+  fs.readFile __dirname + '/index.html', 'utf8', (err, data) ->
+    if err
+      rsp.statusCode = 500
+      rsp.end err
+    else
+      rsp.statusCode = 200
+      rsp.end data
 
-  w.get '/', indexHandler
-  w.get '/index.html', indexHandler
+w.get '/', indexHandler
+w.get '/index.html', indexHandler
 
-  blog.init w
-  slides.init w
-  testapp.init w
+blog.init w
+slides.init w
+testapp.init w
 
 # Start server
+server.use router 
 server.listen 2112, '0.0.0.0'
 console.log 'listening on port 2112'

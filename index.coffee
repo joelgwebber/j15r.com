@@ -50,6 +50,11 @@ blog.init w
 slides.init w
 testapp.init w
 
+# Last-ditch 404 handler
+w.get '.*', (req, rsp) ->
+  rsp.status = 404
+  rsp.end 'Not found'
+
 # Start server
 server.use router 
 server.listen 2112, '0.0.0.0'

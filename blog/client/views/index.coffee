@@ -1,4 +1,5 @@
 navView = require './nav'
+title = require './title'
 
 module.exports.render = (data) -> """
 <!DOCTYPE html>
@@ -10,7 +11,7 @@ module.exports.render = (data) -> """
   <body>
     #{navView.render data.posts}
     <div class='body'>
-      <h1>As simple as possible, but no simpler</h1>
+      #{title.render()}
     </div>
   </body>
 </html>

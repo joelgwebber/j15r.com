@@ -2,28 +2,55 @@ title:Box2D as a Measure of Runtime Performance
 date:2011.12.15
 origurl:/2011/12/for-those-unfamiliar-with-it-box2d-is.html
 
-For those unfamiliar with it, Box2D is a great 2D physics library written by Erin Catto, which is at the core of a large number of casual games on consoles and mobile devices. Angry Birds is one you might have heard of, but there are many, many others.
+For those unfamiliar with it, Box2D is a great 2D physics library written by
+Erin Catto, which is at the core of a large number of casual games on consoles
+and mobile devices. Angry Birds is one you might have heard of, but there are
+many, many others.
 
-It's also not a simple library by any means. When porting Angry Birds to HTML5, we found that in some cases Box2D performance could be the limiting factor in the game's frame-rate (on the more complex levels). It turns out this little library is doing a lot of work under the hood. And the work it's doing isn't limited to any one tight loop or hotspot. Rather, its work is distributed all over the place -- matrix and vector math, creation of lots of small objects, and general object-oriented logic distributed over a complex code base.
+It's also not a simple library by any means. When porting Angry Birds to
+HTML5, we found that in some cases Box2D performance could be the limiting
+factor in the game's frame-rate (on the more complex levels). It turns out
+this little library is doing a lot of work under the hood. And the work it's
+doing isn't limited to any one tight loop or hotspot. Rather, its work is
+distributed all over the place -- matrix and vector math, creation of lots of
+small objects, and general object-oriented logic distributed over a complex
+code base.
 
 MOTIVATION
 
-Box2d makes a great general benchmark -- it's a bottleneck on real-world apps, and there's no one thing that a VM or compiler can optimize to "fix it". It also has the nice property that it's been ported to lots of different platforms -- the original is written in C++, and it's been ported to ActionScript, Java, Javascript, and several other systems. So I took it upon myself to put together a little benchmark that measures the time it takes to simulate one frame of a reasonably complex Box2D world.
+Box2d makes a great general benchmark -- it's a bottleneck on real-world apps,
+and there's no one thing that a VM or compiler can optimize to "fix it". It
+also has the nice property that it's been ported to lots of different
+platforms -- the original is written in C++, and it's been ported to
+ActionScript, Java, Javascript, and several other systems. So I took it upon
+myself to put together a little benchmark that measures the time it takes to
+simulate one frame of a reasonably complex Box2D world.
 
-The goal of this little experiment is not to add fuel to the flames of the Internet's already-tiresome "Compiler and VM Wars" -- rather, my intention is to get some hard data on what behavior real-world performance-sensitive code can actually expect to see in practice on various platforms. Measuring the performance of virtual machines in isolation is particularly tricky, but this benchmark has the nice property that, if a VM or compiler improves it, then real-world problems are actually solved in the wild, and everyone wins.
+The goal of this little experiment is not to add fuel to the flames of the
+Internet's already-tiresome "Compiler and VM Wars" -- rather, my intention is
+to get some hard data on what behavior real-world performance-sensitive code
+can actually expect to see in practice on various platforms. Measuring the
+performance of virtual machines in isolation is particularly tricky, but this
+benchmark has the nice property that, if a VM or compiler improves it, then
+real-world problems are actually solved in the wild, and everyone wins.
 
 THE PLATFORMS
 
-My intention is to measure the performance of various platforms, not particular Box2D ports. The ports themselves necessarily vary somewhat from one-another, but they should still be broadly equivalent. The reason Javascript VMs are represented four times in this list is that I wanted to make sure that we compared Javascript VMs, at their best, to the JVM, NaCl, and native code.
+My intention is to measure the performance of various platforms, not
+particular Box2D ports. The ports themselves necessarily vary somewhat from
+one-another, but they should still be broadly equivalent. The reason
+Javascript VMs are represented four times in this list is that I wanted to
+make sure that we compared Javascript VMs, at their best, to the JVM, NaCl,
+and native code.
 
-Native : This is the standard Box2D code, compiled via gcc or clang/llvm (the latter on my test machine, as described below).
-NaCl : The same code, compiled via the NaCl SDK's custom gcc build, and running within Chrome.
-Java : The JRE (1.6), as currently shipped by Apple on Mac OS 10.6.
-Box2D-web : The hand-written Javascript Box2D port, on various browsers.
-Emscripten : The original C++ code, compiled via Emscripten to Javascript.
-Mandreel : The original C++ code, compiled via Mandreel to Javascript.
-GwtBox2D : The Java port, compiled via GWT to Javascript.
-THE TEST
+Native : This is the standard Box2D code, compiled via gcc or clang/llvm (the
+latter on my test machine, as described below). NaCl : The same code, compiled
+via the NaCl SDK's custom gcc build, and running within Chrome. Java : The JRE
+(1.6), as currently shipped by Apple on Mac OS 10.6. Box2D-web : The hand-
+written Javascript Box2D port, on various browsers. Emscripten : The original
+C++ code, compiled via Emscripten to Javascript. Mandreel : The original C++
+code, compiled via Mandreel to Javascript. GwtBox2D : The Java port, compiled
+via GWT to Javascript. THE TEST
 
 World
 Picking the right world structure for this kind of benchmark is a bit tricky, because it needs to have the following properties:

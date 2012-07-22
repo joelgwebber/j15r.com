@@ -1,5 +1,0 @@
-<module rename-to='HeadsUp'>
-	<inherits name='com.j15r.headsup.HeadsUp' />
-	<define-linker name="bookmarklet" class="com.j15r.headsup.linker.BookmarkletLinker" />
-	<add-linker name='bookmarklet' />
-</module>

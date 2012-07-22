@@ -1,0 +1,66 @@
+package org.grimpo.music;
+
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.ShortMessage;
+import javax.sound.midi.Synthesizer;
+
+import org.grimpo.music.Song.Instant;
+
+public class SynthOut {
+
+  private class Listeners implements Song.Listener {
+    public void onSongPositionChanged(int position) {
+      playCurrentPosition();
+      curPosition = position;
+    }
+  }
+
+  private final Synthesizer synth;
+  private final Song song;
+  private final Listeners listeners = new Listeners();
+  private int curPosition = -1;
+
+  public SynthOut(Song song) {
+    try {
+      this.song = song;
+      song.addListener(listeners);
+
+      synth = MidiSystem.getSynthesizer();
+      synth.open();
+    } catch (MidiUnavailableException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public void close() {
+    synth.close();
+  }
+
+  private void playCurrentPosition() {
+    try {
+      if (curPosition < 0) {
+        return;
+      }
+
+      Instant instant = song.getInstant(song.getPosition());
+      for (Song.Note note : instant.getNotes()) {
+        ShortMessage message = new ShortMessage();
+        byte index = (byte) note.getNote();
+        if (note.getTick() == instant.getTick()) {
+          byte velocity = (byte) (note.getVelocity() * 127);
+          message.setMessage(ShortMessage.NOTE_ON, 0, index, velocity);
+          synth.getReceiver().send(message, instant.getTick());
+        } else if (note.getTick() + note.getDuration() == instant.getTick()) {
+          message.setMessage(ShortMessage.NOTE_OFF, 0, index, 0);
+          synth.getReceiver().send(message, instant.getTick());
+        }
+      }
+    } catch (MidiUnavailableException e) {
+      throw new RuntimeException(e);
+    } catch (InvalidMidiDataException e) {
+      throw new RuntimeException(e);
+    }
+  }
+}

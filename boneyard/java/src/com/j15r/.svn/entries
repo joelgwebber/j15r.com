@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="2"
+   name=""
+   committed-date="2007-12-27T14:48:00.694140Z"
+   url="https://grimpo.googlecode.com/svn/trunk/src/org/grimpo"
+   last-author="joelgwebber"
+   kind="dir"
+   repos="https://grimpo.googlecode.com/svn"
+   revision="2"/>
+<entry
+   name="music"
+   kind="dir"/>
+<entry
+   name="gutenberg"
+   kind="dir"/>
+<entry
+   name="ai"
+   kind="dir"/>
+</wc-entries>

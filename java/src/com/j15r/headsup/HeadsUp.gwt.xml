@@ -1,4 +1,0 @@
-<module rename-to='HeadsUp'>
-	<inherits name='com.google.gwt.query.Query' />
-	<entry-point class='com.j15r.headsup.client.HeadsUp' />
-</module>

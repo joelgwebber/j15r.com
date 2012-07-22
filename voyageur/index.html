@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel='stylesheet' href='voyageur.css'>
+</head>
+
+<body>
+  <div class='mapContainer'>
+    <div id='map' class='map'></div>
+  </div>
+
+  <script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+
+  <script>
+    var locations = [
+      {
+        name: 'Varanasi',
+        lat: 25.318266,
+        lng: 82.978978,
+        photos: [
+          'https://lh6.googleusercontent.com/-eSuk9gDgwXo/RTmsVG9cABI/AAAAAAAAANs/xgazEyTVzQw/s1024/DSC03867.JPG',
+          'https://lh4.googleusercontent.com/-BKbUwjTaCpA/RXiCvh6J8MI/AAAAAAAABnI/qJpAofdn3W4/s1024/IMG_3250.JPG',
+          'https://lh6.googleusercontent.com/-4F1p0tOoYuM/RXiC-B6J8PI/AAAAAAAABng/ne9l7ArtOh8/s1024/IMG_3261.JPG',
+          'https://lh4.googleusercontent.com/-HjJQFp4dgdE/RXiDTR6J8TI/AAAAAAAABoA/EIyLzwHdyEQ/s1024/IMG_3295.JPG',
+          'https://lh6.googleusercontent.com/-pzjek3pA8SA/RXiC1x6J8NI/AAAAAAAABnQ/R1yUc8CJxow/s1024/IMG_3268.JPG',
+          'https://lh4.googleusercontent.com/-vDPWy7PEbak/RXiDfh6J8VI/AAAAAAAABoQ/BfASpsc3kSY/s800/IMG_3331.JPG',
+          'https://lh3.googleusercontent.com/-fSakJLwr4eY/RXiEAB6J8ZI/AAAAAAAABow/5bBzWFn_FMw/s1024/IMG_3366.JPG',
+          'https://lh6.googleusercontent.com/-KclYESorAuk/RXiEPx6J8bI/AAAAAAAABpA/sdXNdU8oRMw/s1024/100_1701.JPG',
+          'https://lh4.googleusercontent.com/-H2qd3tunm0M/RXiEeh6J8eI/AAAAAAAABpY/dP3WIpfTAAw/s1024/100_1712.JPG',
+          'https://lh5.googleusercontent.com/-FkQdm2UzHp4/RXiEhx6J8fI/AAAAAAAABpg/tR_0XLZ6YGU/s1024/100_1713.JPG',
+          'https://lh6.googleusercontent.com/-fQr6VUWPisE/RXiFTB6J8qI/AAAAAAAABq4/Cl5ZGRcFkN4/s1024/100_1710.JPG',
+          'https://lh3.googleusercontent.com/-XmmSXGPUnps/RXiEkx6J8gI/AAAAAAAABpo/2gzOidpDev8/s1024/IMG_3263.JPG',
+          'https://lh6.googleusercontent.com/-tyymasi5qYQ/RXiE8x6J8lI/AAAAAAAABqQ/Ptbf7dNxvP4/s1024/100_1675.JPG',
+          'https://lh3.googleusercontent.com/-DaG0UT5LUvU/RXiFDh6J8mI/AAAAAAAABqY/sZYxM2xReo8/s800/IMG_3385.JPG',
+          'https://lh5.googleusercontent.com/-xag3RfNKjXM/RTmsir9HABI/AAAAAAAAAN0/skHJ3g-bTlw/s1024/DSC03890.JPG',
+          'https://lh5.googleusercontent.com/-NkDtuHXFQ_A/RTmtDPpkABI/AAAAAAAAAN8/AKZN6wanews/s1024/100_1724.JPG',
+          'https://lh5.googleusercontent.com/-gZdeD7hkMdU/RXiFXh6J8rI/AAAAAAAABrA/VN0Y2uYGg7M/s800/100_1718.JPG',
+          'https://lh6.googleusercontent.com/-CN0flDEKtco/RXiFiR6J8tI/AAAAAAAABrQ/zM6xwV7hajQ/s1024/IMG_3402.JPG',
+          'https://lh3.googleusercontent.com/-icwfNg3tuJM/RXiFmh6J8uI/AAAAAAAABrY/dh6Pg7gNCCk/s1024/IMG_3424.JPG',
+          'https://lh5.googleusercontent.com/-Sw5jPVel8SI/RXiFrB6J8vI/AAAAAAAABrg/72xDecqy1t0/s1024/IMG_3429.JPG',
+          'https://lh4.googleusercontent.com/-X6-CyU3FIY8/RXiFvR6J8wI/AAAAAAAABro/DZgrv5LcF9Y/s800/IMG_3444.JPG',
+          'https://lh3.googleusercontent.com/-XxeBWPngm1I/RXiFzx6J8xI/AAAAAAAABrw/BBePg8r2e5Q/s800/IMG_3445.JPG',
+          'https://lh3.googleusercontent.com/-4G67knyRBWQ/RXiGkx6J87I/AAAAAAAABtA/sYV8X2DVSFM/s1024/IMG_3508.JPG',
+          'https://lh5.googleusercontent.com/-r9eTjzLxblc/RXiGqh6J88I/AAAAAAAABtI/GyxDEB_ZLKI/s1024/IMG_3516.JPG',
+          'https://lh3.googleusercontent.com/-1SAZfx6J1B4/RXiGuh6J89I/AAAAAAAABtQ/B9wsygPsAcA/s1024/IMG_3519.JPG',
+          'https://lh5.googleusercontent.com/-8Pn5z-MMfJ4/RXiHAB6J9AI/AAAAAAAABto/BbLd-_OKZrk/s1024/IMG_3546.JPG',
+          'https://lh3.googleusercontent.com/-fyUUUhq7smk/RXiHVR6J9DI/AAAAAAAABuA/K7OTx848axY/s1024/IMG_3563.JPG',
+          'https://lh5.googleusercontent.com/-mrUb_Td9_wg/RXiHaR6J9EI/AAAAAAAABuI/EuXouZSQRKI/s1024/IMG_3566.JPG',
+          'https://lh5.googleusercontent.com/-RKejwouvhcI/RXiGXx6J84I/AAAAAAAABso/g_MUOL6RIFw/s1024/IMG_3488.JPG',
+        ]
+      },
+      {
+        name: 'Jodhpur',
+        lat: 26.256729,
+        lng: 73.017044,
+        photos: [
+          'https://lh5.googleusercontent.com/-CpdxsJHJez4/RXdCNx6J4-I/AAAAAAAAA3o/cJMFg41BHLw/s1024/IMG_1970.JPG',
+        ]
+      },
+      {
+        name: 'Jaisalmer',
+        lat: 26.92,
+        lng: 70.9,
+        photos: [
+          'https://lh5.googleusercontent.com/-OpYsqmDU-qs/RXh8GR6J7tI/AAAAAAAABio/PkLPGcv70GM/s1024/IMG_2310.JPG',
+        ]
+      },
+      {
+        name: 'Jaipur',
+        lat: 26.917,
+        lng: 75.817,
+        photos: [
+          'https://lh6.googleusercontent.com/-6nfwfqgQYX8/RXiPLx6J-GI/AAAAAAAAB28/mmL0mJO5CbI/s1024/IMG_2908.JPG',
+        ]
+      },
+      {
+        name: 'Khuri',
+        lat: 26.902294,
+        lng: 74.132805,
+        photos: [
+          'https://lh6.googleusercontent.com/-s9T-op-TR4M/RXiQwR6J-PI/AAAAAAAAB4g/GrEnFSidvxk/s800/IMG_2510.JPG',
+        ]
+      },
+      {
+        name: 'Delhi',
+        lat: 28.635308,
+        lng: 77.22496,
+        photos: [
+          'https://lh4.googleusercontent.com/-uDgGBdb7IKQ/RXcr7R6J0EI/AAAAAAAAAQc/DKNab4WsBYg/s1024/IMG_1700.JPG',
+        ],
+      },
+      {
+        name: 'Agra',
+        lat: 27.17667,
+        lng: 78.008074,
+        photos: [
+          'https://lh4.googleusercontent.com/-sGDrPs4xlwg/RXiKqB6J9OI/AAAAAAAABv8/jC6MxEcstwg/s800/IMG_3049.JPG',
+        ]
+      }
+    ]
+
+    var map, mapDiv, mapContainerDiv;
+    var curLocIdx = 0;
+
+    function resizeImage(img, maxWidth, maxHeight) {
+      function doResize() {
+        var wRatio = maxWidth / img.width;
+        var hRatio = maxHeight / img.height;
+        var ratio = Math.min(wRatio, hRatio);
+        var width = img.width * ratio;
+        var height = img.height * ratio;
+        img.width = width;
+        img.height = height;
+      }
+
+      if (img.complete) {
+        doResize();
+      } else {
+        img.onload = doResize;
+      }
+    }
+
+    function showLocation(loc) {
+      var latlng = new google.maps.LatLng(loc.lat, loc.lng);
+      map.setCenter(latlng);
+    }
+
+    function buildLocations() {
+      for (var i = 0; i < locations.length; ++i) {
+        var loc = locations[i];
+        var img = document.createElement('img');
+        img.style.display = 'block';
+        img.src = loc.photos[0];
+        document.body.appendChild(img);
+        resizeImage(img, 320, 240);
+      }
+    }
+
+    function buildPhotos(loc) {
+      for (var i = 0; i < loc.photos.length; ++i) {
+        var img = document.createElement('img');
+        img.src = loc.photos[i];
+        document.body.appendChild(img);
+        resizeImage(img, 320, 240);
+      }
+    }
+
+    function onresize() {
+      var doc = document.documentElement;
+      mapDiv.style.width = ((doc.clientWidth - 64) / 1) + 'px';
+      mapDiv.style.height = ((doc.clientHeight - 64) / 1) + 'px';
+    }
+
+    function showLoc(locIdx) {
+      var loc = locations[locIdx];
+      map.panTo(new google.maps.LatLng(loc.lat, loc.lng));
+    }
+
+    function onkeydown(evt) {
+      switch (evt.keyCode) {
+        case 37:
+        case 38:
+          if (curLocIdx > 0) {
+            --curLocIdx;
+            showLoc(curLocIdx);
+          }
+          break;
+
+        case 39:
+        case 40:
+          if (curLocIdx < locations.length - 1) {
+            ++curLocIdx;
+            showLoc(curLocIdx);
+          }
+          break;
+      }
+    }
+
+    function main() {
+      mapContainerDiv = document.getElementById('mapContainer');
+      mapDiv = document.getElementById('map');
+
+      map = new google.maps.Map(mapDiv, {
+        zoom: 9,
+        disableDefaultUI: true,
+        mapTypeId: google.maps.MapTypeId.TERRAIN
+      });
+
+      window.onresize = onresize;
+      onresize();
+
+      document.onkeydown = onkeydown;
+
+      buildLocations();
+      showLocation(locations[0]);
+    }
+
+    main();
+  </script>
+</body>
+</html>
+

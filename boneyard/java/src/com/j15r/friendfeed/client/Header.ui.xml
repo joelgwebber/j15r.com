@@ -1,0 +1,66 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'>
+  <ui:image field='composeImage' src='compose.png'/>
+  <ui:image field='logoImage' src='iphone-logo.png'/>
+  <ui:image field='nextImage' src='next.png'/>
+  <ui:image field='prevImage' src='prev.png'/>
+  <ui:image field='refreshImage' src='refresh.png'/>
+
+  <ui:style>
+  .toolbar {
+	  background: url(iphone-bar.png) repeat-x;
+	  margin-bottom: -8px;
+	  height: 44px;
+	}
+	
+	@sprite .logoAnchor {
+	  gwt-image: "logoImage";
+	}
+	
+	@sprite .prevAnchor {
+	  gwt-image: "prevImage";
+	}
+	
+	@sprite .composeAnchor {
+	  gwt-image: "composeImage";
+	}
+	
+	@sprite .refreshAnchor {
+	  gwt-image: "refreshImage";
+	}
+	
+	@sprite .nextAnchor {
+	  gwt-image: "nextImage";
+	}
+	
+	.logoAnchor, .prevAnchor, .composeAnchor, .refreshAnchor, .nextAnchor {
+	  display: block;
+	  float: left;
+	}
+	
+	.prevAnchor, .composeAnchor, .refreshAnchor, .nextAnchor {
+	  background-position: center;
+	  width: 20px;
+	  height: 40px;
+	  margin-left: 4px;
+	}
+	
+	.logoutAnchor {
+	  margin-top: 10px;
+	  margin-right: 1em;
+	  float: right;
+	}
+  </ui:style>
+
+	<div>
+		<div class='{style.toolbar}'>
+			<a href='#' ui:field='logoAnchor' class='{style.logoAnchor}' />
+
+			<a href='#' ui:field='prevAnchor' class='{style.prevAnchor}' />
+			<a href='#' ui:field='composeAnchor' class='{style.composeAnchor}' />
+
+			<a href='#' ui:field='refreshAnchor' class='{style.refreshAnchor}'/>
+			<a href='#' ui:field='nextAnchor' class='{style.nextAnchor}'/>
+			<a href='#' ui:field='logoutAnchor' class='{style.logoutAnchor}'>logout</a>
+		</div>
+	</div>
+</ui:UiBinder>

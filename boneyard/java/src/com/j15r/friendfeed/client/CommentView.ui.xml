@@ -1,0 +1,16 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'>
+  <ui:style>
+	.view {
+	  background: url(comment.png) no-repeat top left;
+	  margin-left: 12px;
+	  padding-left: 19px;
+	  padding-bottom: 4px;
+	}
+  </ui:style>
+
+	<div class='{style.view}'>
+		<span ui:field='bodyElem' />
+		-
+		<a target='_blank' ui:field='userElem'></a>
+	</div>
+</ui:UiBinder>

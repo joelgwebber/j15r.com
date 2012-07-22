@@ -1,0 +1,169 @@
+package org.grimpo.music;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+public class PianoWeenie {
+
+  private class Listeners implements WindowListener, KeyListener,
+      MidiIn.Listener, Song.Listener {
+
+    public void keyPressed(KeyEvent e) {
+      switch (e.getKeyCode()) {
+        case KeyEvent.VK_RIGHT:
+          moveToNextRealInstant(true);
+          break;
+        case KeyEvent.VK_LEFT:
+          moveToNextRealInstant(false);
+          break;
+        case KeyEvent.VK_HOME:
+          song.setPosition(0);
+          break;
+        case KeyEvent.VK_END:
+          song.setPosition(song.getMaxPosition() - 1);
+          break;
+      }
+    }
+
+    public void keyReleased(KeyEvent e) {
+    }
+
+    public void keyTyped(KeyEvent e) {
+    }
+
+    public void windowActivated(WindowEvent e) {
+    }
+
+    public void windowClosed(WindowEvent e) {
+    }
+
+    public void windowClosing(WindowEvent e) {
+      midiIn.close();
+      synth.close();
+      System.exit(0);
+    }
+
+    public void windowDeactivated(WindowEvent e) {
+    }
+
+    public void windowDeiconified(WindowEvent e) {
+    }
+
+    public void windowIconified(WindowEvent e) {
+    }
+
+    public void windowOpened(WindowEvent e) {
+    }
+
+    public void onSongPositionChanged(int position) {
+      Arrays.fill(keys, false);
+      scrollBar.setValue(-position);
+      pianoRoll.display(song, position);
+      circle.display(song, position);
+    }
+
+    public void onMidiKeyDown(int note) {
+      keys[note] = true;
+      checkKeyMatch();
+    }
+
+    public void onMidiKeyUp(int note) {
+      keys[note] = false;
+      checkKeyMatch();
+    }
+  }
+
+  public static void main(String[] args) throws Throwable {
+    new PianoWeenie();
+  }
+
+  private final boolean[] keys = new boolean[127];
+
+  private JFrame frame = new JFrame("Piano Weenie");
+  private Listeners listeners = new Listeners();
+
+  private Song song = new Song();
+  private JScrollBar scrollBar = new JScrollBar(JScrollBar.VERTICAL);
+  private KeyboardDisplay keyboard = new KeyboardDisplay();
+  private PianoRollDisplay pianoRoll = new PianoRollDisplay();
+  private CircleDisplay circle = new CircleDisplay();
+  private SynthOut synth = new SynthOut(song);
+  private MidiIn midiIn = new MidiIn(listeners);
+
+  public PianoWeenie() throws IOException {
+    keyboard.addKeyListener(listeners);
+    song.addListener(listeners);
+
+    InputStream stream = getClass().getClassLoader().getResourceAsStream(
+        "org/grimpo/music/midi/hollyivy.mid");
+    song.open(stream);
+
+    frame.setBackground(Color.WHITE);
+    frame.addWindowListener(listeners);
+
+    JPanel panel = new JPanel(new BorderLayout(4, 4));
+//    panel.add(scrollBar, BorderLayout.WEST);
+    panel.add(keyboard, BorderLayout.SOUTH);
+    panel.add(pianoRoll, BorderLayout.CENTER);
+    panel.add(circle, BorderLayout.NORTH);
+    frame.setContentPane(panel);
+
+    frame.setSize(1200, 600);
+    frame.setVisible(true);
+
+    scrollBar.setMinimum(-song.getMaxPosition());
+    scrollBar.setMaximum(0);
+    scrollBar.getModel().addChangeListener(new ChangeListener() {
+      public void stateChanged(ChangeEvent e) {
+        song.setPosition(-scrollBar.getValue());
+      }
+    });
+  }
+
+  private void moveToNextRealInstant(boolean forward) {
+    while (true) {
+      if (forward) {
+        song.advance(1);
+      } else {
+        song.retreat(1);
+      }
+
+      Song.Instant instant = song.getInstant(song.getPosition());
+      for (Song.Note note : instant.getNotes()) {
+        if (note.getTick() == instant.getTick()) {
+          return;
+        }
+      }
+    }
+  }
+
+  private void checkKeyMatch() {
+    // Determine whether the midi keys are down for all the notes begun in this
+    // instant.
+    Song.Instant instant = song.getInstant(song.getPosition());
+    for (Song.Note note : instant.getNotes()) {
+      if (note.getTick() == instant.getTick()) {
+        if (!keys[note.getNote()]) {
+          // Missing a key. Not time to advance yet.
+          return;
+        }
+      }
+    }
+
+    // All keys are pressed. Advance.
+    moveToNextRealInstant(true);
+  }
+}

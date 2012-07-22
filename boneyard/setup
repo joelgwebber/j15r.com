@@ -1,0 +1,3 @@
+#!/bin/sh
+sudo npm install -g coffee-script
+npm install connect route66 browserify node-markdown

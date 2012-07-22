@@ -1,0 +1,41 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'>
+  <ui:style>
+  .logo {
+    position: relative;
+    vertical-align: top;
+    margin-right: 1em;
+  }
+
+  .top {
+    text-align: center;
+    height: 2em;
+  }
+
+  .searchBox {
+    width: 300px;
+  }
+
+  .bottom {
+    text-align: center;
+  }
+
+  .button {
+    margin-left: 2px;
+    margin-right: 2px;
+  }
+  </ui:style>
+
+  <form ui:field='formElem'>
+    <div class='{style.top}'>
+      <img src='http://www.google.com/images/logo_sm.gif' class='{style.logo}'/>
+      <input type='text' class='{style.searchBox}' ui:field='searchInput'/>
+      <input type='submit' value='Google Search'/>
+    </div>
+    <div class='{style.bottom}'>
+      <a href='#' ui:field='webElem' class='{style.button}'>Web</a>
+      <a href='#' ui:field='imageElem' class='{style.button}'>Images</a>
+      <a href='#' ui:field='videoElem' class='{style.button}'>Video</a>
+      <a href='#' ui:field='newsElem' class='{style.button}'>News</a>
+    </div>
+  </form>
+</ui:UiBinder>

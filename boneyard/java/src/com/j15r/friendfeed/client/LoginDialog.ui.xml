@@ -1,0 +1,31 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'>
+  <ui:style>
+	.loginText {
+	  color: #444;
+	  font-weight: bold;
+	  padding-left: 8px;
+	  padding-top: 10px;
+	  float: left;
+	}
+	
+	.form {
+	  clear: left;
+	}
+	
+	.submit {
+	  float: right;
+	}
+  </ui:style>
+
+  <!-- TODO: Remove this extra div
+    (it's there to fix a UiBinder bug that doesn't let you bind the root element). -->
+	<div>
+		<form ui:field='formElem' class='{style.form}'>
+			<table>
+				<tr><td>Nickname:</td><td><input type='text' ui:field='nickElem'/></td></tr>
+				<tr><td>Key:</td><td><input type='text' ui:field='keyElem'/></td></tr>
+			</table>
+			<input type='submit' ui:field='submitElem' class='{style.submit}'/>
+		</form>
+	</div>
+</ui:UiBinder>

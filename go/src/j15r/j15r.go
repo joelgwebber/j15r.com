@@ -22,10 +22,14 @@ const templates = `
 	{{template "head"}}
 
 	<body>
-		<script src='jsx/main.js'></script>
+		<div class='header'>
+			<a href='/'>Home</a>
+		</div>
 
 		{{range .Articles}}<a href='{{.Url}}'>{{.Title}}</a><br>
 		{{end}}
+
+		<script src='jsx/main.js'></script>
 	</body>
 </html>
 {{end}}
@@ -36,6 +40,10 @@ const templates = `
 	{{template "head"}}
 
 	<body>
+	<div class='header'>
+		<a href='/'>Home</a>
+	</div>
+
 	<h1>{{.Title}}</h1>
 
 	{{.Content}}
@@ -71,16 +79,16 @@ const templates = `
 
 {{define "pardot-crap"}}
 	<script type='text/javascript'>
-		piAId = &#39;8312&#39;;
-		piCId = &#39;55716&#39;;
+		piAId = '8312';
+		piCId = '55716';
 		(function() {
 		  function async_load(){
-		  var s = document.createElement(&#39;script&#39;); s.type = &#39;text/javascript&#39;;
-		  s.src = (&#39;https:&#39; == document.location.protocol ? &#39;https://pi&#39; : &#39;http://cdn&#39;) + &#39;.pardot.com/pd.js&#39;;
-		  var c = document.getElementsByTagName(&#39;script&#39;)[0]; c.parentNode.insertBefore(s, c);
+		  var s = document.createElement('script'); s.type = 'text/javascript';
+		  s.src = ('https:' == document.location.protocol ? 'https://pi' : 'http://cdn') + '.pardot.com/pd.js';
+		  var c = document.getElementsByTagName('script')[0]; c.parentNode.insertBefore(s, c);
 		}
-		if(window.attachEvent) { window.attachEvent(&#39;onload&#39;, async_load); }
-		  else { window.addEventListener(&#39;load&#39;, async_load, false); }
+		if(window.attachEvent) { window.attachEvent('onload', async_load); }
+		  else { window.addEventListener('load', async_load, false); }
 		})();
 	</script>
 {{end}}
@@ -88,12 +96,12 @@ const templates = `
 {{define "analytics-crap"}}
 	<script type='text/javascript'>
 	  var _gaq = _gaq || [];
-	  _gaq.push([&#39;_setAccount&#39;, &#39;UA-29878232-1&#39;]);
-	  _gaq.push([&#39;_trackPageview&#39;]);
+	  _gaq.push(['_setAccount', 'UA-29878232-1']);
+	  _gaq.push(['_trackPageview']);
 	  (function() {
-	    var ga = document.createElement(&#39;script&#39;); ga.type = &#39;text/javascript&#39;; ga.async = true;
-	    ga.src = (&#39;https:&#39; == document.location.protocol ? &#39;https://ssl&#39; : &#39;http://www&#39;) + &#39;.google-analytics.com/ga.js&#39;;
-	    var s = document.getElementsByTagName(&#39;script&#39;)[0]; s.parentNode.insertBefore(ga, s);
+	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 	  })();
 	</script>
 {{end}}
@@ -191,10 +199,10 @@ func initArticleIndex() error {
 					relPath := fmt.Sprintf("%v/%v", dir, filename)
 
 					art := article{
-						Title: title,
-						Url: url,
+						Title:   title,
+						Url:     url,
 						RelPath: relPath,
-						Date: simpleDate{year, month, date},
+						Date:    simpleDate{year, month, date},
 					}
 					articles = append(articles, art)
 					articleIndex[url] = art
@@ -243,7 +251,7 @@ func articleHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 
 	article, exists := articleIndex[r.URL.Path]
-	if !exists { 
+	if !exists {
 		http.NotFound(w, r)
 		return
 	}

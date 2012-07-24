@@ -1,0 +1,3 @@
+#!/bin/sh
+sudo killall j15r
+sudo nohup ./go/bin/j15r --addr=:80 >out 2>err &

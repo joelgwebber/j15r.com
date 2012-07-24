@@ -1,0 +1,2 @@
+#!/bin/sh
+GOPATH=~/src/j15r.com/go go install j15r

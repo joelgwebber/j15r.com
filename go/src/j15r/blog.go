@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"net/http"
 	"html/template"
+	"github.com/kellegous/pork"
 	"github.com/russross/blackfriday"
 )
 
@@ -80,22 +81,32 @@ var originalUrls = map[string]string{
 	"/blog/2004/12/20/The_Insanity_of_HTTP_Compression":                      "/2004/12/insanity-of-http-compression.html",
 }
 
+var reverseUrls = make(map[string]string)
+
 type blog struct {
 	tmpl         *template.Template
-	articles     []Article
-	articleIndex map[string]Article
+	articles     []*Article
+	articleIndex map[string]*Article
 }
 
-func (b *blog) articleHandler(w http.ResponseWriter, r *http.Request) {
+func (b *blog) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 
-	article, exists := b.articleIndex[r.URL.Path]
+	path := r.URL.Path
+	article, exists := b.articleIndex[path]
 	if !exists {
-		http.NotFound(w, r)
+		newUrl, exists := reverseUrls[path]
+		if exists {
+			http.Redirect(w, r, newUrl, 301)
+		} else {
+			http.NotFound(w, r)
+		}
 		return
 	}
 
-	mdBytes, err := ioutil.ReadFile(filepath.Join("blog", article.RelPath))
+	relPath := fmt.Sprintf("%v.md", path[1:])
+	fmt.Printf("relPath: %v\n", relPath)
+	mdBytes, err := ioutil.ReadFile(relPath)
 	if err != nil {
 		http.NotFound(w, r)
 		return
@@ -114,8 +125,8 @@ func (b *blog) articleHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (b *blog) initArticleIndex() error {
-	b.articles = make([]Article, 0)
-	b.articleIndex = make(map[string]Article)
+	b.articles = make([]*Article, 0)
+	b.articleIndex = make(map[string]*Article)
 
 	yearDirs, err := ioutil.ReadDir("blog")
 	if err != nil {
@@ -173,13 +184,11 @@ func (b *blog) initArticleIndex() error {
 					title := strings.Replace(strippedName, "_", " ", -1)
 					dir := fmt.Sprintf("/%v/%v/%v", yearDir.Name(), monthDir.Name(), dateDir.Name())
 					url := fmt.Sprintf("/blog%v/%v", dir, strippedName)
-					relPath := fmt.Sprintf("%v/%v", dir, filename)
 
-					art := Article{
-						Title:   title,
-						Url:     url,
-						RelPath: relPath,
-						Date:    SimpleDate{year, month, date},
+					art := &Article{
+						Title: title,
+						Url:   url,
+						Date:  SimpleDate{year, month, date},
 					}
 					b.articles = append(b.articles, art)
 					b.articleIndex[url] = art
@@ -191,20 +200,29 @@ func (b *blog) initArticleIndex() error {
 	return nil
 }
 
-func (b *blog) GetArticles() []Article {
+func (b *blog) GetArticles() []*Article {
 	return b.articles
 }
 
-func (b *blog) GetHandler() func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		b.articleHandler(w, r)
-	}
-}
-
-func InitBlog(tmpl *template.Template) (ArticleProvider, error) {
+func InitBlog(r pork.Router, tmpl *template.Template) (ArticleProvider, error) {
 	var b = &blog{tmpl: tmpl}
-
 	b.initArticleIndex()
+
+	// Handlers.
+	r.Handle("/blog/", b)
+
+	// Special-cases ("/2011/", et al) to URLs from the old Blogger site.
+	r.Handle("/2011/", b)
+	r.Handle("/2010/", b)
+	r.Handle("/2009/", b)
+	r.Handle("/2007/", b)
+	r.Handle("/2005/", b)
+	r.Handle("/2004/", b)
+
+	// Calculate the reverse url map.
+	for k, v := range originalUrls {
+		reverseUrls[v] = k
+	}
 
 	_, err := tmpl.Parse(blogTemplate)
 	if err != nil {

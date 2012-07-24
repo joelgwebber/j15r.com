@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"log"
+	"sort"
 	"net/http"
 	"html/template"
 	"github.com/kellegous/pork"
@@ -19,7 +20,8 @@ const indexTemplate = `
       <a href='/'>Home</a>
     </div>
 
-    {{range .Articles}}<a href='{{.Url}}'>{{.Title}}</a><br>
+    {{range .Articles}}{{.Date.Year}}.{{.Date.Month}}.{{.Date.Date}} ::
+      {{if .Url}}<a href='{{.Url}}'>{{.Title}}</a>{{else}}{{.Title}}{{end}}<br>
     {{end}}
 
     <script src='jsx/main.js'></script>
@@ -67,8 +69,7 @@ const sharedTemplates = `
 `
 
 type ArticleProvider interface {
-	GetArticles() []Article
-	GetHandler() func(http.ResponseWriter, *http.Request)
+	GetArticles() []*Article
 }
 
 type SimpleDate struct {
@@ -77,23 +78,39 @@ type SimpleDate struct {
 	Date  int
 }
 
+func (d *SimpleDate) abs() int { return d.Year*13*32 + d.Month*32 + d.Date }
+
 type Article struct {
-	Title   string
-	Url     string
-	RelPath string
-	Date    SimpleDate
+	Title string
+	Url   string
+	Date  SimpleDate
 }
 
+type Articles []*Article
+
+func (a Articles) Len() int           { return len(a) }
+func (a Articles) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a Articles) Less(i, j int) bool { return a[i].Date.abs() > a[j].Date.abs() }
+
 type indexData struct {
-	Articles []Article
+	Articles []*Article
 }
 
 var tmpl *template.Template
-var blogProvider ArticleProvider
+var providers []ArticleProvider
+
+func mergeAndSortArticles() []*Article {
+	result := make(Articles, 0)
+	for _, p := range providers {
+		result = append(result, p.GetArticles()...)
+	}
+	sort.Sort(result)
+	return result
+}
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	err := tmpl.ExecuteTemplate(w, "index", &indexData{blogProvider.GetArticles()})
+	err := tmpl.ExecuteTemplate(w, "index", &indexData{mergeAndSortArticles()})
 	if err != nil {
 		http.Error(w, "Unexpected error", 500)
 	}
@@ -125,34 +142,50 @@ func main() {
 		return
 	}
 
-	blogProvider, err = InitBlog(tmpl)
-	if err != nil {
-		log.Fatalf("Unable to initialize blog: %v", err)
-		return
-	}
-
 	// Setup a simple router.
 	r := pork.NewRouter(func(status int, r *http.Request) {
 		log.Printf("%d %s %s %s", status, r.RemoteAddr, r.Method, r.URL.String())
 	}, nil, nil)
 
-	config := pork.Config{
-		Level: pork.None,
-	}
-
+	// Index page handler.
 	r.HandleFunc("/", indexHandler)
-	r.HandleFunc("/blog/", blogProvider.GetHandler())
 
-	r.Handle("/slides/", pork.Content(&config, http.Dir(".")))
-	r.Handle("/photo/", pork.Content(&config, http.Dir(".")))
-	r.Handle("/voyageur/", pork.Content(&config, http.Dir(".")))
+	// Blog.
+	p, err := InitBlog(r, tmpl)
+	if err != nil {
+		log.Fatalf("%v", err)
+		return
+	}
+	providers = append(providers, p)
 
+	// Slides.
+	p, err = InitSlides(r, tmpl)
+	if err != nil {
+		log.Fatalf("%v", err)
+		return
+	}
+	providers = append(providers, p)
+
+	// Jobs.
+	p, err = InitJobs(r, tmpl)
+	if err != nil {
+		log.Fatalf("%v", err)
+		return
+	}
+	providers = append(providers, p)
+
+	// Preprocessed content (scripts and styles).
+	config := pork.Config{Level: pork.None}
 	scssContent := pork.Content(&config, http.Dir("."))
 	jsxContent := pork.Content(&config, http.Dir("."))
-
 	r.Handle("/scss/", scssContent)
 	r.Handle("/jsx/", jsxContent)
 
+	// Little experiments.
+	r.Handle("/photo/", pork.Content(&config, http.Dir(".")))
+	r.Handle("/voyageur/", pork.Content(&config, http.Dir(".")))
+
+	// Let 'er rip.
 	log.Printf("Listening on port %s", *addr)
 	http.ListenAndServe(*addr, r)
 }

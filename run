@@ -1,0 +1,3 @@
+#!/bin/sh
+go install j15r
+./go/bin/j15r

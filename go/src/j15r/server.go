@@ -1,0 +1,158 @@
+package main
+
+import (
+	"flag"
+	"log"
+	"net/http"
+	"html/template"
+	"github.com/kellegous/pork"
+)
+
+const indexTemplate = `
+{{define "index"}}
+<!DOCTYPE html>
+<html>
+  {{template "head"}}
+
+  <body>
+    <div class='header'>
+      <a href='/'>Home</a>
+    </div>
+
+    {{range .Articles}}<a href='{{.Url}}'>{{.Title}}</a><br>
+    {{end}}
+
+    <script src='jsx/main.js'></script>
+  </body>
+</html>
+{{end}}
+`
+
+const sharedTemplates = `
+{{define "head"}}
+  <head>
+    <title>j15r.com</title>
+    <link rel='stylesheet' href='/scss/j15r.css'>
+  </head>
+{{end}}
+
+{{define "pardot-crap"}}
+  <script type='text/javascript'>
+    piAId = '8312';
+    piCId = '55716';
+    (function() {
+      function async_load(){
+      var s = document.createElement('script'); s.type = 'text/javascript';
+      s.src = ('https:' == document.location.protocol ? 'https://pi' : 'http://cdn') + '.pardot.com/pd.js';
+      var c = document.getElementsByTagName('script')[0]; c.parentNode.insertBefore(s, c);
+    }
+    if(window.attachEvent) { window.attachEvent('onload', async_load); }
+      else { window.addEventListener('load', async_load, false); }
+    })();
+  </script>
+{{end}}
+
+{{define "analytics-crap"}}
+  <script type='text/javascript'>
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-29878232-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+{{end}}
+`
+
+type ArticleProvider interface {
+	GetArticles() []Article
+	GetHandler() func(http.ResponseWriter, *http.Request)
+}
+
+type SimpleDate struct {
+	Year  int
+	Month int
+	Date  int
+}
+
+type Article struct {
+	Title   string
+	Url     string
+	RelPath string
+	Date    SimpleDate
+}
+
+type indexData struct {
+	Articles []Article
+}
+
+var tmpl *template.Template
+var blogProvider ArticleProvider
+
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html")
+	err := tmpl.ExecuteTemplate(w, "index", &indexData{blogProvider.GetArticles()})
+	if err != nil {
+		http.Error(w, "Unexpected error", 500)
+	}
+}
+
+func initTemplates() (err error) {
+	tmp := template.New("index")
+	tmp, err = tmp.Parse(sharedTemplates)
+	if err != nil {
+		return err
+	}
+	tmp, err = tmp.Parse(indexTemplate)
+	if err != nil {
+		return err
+	}
+	tmpl = tmp
+	return nil
+}
+
+func main() {
+	// Flags.
+	addr := flag.String("addr", ":8080", "The address to use")
+	flag.Parse()
+
+	// Parse site templates.
+	err := initTemplates()
+	if err != nil {
+		log.Fatalf("Unable to initialize site templates: %v", err)
+		return
+	}
+
+	blogProvider, err = InitBlog(tmpl)
+	if err != nil {
+		log.Fatalf("Unable to initialize blog: %v", err)
+		return
+	}
+
+	// Setup a simple router.
+	r := pork.NewRouter(func(status int, r *http.Request) {
+		log.Printf("%d %s %s %s", status, r.RemoteAddr, r.Method, r.URL.String())
+	}, nil, nil)
+
+	config := pork.Config{
+		Level: pork.None,
+	}
+
+	r.HandleFunc("/", indexHandler)
+	r.HandleFunc("/blog/", blogProvider.GetHandler())
+
+	r.Handle("/slides/", pork.Content(&config, http.Dir(".")))
+	r.Handle("/photo/", pork.Content(&config, http.Dir(".")))
+	r.Handle("/voyageur/", pork.Content(&config, http.Dir(".")))
+
+	scssContent := pork.Content(&config, http.Dir("."))
+	jsxContent := pork.Content(&config, http.Dir("."))
+
+	r.Handle("/scss/", scssContent)
+	r.Handle("/jsx/", jsxContent)
+
+	log.Printf("Listening on port %s", *addr)
+	http.ListenAndServe(*addr, r)
+}

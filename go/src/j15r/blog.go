@@ -188,6 +188,7 @@ func (b *blog) initArticleIndex() error {
 					art := &Article{
 						Title: title,
 						Url:   url,
+						Icon:	 "img/icon-blog.png",
 						Date:  SimpleDate{year, month, date},
 					}
 					b.articles = append(b.articles, art)

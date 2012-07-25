@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"sort"
 	"net/http"
@@ -20,7 +21,9 @@ const indexTemplate = `
       <a href='/'>Home</a>
     </div>
 
-    {{range .Articles}}{{.Date.Year}}.{{.Date.Month}}.{{.Date.Date}} ::
+    {{range .Articles}}
+    	<img src='{{.Icon}}'>
+      {{.Date.Year}}.{{.Date.Month}}.{{.Date.Date}} ::
       {{if .Url}}<a href='{{.Url}}'>{{.Title}}</a>{{else}}{{.Title}}{{end}}<br>
     {{end}}
 
@@ -83,6 +86,7 @@ func (d *SimpleDate) abs() int { return d.Year*13*32 + d.Month*32 + d.Date }
 type Article struct {
 	Title string
 	Url   string
+	Icon	string
 	Date  SimpleDate
 }
 
@@ -130,6 +134,14 @@ func initTemplates() (err error) {
 	return nil
 }
 
+func addProvider(init func(pork.Router, *template.Template) (ArticleProvider, error), r pork.Router) {
+	p, err := init(r, tmpl)
+	if err != nil {
+		panic(fmt.Sprintf("%v", err))
+	}
+	providers = append(providers, p)
+}
+
 func main() {
 	// Flags.
 	addr := flag.String("addr", ":8080", "The address to use")
@@ -150,36 +162,17 @@ func main() {
 	// Index page handler.
 	r.HandleFunc("/", indexHandler)
 
-	// Blog.
-	p, err := InitBlog(r, tmpl)
-	if err != nil {
-		log.Fatalf("%v", err)
-		return
-	}
-	providers = append(providers, p)
-
-	// Slides.
-	p, err = InitSlides(r, tmpl)
-	if err != nil {
-		log.Fatalf("%v", err)
-		return
-	}
-	providers = append(providers, p)
-
-	// Jobs.
-	p, err = InitJobs(r, tmpl)
-	if err != nil {
-		log.Fatalf("%v", err)
-		return
-	}
-	providers = append(providers, p)
+	// Article providers.
+	addProvider(InitBlog, r);
+	addProvider(InitSlides, r);
+	addProvider(InitJobs, r);
+	addProvider(InitProjects, r);
 
 	// Preprocessed content (scripts and styles).
 	config := pork.Config{Level: pork.None}
-	scssContent := pork.Content(&config, http.Dir("."))
-	jsxContent := pork.Content(&config, http.Dir("."))
-	r.Handle("/scss/", scssContent)
-	r.Handle("/jsx/", jsxContent)
+	r.Handle("/scss/", pork.Content(&config, http.Dir(".")))
+	r.Handle("/jsx/", pork.Content(&config, http.Dir(".")))
+	r.Handle("/img/", pork.Content(&config, http.Dir(".")))
 
 	// Little experiments.
 	r.Handle("/photo/", pork.Content(&config, http.Dir(".")))

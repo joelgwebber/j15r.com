@@ -40,13 +40,13 @@ func InitProjects(r pork.Router, tmpl *template.Template) (ArticleProvider, erro
         Title: "Wizards and Warriors",
         Url: "http://www.gamespot.com/wizards-and-warriors/",
         Icon: "img/icon-project.png",
-        Date:  SimpleDate{1997, 0, 0},
+        Date:  SimpleDate{1996, 0, 0},
       },
       &Article{
         Title: "Fading Suns: Noble Armada",
         Url: "http://www.gamespot.com/fading-suns-noble-armada/",
         Icon: "img/icon-project.png",
-        Date:  SimpleDate{1999, 0, 0},
+        Date:  SimpleDate{1998, 0, 0},
       },
       &Article{
         Title: "AppForge Mobile VB",

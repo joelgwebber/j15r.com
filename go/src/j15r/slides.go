@@ -30,19 +30,19 @@ func InitSlides(r pork.Router, tmpl *template.Template) (ArticleProvider, error)
 			&Article{
 				Title: "Introduction to Native Client",
 				Url:   "/slides/decks/nacl.html",
-				Icon:	 "img/icon-blog.png",
+				Icon:	 "img/icon-slides.png",
 				Date:  SimpleDate{2012, 3, 21},
 			},
 			&Article{
 				Title: "Introduction to the PlayN Game Library",
 				Url:   "/slides/decks/playn.html",
-				Icon:	 "img/icon-blog.png",
+				Icon:	 "img/icon-slides.png",
 				Date:  SimpleDate{2012, 3, 22},
 			},
 			&Article{
 				Title: "Angry Birds on HTML5",
 				Url:   "/slides/decks/ab.html",
-				Icon:	 "img/icon-blog.png",
+				Icon:	 "img/icon-slides.png",
 				Date:  SimpleDate{2012, 3, 21},
 			},
 		},

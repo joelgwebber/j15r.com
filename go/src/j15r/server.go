@@ -167,6 +167,7 @@ func main() {
 	addProvider(InitSlides, r);
 	addProvider(InitJobs, r);
 	addProvider(InitProjects, r);
+	addProvider(InitMisc, r);
 
 	// Preprocessed content (scripts and styles).
 	config := pork.Config{Level: pork.None}

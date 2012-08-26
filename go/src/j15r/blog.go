@@ -54,8 +54,8 @@ const blogTemplate = `
 {{end}}
 
 {{define "atom"}}
-<feed xmlns='http://www.w3.org/2005/Atom' xmlns:thr='http://purl.org/syndication/thread/1.0'>
-	<id>http://j15r.com/blog</id>
+<feed xmlns='http://www.w3.org/2005/Atom' xmlns:thr='http://purl.org/syndication/thread/1.0' xmlns:openSearch='http://a9.com/-/spec/opensearchrss/1.0/'>
+	<id>http://j15r.com/</id>
   <title type='text'>as simple as possible, but no simpler</title>
   <updated>{{template "atom-date" .Updated}}</updated>
 
@@ -67,6 +67,10 @@ const blogTemplate = `
     <uri>http://j15r.com/</uri>
     <email>jgw@pobox.com</email>
   </author>
+
+	<openSearch:totalResults>{{len .Articles}}</openSearch:totalResults>
+	<openSearch:startIndex>1</openSearch:startIndex>
+	<openSearch:itemsPerPage>{{len .Articles}}</openSearch:itemsPerPage>
 
   {{range .Articles}}
   <entry>

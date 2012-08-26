@@ -2,6 +2,7 @@ package main
 
 import (
 	"strings"
+	"sort"
 	"bytes"
 	"fmt"
 	"io"
@@ -53,8 +54,10 @@ const blogTemplate = `
 {{end}}
 
 {{define "atom"}}
-<feed xmlns='http://www.w3.org/2005/Atom'xmlns:thr='http://purl.org/syndication/thread/1.0'>
+<feed xmlns='http://www.w3.org/2005/Atom' xmlns:thr='http://purl.org/syndication/thread/1.0'>
+	<id>http://j15r.com/blog</id>
   <title type='text'>as simple as possible, but no simpler</title>
+  <updated>{{template "atom-date" .Updated}}</updated>
 
   <link rel='self' type='application/atom+xml' href='http://j15r.com/blog/feed'/>
   <link rel='alternate' type='text/html' href='http://j15r.com/blog'/>
@@ -67,14 +70,17 @@ const blogTemplate = `
 
   {{range .Articles}}
   <entry>
-    <id></id>
-    <published>{{.Article.Date.Year}}-{{.Article.Date.Month}}-{{.Article.Date.Date}}</published>
+		<id>http://j15r.com{{.Article.Url}}</id>
+	  <published>{{template "atom-date" .Article.Date}}</published>
+	  <updated>{{template "atom-date" .Article.Date}}</updated>
     <title type='text'>{{.Article.Title}}</title>
     <content type='html'>{{.Content}}</content>
   </entry>
   {{end}}
 </feed>
 {{end}}
+
+{{define "atom-date"}} {{.Year}}-{{.Month}}-{{.Date}}T00:00:00 {{end}}
 `
 
 var originalUrls = map[string]string{
@@ -114,8 +120,13 @@ type fullArticle struct {
 }
 
 type atomData struct {
+	Updated  SimpleDate
 	Articles []fullArticle
 }
+
+func (a atomData) Len() int           { return len(a.Articles) }
+func (a atomData) Swap(i, j int)      { a.Articles[i], a.Articles[j] = a.Articles[j], a.Articles[i] }
+func (a atomData) Less(i, j int) bool { return a.Articles[i].Article.Date.abs() > a.Articles[j].Article.Date.abs() }
 
 var reverseUrls = make(map[string]string)
 
@@ -138,13 +149,19 @@ func (b *blog) atomServer() func(http.ResponseWriter, *http.Request) {
 
 			fullArticles[i] = fullArticle{
 				Article: article,
-				Content: template.HTML(buf.String()),
+				Content: template.HTML(escapedBuf.String()),
 			}
 		}
 
-		err := b.tmpl.ExecuteTemplate(w, "atom", &atomData{Articles: fullArticles})
+		atom := &atomData{
+			Articles: fullArticles,
+		}
+		sort.Sort(atom)
+		atom.Updated = atom.Articles[0].Article.Date
+
+		err := b.tmpl.ExecuteTemplate(w, "atom", atom)
 		if err != nil {
-			http.Error(w, "Unexpected error", 500)
+			http.Error(w, err.Error(), 500)
 		}
 	}
 }

@@ -80,7 +80,7 @@ const blogTemplate = `
 </feed>
 {{end}}
 
-{{define "atom-date"}} {{.Year}}-{{.Month}}-{{.Date}}T00:00:00 {{end}}
+{{define "atom-date"}}{{.Year}}-{{.Month}}-{{.Date}}T00:00:00{{end}}
 `
 
 var originalUrls = map[string]string{

@@ -2,12 +2,15 @@ package main
 
 import (
 	"strings"
+	"bytes"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"path/filepath"
 	"strconv"
 	"net/http"
 	"html/template"
+	"encoding/xml"
 	"github.com/kellegous/pork"
 	"github.com/russross/blackfriday"
 )
@@ -48,13 +51,31 @@ const blogTemplate = `
   <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
   <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
 {{end}}
-`
 
-type articleData struct {
-	Title   string
-	Content template.HTML
-	OrigUrl string
-}
+{{define "atom"}}
+<feed xmlns='http://www.w3.org/2005/Atom'xmlns:thr='http://purl.org/syndication/thread/1.0'>
+  <title type='text'>as simple as possible, but no simpler</title>
+
+  <link rel='self' type='application/atom+xml' href='http://j15r.com/blog/feed'/>
+  <link rel='alternate' type='text/html' href='http://j15r.com/blog'/>
+
+  <author>
+    <name>Joel Webber</name>
+    <uri>http://j15r.com/</uri>
+    <email>jgw@pobox.com</email>
+  </author>
+
+  {{range .Articles}}
+  <entry>
+    <id></id>
+    <published>{{.Article.Date.Year}}-{{.Article.Date.Month}}-{{.Article.Date.Date}}</published>
+    <title type='text'>{{.Article.Title}}</title>
+    <content type='html'>{{.Content}}</content>
+  </entry>
+  {{end}}
+</feed>
+{{end}}
+`
 
 var originalUrls = map[string]string{
 	"/blog/2011/12/15/Box2D_as_a_Measure_of_Runtime_Performance":             "/2011/12/for-those-unfamiliar-with-it-box2d-is.html",
@@ -81,6 +102,21 @@ var originalUrls = map[string]string{
 	"/blog/2004/12/20/The_Insanity_of_HTTP_Compression":                      "/2004/12/insanity-of-http-compression.html",
 }
 
+type articleData struct {
+	Title   string
+	Content template.HTML
+	OrigUrl string
+}
+
+type fullArticle struct {
+	Article *Article
+	Content template.HTML
+}
+
+type atomData struct {
+	Articles []fullArticle
+}
+
 var reverseUrls = make(map[string]string)
 
 type blog struct {
@@ -89,11 +125,35 @@ type blog struct {
 	articleIndex map[string]*Article
 }
 
+func (b *blog) atomServer() func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/atom+xml")
+
+		fullArticles := make([]fullArticle, len(b.articles))
+		for i, article := range b.articles {
+			var buf bytes.Buffer
+			b.renderArticle(article.Url, &buf)
+			var escapedBuf bytes.Buffer
+			xml.Escape(&escapedBuf, buf.Bytes())
+
+			fullArticles[i] = fullArticle{
+				Article: article,
+				Content: template.HTML(buf.String()),
+			}
+		}
+
+		err := b.tmpl.ExecuteTemplate(w, "atom", &atomData{Articles: fullArticles})
+		if err != nil {
+			http.Error(w, "Unexpected error", 500)
+		}
+	}
+}
+
 func (b *blog) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 
 	path := r.URL.Path
-	article, exists := b.articleIndex[path]
+	_, exists := b.articleIndex[path]
 	if !exists {
 		newUrl, exists := reverseUrls[path]
 		if exists {
@@ -104,24 +164,27 @@ func (b *blog) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	err := b.renderArticle(path, w)
+	if err != nil {
+		http.Error(w, "Unexpected error", 500)
+	}
+}
+
+func (b *blog) renderArticle(path string, w io.Writer) error {
+	article := b.articleIndex[path]
 	relPath := fmt.Sprintf("%v.md", path[1:])
-	fmt.Printf("relPath: %v\n", relPath)
 	mdBytes, err := ioutil.ReadFile(relPath)
 	if err != nil {
-		http.NotFound(w, r)
-		return
+		return err
 	}
 
 	md := blackfriday.MarkdownCommon(mdBytes)
 
-	err = b.tmpl.ExecuteTemplate(w, "blog", &articleData{
+	return b.tmpl.ExecuteTemplate(w, "blog", &articleData{
 		Title:   article.Title,
 		Content: template.HTML(md),
-		OrigUrl: originalUrls[r.URL.Path],
+		OrigUrl: originalUrls[path],
 	})
-	if err != nil {
-		http.Error(w, "Unexpected error", 500)
-	}
 }
 
 func (b *blog) initArticleIndex() error {
@@ -188,7 +251,7 @@ func (b *blog) initArticleIndex() error {
 					art := &Article{
 						Title: title,
 						Url:   url,
-						Icon:	 "img/icon-blog.png",
+						Icon:  "img/icon-blog.png",
 						Date:  SimpleDate{year, month, date},
 					}
 					b.articles = append(b.articles, art)
@@ -219,6 +282,10 @@ func InitBlog(r pork.Router, tmpl *template.Template) (ArticleProvider, error) {
 	r.Handle("/2007/", b)
 	r.Handle("/2005/", b)
 	r.Handle("/2004/", b)
+
+	// Atom (old & new).
+	r.HandleFunc("/feeds/posts/default", b.atomServer())
+	r.HandleFunc("/blog/feed", b.atomServer())
 
 	// Calculate the reverse url map.
 	for k, v := range originalUrls {

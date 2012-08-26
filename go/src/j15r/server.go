@@ -86,7 +86,7 @@ func (d *SimpleDate) abs() int { return d.Year*13*32 + d.Month*32 + d.Date }
 type Article struct {
 	Title string
 	Url   string
-	Icon	string
+	Icon  string
 	Date  SimpleDate
 }
 
@@ -163,11 +163,11 @@ func main() {
 	r.HandleFunc("/", indexHandler)
 
 	// Article providers.
-	addProvider(InitBlog, r);
-	addProvider(InitSlides, r);
-	addProvider(InitJobs, r);
-	addProvider(InitProjects, r);
-	addProvider(InitMisc, r);
+	addProvider(InitBlog, r)
+	addProvider(InitSlides, r)
+	addProvider(InitJobs, r)
+	addProvider(InitProjects, r)
+	addProvider(InitMisc, r)
 
 	// Preprocessed content (scripts and styles).
 	config := pork.Config{Level: pork.None}
@@ -178,6 +178,9 @@ func main() {
 	// Little experiments.
 	r.Handle("/photo/", pork.Content(&config, http.Dir(".")))
 	r.Handle("/voyageur/", pork.Content(&config, http.Dir(".")))
+
+	// Little Gutenberg.
+	InitGutenberg(r)
 
 	// Let 'er rip.
 	log.Printf("Listening on port %s", *addr)

@@ -142,14 +142,17 @@ func (b *blog) atomServer() func(http.ResponseWriter, *http.Request) {
 
 		fullArticles := make([]fullArticle, len(b.articles))
 		for i, article := range b.articles {
+			content, err := b.renderContent(article.Url)
+			if err != nil {
+				http.NotFound(w, r)
+				return
+			}
 			var buf bytes.Buffer
-			b.renderArticle(article.Url, &buf)
-			var escapedBuf bytes.Buffer
-			xml.Escape(&escapedBuf, buf.Bytes())
+			xml.Escape(&buf, []byte(content))
 
 			fullArticles[i] = fullArticle{
 				Article: article,
-				Content: template.HTML(escapedBuf.String()),
+				Content: template.HTML(buf.String()),
 			}
 		}
 
@@ -189,19 +192,28 @@ func (b *blog) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func (b *blog) renderArticle(path string, w io.Writer) error {
 	article := b.articleIndex[path]
-	relPath := fmt.Sprintf("%v.md", path[1:])
-	mdBytes, err := ioutil.ReadFile(relPath)
+
+	md, err := b.renderContent(path)
 	if err != nil {
 		return err
 	}
-
-	md := blackfriday.MarkdownCommon(mdBytes)
 
 	return b.tmpl.ExecuteTemplate(w, "blog", &articleData{
 		Title:   article.Title,
 		Content: template.HTML(md),
 		OrigUrl: originalUrls[path],
 	})
+}
+
+func (b *blog) renderContent(path string) (string, error) {
+	relPath := fmt.Sprintf("%v.md", path[1:])
+	mdBytes, err := ioutil.ReadFile(relPath)
+	if err != nil {
+		return "", err
+	}
+
+	htmlBytes := blackfriday.MarkdownCommon(mdBytes)
+	return string(htmlBytes), nil
 }
 
 func (b *blog) initArticleIndex() error {

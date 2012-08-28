@@ -1,3 +1,42 @@
 body {
+  margin: 0px;
   font: 10pt Helvetica, Arial, sans-serif;
+}
+
+.header {
+  background: white;
+  position: fixed;
+  width: 100%; height: 32px;
+  z-index: 32767;
+}
+
+.header-main {
+  width: 100%;
+  padding: 8px;
+}
+
+.header-gradient {
+  position: absolute;
+  top: 32px;
+  width: 100%; height: 8px;
+
+  // TODO: cross-browser.
+  background: -webkit-gradient(linear, left top, left bottom,
+    from(rgba(0, 0, 0, .2)),
+    to(transparent));
+  -webkit-mask-box-image: -webkit-gradient(linear, left top, right top,
+    color-stop(0.0, rgba(0, 0, 0,   0)),
+    color-stop(0.5, rgba(0, 0, 0, 0.8)),
+    color-stop(1.0, rgba(0, 0, 0,   0))
+  );
+}
+
+.content {
+  padding-top: 40px;
+  margin: 0px 8px 8px 8px;
+}
+
+.icon {
+  display: inline-block;
+  width: 40px; height: 40px;
 }

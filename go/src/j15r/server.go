@@ -17,17 +17,15 @@ const indexTemplate = `
   {{template "head"}}
 
   <body>
-    <div class='header'>
-      <a href='/'>Home</a>
+    {{template "header"}}
+
+    <div class='content'>
+      {{range .Articles}}
+      	<div class='icon'><img src='{{.Icon}}'></div>
+        {{.Date.Year}}.{{.Date.Month}}.{{.Date.Date}} ::
+        {{if .Url}}<a href='{{.Url}}'>{{.Title}}</a>{{else}}{{.Title}}{{end}}<br>
+      {{end}}
     </div>
-
-    {{range .Articles}}
-    	<img src='{{.Icon}}'>
-      {{.Date.Year}}.{{.Date.Month}}.{{.Date.Date}} ::
-      {{if .Url}}<a href='{{.Url}}'>{{.Title}}</a>{{else}}{{.Title}}{{end}}<br>
-    {{end}}
-
-    <script src='jsx/main.js'></script>
   </body>
 </html>
 {{end}}
@@ -39,6 +37,19 @@ const sharedTemplates = `
     <title>j15r.com</title>
     <link rel='stylesheet' href='/scss/j15r.css'>
   </head>
+{{end}}
+
+{{define "header"}}
+  <div class='header'>
+    <div class='header-main'>
+      <a href='/'>Home</a>
+      <a href='https://github.com/joelgwebber'>Github</a>
+      <a href='https://code.google.com/u/joelgwebber/'>Google Code</a>
+      <a href='https://plus.google.com/u/0/111111598146968769323'>Google+</a>
+      <a href='http://twitter.com/jgw'>Twitter</a>
+    </div>
+    <div class='header-gradient'></div>
+  </div>
 {{end}}
 
 {{define "pardot-crap"}}

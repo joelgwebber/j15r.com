@@ -23,13 +23,13 @@ const blogTemplate = `
   {{template "head"}}
 
   <body>
-  <div class='header'>
-    <a href='/'>Home</a>
-  </div>
+  {{template "header"}}
 
-  <h1>{{.Title}}</h1>
+  <div class='content'>
+	  <h1>{{.Title}}</h1>
 
-  {{.Content}}
+	  {{.Content}}
+	</div>
 
   {{template "disqus-crap" .OrigUrl}}
   {{template "analytics-crap"}}

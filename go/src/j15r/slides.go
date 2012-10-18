@@ -1,7 +1,6 @@
 package main
 
 import (
-	"net/http"
 	"html/template"
 	"github.com/kellegous/pork"
 )
@@ -16,33 +15,29 @@ func (s *slides) GetArticles() []*Article {
 }
 
 func (s *slides) GetIcon() string {
-  return "img/icon-slides.png"
+	return "img/icon-slides.png"
 }
 
 func InitSlides(r pork.Router, tmpl *template.Template) (ArticleProvider, error) {
-	// Just serve the slides up statically.
-	config := pork.Config{Level: pork.None}
-	r.Handle("/slides/", pork.Content(&config, http.Dir(".")))
-
 	return &slides{
 		tmpl: tmpl,
 		articles: []*Article{
 			&Article{
 				Title: "Angry Birds on HTML5",
 				Url:   "/slides/decks/ab.html",
-				Icon:	 "/slides/angrybirds.jpg",
+				Icon:  "/slides/angrybirds.jpg",
 				Date:  SimpleDate{2011, 10, 10},
 			},
 			&Article{
 				Title: "Introduction to Native Client",
 				Url:   "/slides/decks/nacl.html",
-				Icon:	 "/slides/nacl.jpg",
+				Icon:  "/slides/nacl.jpg",
 				Date:  SimpleDate{2012, 3, 21},
 			},
 			&Article{
 				Title: "Introduction to the PlayN Game Library",
 				Url:   "/slides/decks/playn.html",
-				Icon:	 "/slides/playn.jpg",
+				Icon:  "/slides/playn.jpg",
 				Date:  SimpleDate{2012, 3, 22},
 			},
 		},

@@ -1,3 +1,4 @@
 j15r.com.pem
 out
-err
+stdout
+stderr

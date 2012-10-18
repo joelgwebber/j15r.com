@@ -24,7 +24,7 @@ class Slides {
     this.showSlide(0);
 
     dom.window.addEventListener('keydown', (e) -> { this.onKeyDown(e); }, false);
-    dom.window.addEventListener('mousedown', (e) -> { this.onMouseDown(e); }, false);
+    dom.window.addEventListener('click', (e) -> { this.onClick(e); }, false);
 
     this.initBugs();
     this.printBug = this.addBug('print', (e) -> { this.switchPrintMode(e); });
@@ -73,6 +73,9 @@ class Slides {
   }
 
   function hideAllSlides() : void {
+    var outer = dom.window.document.querySelector('.slides') as HTMLElement;
+    outer.style.display = 'none';
+
     for (var i in this.slides) {
       this.hide(this.slides[i]);
 
@@ -80,6 +83,8 @@ class Slides {
       s.position = 'absolute';
       s.left = s.top = '1em';
     }
+
+    outer.style.display = '';
   }
 
   function showAllSlides() : void {
@@ -248,8 +253,13 @@ class Slides {
     }
   }
 
-  function onMouseDown(evt : Event) : void {
-    this.nextSlide(evt);
+  function onClick(evt : Event) : void {
+    var mouse = evt as MouseEvent;
+    if (mouse.clientX < 480) {
+      this.prevSlide(evt);
+    } else {
+      this.nextSlide(evt);
+    }
   }
 }
 

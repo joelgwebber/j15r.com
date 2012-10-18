@@ -108,7 +108,7 @@ type Article struct {
 	Url   string
 	Icon  string
 	Date  SimpleDate
-  Size  int
+	Size  int
 }
 
 type yearArticles struct {
@@ -120,21 +120,24 @@ type indexData struct {
 	YearArticles []*yearArticles
 }
 
+var pub pork.Handler
 var tmpl *template.Template
 var providers []ArticleProvider
 
 type articlesSortedBackwards []*Article
+
 func (a articlesSortedBackwards) Len() int           { return len(a) }
 func (a articlesSortedBackwards) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a articlesSortedBackwards) Less(i, j int) bool { return a[i].Date.abs() > a[j].Date.abs() }
 
 type yearArticlesSortedBackwards []*yearArticles
+
 func (ya yearArticlesSortedBackwards) Len() int           { return len(ya) }
 func (ya yearArticlesSortedBackwards) Swap(i, j int)      { ya[i], ya[j] = ya[j], ya[i] }
 func (ya yearArticlesSortedBackwards) Less(i, j int) bool { return ya[i].Year > ya[j].Year }
 
 func mergeAndSortArticles() []*yearArticles {
-  // Build a map from year to articles-by-year.
+	// Build a map from year to articles-by-year.
 	yaMap := make(map[int]*yearArticles, 0)
 	for _, p := range providers {
 		for _, a := range p.GetArticles() {
@@ -146,26 +149,30 @@ func mergeAndSortArticles() []*yearArticles {
 		}
 	}
 
-  // Turn the map into a reverse-sorted array of articles-by-year.
-  i := 0
-  yas := make([]*yearArticles, len(yaMap))
+	// Turn the map into a reverse-sorted array of articles-by-year.
+	i := 0
+	yas := make([]*yearArticles, len(yaMap))
 	for _, ya := range yaMap {
-    // Also reverse-sort articles within each year.
+		// Also reverse-sort articles within each year.
 		sort.Sort(articlesSortedBackwards(ya.Articles))
-    yas[i] = ya
-    i++
+		yas[i] = ya
+		i++
 	}
-  sort.Sort(yearArticlesSortedBackwards(yas))
+	sort.Sort(yearArticlesSortedBackwards(yas))
 
 	return yas
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html")
+	if r.URL.Path == "/" {
+		w.Header().Set("Content-Type", "text/html")
 
-	err := tmpl.ExecuteTemplate(w, "index", &indexData{mergeAndSortArticles()})
-	if err != nil {
-		http.Error(w, "Unexpected error", 500)
+		err := tmpl.ExecuteTemplate(w, "index", &indexData{mergeAndSortArticles()})
+		if err != nil {
+			http.Error(w, "Unexpected error", 500)
+		}
+	} else {
+		pub.ServeHTTP(w, r)
 	}
 }
 
@@ -194,7 +201,7 @@ func addProvider(init func(pork.Router, *template.Template) (ArticleProvider, er
 func main() {
 	// Flags.
 	addr := flag.String("addr", ":8080", "The address to use")
-  prod := flag.Bool("prod", false, "productionize, and run from the compiled output")
+	prod := flag.Bool("prod", false, "productionize, and run from the compiled output")
 	flag.Parse()
 
 	// Parse site templates.
@@ -209,9 +216,6 @@ func main() {
 		// log.Printf("%d %s %s %s", status, r.RemoteAddr, r.Method, r.URL.String())
 	}, nil, nil)
 
-	// Index page handler.
-	r.HandleFunc("/", indexHandler)
-
 	// Article providers.
 	addProvider(InitBlog, r)
 	addProvider(InitSlides, r)
@@ -221,25 +225,21 @@ func main() {
 
 	// Preprocessed content (scripts and styles).
 	config := pork.Config{Level: pork.None}
-
-  if *prod {
-    pork.Content(&config, http.Dir("slides")).Productionize(http.Dir("out/slides"))
-  }
-
-	r.Handle("/scss/", pork.Content(&config, http.Dir(".")))
-	r.Handle("/jsx/", pork.Content(&config, http.Dir(".")))
-	r.Handle("/img/", pork.Content(&config, http.Dir(".")))
-	r.Handle("/fonts/", pork.Content(&config, http.Dir(".")))
-	r.Handle("/html/", pork.Content(&config, http.Dir(".")))
-
-	// Little experiments.
-	r.Handle("/photo/", pork.Content(&config, http.Dir(".")))
-	r.Handle("/voyageur/", pork.Content(&config, http.Dir(".")))
+	pub = pork.Content(&config, http.Dir("pub"))
+	if *prod {
+		pub.Productionize(http.Dir("out"))
+	}
 
 	// Little Gutenberg.
 	InitGutenberg(r)
 
+	// Index and static content handler.
+	r.HandleFunc("/", indexHandler)
+
 	// Let 'er rip.
 	log.Printf("Listening on port %s", *addr)
-	http.ListenAndServe(*addr, r)
+	err = http.ListenAndServe(*addr, r)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

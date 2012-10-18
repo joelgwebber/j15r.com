@@ -1,12 +1,25 @@
+@font-face { font-family: 'MuseoSlab100'; src: url('/fonts/MuseoSlab100.woff'); }
+@font-face { font-family: 'MuseoSlab100Italic'; src: url('/fonts/MuseoSlab100Italic.woff'); }
+@font-face { font-family: 'MuseoSlab300'; src: url('/fonts/MuseoSlab300.woff'); }
+@font-face { font-family: 'MuseoSlab300Italic'; src: url('/fonts/MuseoSlab300Italic.woff'); }
+@font-face { font-family: 'MuseoSlab500'; src: url('/fonts/MuseoSlab500.woff'); }
+@font-face { font-family: 'MuseoSlab500Italic'; src: url('/fonts/MuseoSlab500Italic.woff'); }
+@font-face { font-family: 'MuseoSlab700'; src: url('/fonts/MuseoSlab700.woff'); }
+@font-face { font-family: 'MuseoSlab700Italic'; src: url('/fonts/MuseoSlab700Italic.woff'); }
+@font-face { font-family: 'MuseoSlab900'; src: url('/fonts/MuseoSlab900.woff'); }
+@font-face { font-family: 'MuseoSlab900Italic'; src: url('/fonts/MuseoSlab900Italic.woff'); }
+@font-face { font-family: 'MuseoSlab1000'; src: url('/fonts/MuseoSlab1000.woff'); }
+@font-face { font-family: 'MuseoSlab1000Italic'; src: url('/fonts/MuseoSlab1000Italic.woff'); }
+
 body {
   margin: 0px;
-  font: 10pt Helvetica, Arial, sans-serif;
+  font: 12pt MuseoSlab300, Helvetica, Arial, sans-serif;
 }
 
 .header {
   background: white;
   position: fixed;
-  width: 100%; height: 32px;
+  width: 100%; height: 64px;
   z-index: 32767;
 }
 
@@ -17,13 +30,14 @@ body {
 
 .header-gradient {
   position: absolute;
-  top: 32px;
+  top: 64px;
   width: 100%; height: 8px;
 
   // TODO: cross-browser.
   background: -webkit-gradient(linear, left top, left bottom,
     from(rgba(0, 0, 0, .2)),
     to(transparent));
+
   -webkit-mask-box-image: -webkit-gradient(linear, left top, right top,
     color-stop(0.0, rgba(0, 0, 0,   0)),
     color-stop(0.5, rgba(0, 0, 0, 0.8)),
@@ -31,12 +45,87 @@ body {
   );
 }
 
-.content {
-  padding-top: 40px;
-  margin: 0px 8px 8px 8px;
+.reflink {
+  float: right;
+  margin-right: 8px;
 }
 
-.icon {
+.outer {
+  text-align: center;
+}
+
+.content {
+  padding-top: 60px;
+  margin: 0px 8px 8px 8px;
+  max-width: 1280px;
+}
+
+.article {
   display: inline-block;
-  width: 40px; height: 40px;
+  position: relative;
+  vertical-align: top;
+  background-size: cover;
+  text-decoration: none;
+  width: 256px;
+  height: 256px;
+  margin: 8px;
+  box-shadow: -1px 3px 15px rgba(0, 0, 0, 0.3);
+}
+
+.year {
+  margin: 96px 0px;
+  position: relative;
+}
+
+.year-header {
+  font-family: MuseoSlab300;
+  font-size: 64px;
+}
+
+.year:nth-child(odd) {
+  text-align: left;
+  padding-left: 96px;
+
+  .year-header {
+    text-align: left;
+    position: absolute;
+    left: -40px;
+    top: 40%;
+    -webkit-transform: rotate(-90deg);
+  }
+}
+
+.year:nth-child(even) {
+  text-align: right;
+  padding-right: 96px;
+
+  .year-header {
+    text-align: right;
+    position: absolute;
+    right: -40px;
+    top: 40%;
+    -webkit-transform: rotate(90deg);
+  }
+}
+
+.date {
+  font-family: MuseoSlab500;
+  position: absolute;
+  top: 4px; left: 0;
+  padding: 4px;
+  margin-right: 32px;
+  color: white;
+  background-color: black;
+  opacity: 0.75;
+}
+
+.title {
+  font-family: MuseoSlab700;
+  position: absolute;
+  bottom: 4px; right: 0;
+  padding: 4px;
+  margin-left: 32px;
+  color: white;
+  background-color: black;
+  opacity: 0.75;
 }

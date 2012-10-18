@@ -21,12 +21,12 @@ func InitMisc(r pork.Router, tmpl *template.Template) (ArticleProvider, error) {
       &Article{
         Title: "Georgia Institute of Technology",
         Url:   "http://cc.gatech.edu/",
-        Icon:  "img/icon-education.png",
+        Icon:  "img/gatech.jpg",
         Date:  SimpleDate{1990, 8, 0},
       },
 			&Article{
 				Title: "Finally graduated!",
-				Icon:  "img/icon-education.png",
+				Icon:  "/img/graduation.jpg",
 				Date:  SimpleDate{1998, 6, 0},
 			},
 		},

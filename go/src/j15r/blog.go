@@ -5,6 +5,7 @@ import (
 	"sort"
 	"bytes"
 	"fmt"
+	"os"
 	"io"
 	"io/ioutil"
 	"path/filepath"
@@ -174,9 +175,23 @@ func (b *blog) atomServer() func(http.ResponseWriter, *http.Request) {
 }
 
 func (b *blog) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html")
-
 	path := r.URL.Path
+
+	// If it's a raw file, just serve it.
+	_, err := os.Stat(path[1:])
+	if err == nil {
+		http.ServeFile(w, r, path[1:])
+		return
+	}
+
+	// If it's an image request, but not found on-disk, serve a default image.
+	if strings.HasSuffix(path, ".jpg") {
+		http.ServeFile(w, r, "img/blog.jpg")
+		return
+	}
+
+	// Otherwise, assume it refers to an article.
+	w.Header().Set("Content-Type", "text/html")
 	_, exists := b.articleIndex[path]
 	if !exists {
 		newUrl, exists := reverseUrls[path]
@@ -188,7 +203,7 @@ func (b *blog) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := b.renderArticle(path, w)
+	err = b.renderArticle(path, w)
 	if err != nil {
 		http.Error(w, "Unexpected error", 500)
 	}
@@ -280,11 +295,12 @@ func (b *blog) initArticleIndex() error {
 					title := strings.Replace(strippedName, "_", " ", -1)
 					dir := fmt.Sprintf("/%v/%v/%v", yearDir.Name(), monthDir.Name(), dateDir.Name())
 					url := fmt.Sprintf("/blog%v/%v", dir, strippedName)
+					iconUrl := fmt.Sprintf("/blog%v/%v.jpg", dir, strippedName)
 
 					art := &Article{
 						Title: title,
 						Url:   url,
-						Icon:  "img/icon-blog.png",
+						Icon:  iconUrl,
 						Date:  SimpleDate{year, month, date},
 					}
 					b.articles = append(b.articles, art)

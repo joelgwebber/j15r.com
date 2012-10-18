@@ -1,2 +1,2 @@
 #!/bin/sh
-GOPATH=~/src/j15r.com/go go install j15r
+GOPATH=~/src/j15r.com/go go install -gcflags '-N -l' j15r

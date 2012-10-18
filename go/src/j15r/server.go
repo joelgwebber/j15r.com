@@ -19,12 +19,21 @@ const indexTemplate = `
   <body>
     {{template "header"}}
 
-    <div class='content'>
-      {{range .Articles}}
-      	<div class='icon'><img src='{{.Icon}}'></div>
-        {{.Date.Year}}.{{.Date.Month}}.{{.Date.Date}} ::
-        {{if .Url}}<a href='{{.Url}}'>{{.Title}}</a>{{else}}{{.Title}}{{end}}<br>
-      {{end}}
+    <div class='outer'>
+      <div class='content'>
+        {{range .YearArticles}}
+          <div class='year'>
+          <div class='year-header'>{{.Year}}</div>
+
+          {{range .Articles}}
+            <a class='article' style='background-image: url({{.Icon}})' {{if .Url}}href='{{.Url}}'{{end}}>
+              <div class='date'>{{.Date.Year}}.{{.Date.Month}}.{{.Date.Date}}</div>
+              <div class='title'>{{.Title}}</div>
+            </a>
+          {{end}}
+          </div>
+        {{end}}
+      </div>
     </div>
   </body>
 </html>
@@ -42,11 +51,11 @@ const sharedTemplates = `
 {{define "header"}}
   <div class='header'>
     <div class='header-main'>
-      <a href='/'>Home</a>
-      <a href='https://github.com/joelgwebber'>Github</a>
-      <a href='https://code.google.com/u/joelgwebber/'>Google Code</a>
-      <a href='https://plus.google.com/u/0/111111598146968769323'>Google+</a>
-      <a href='http://twitter.com/jgw'>Twitter</a>
+      <a href='/'><img src='/img/j15r.png'></a>
+      <a class='reflink' href='https://github.com/joelgwebber'><img src='/img/github.png'></a>
+      <a class='reflink' href='https://code.google.com/u/joelgwebber/'><img src='/img/googlecode.png'></a>
+      <a class='reflink' href='https://plus.google.com/u/0/111111598146968769323'><img src='/img/gplus.png'></a>
+      <a class='reflink' href='http://twitter.com/jgw'><img src='/img/twitter.png'></a>
     </div>
     <div class='header-gradient'></div>
   </div>
@@ -99,32 +108,61 @@ type Article struct {
 	Url   string
 	Icon  string
 	Date  SimpleDate
+  Size  int
 }
 
-type Articles []*Article
-
-func (a Articles) Len() int           { return len(a) }
-func (a Articles) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a Articles) Less(i, j int) bool { return a[i].Date.abs() > a[j].Date.abs() }
+type yearArticles struct {
+	Year     int
+	Articles []*Article
+}
 
 type indexData struct {
-	Articles []*Article
+	YearArticles []*yearArticles
 }
 
 var tmpl *template.Template
 var providers []ArticleProvider
 
-func mergeAndSortArticles() []*Article {
-	result := make(Articles, 0)
+type articlesSortedBackwards []*Article
+func (a articlesSortedBackwards) Len() int           { return len(a) }
+func (a articlesSortedBackwards) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a articlesSortedBackwards) Less(i, j int) bool { return a[i].Date.abs() > a[j].Date.abs() }
+
+type yearArticlesSortedBackwards []*yearArticles
+func (ya yearArticlesSortedBackwards) Len() int           { return len(ya) }
+func (ya yearArticlesSortedBackwards) Swap(i, j int)      { ya[i], ya[j] = ya[j], ya[i] }
+func (ya yearArticlesSortedBackwards) Less(i, j int) bool { return ya[i].Year > ya[j].Year }
+
+func mergeAndSortArticles() []*yearArticles {
+  // Build a map from year to articles-by-year.
+	yaMap := make(map[int]*yearArticles, 0)
 	for _, p := range providers {
-		result = append(result, p.GetArticles()...)
+		for _, a := range p.GetArticles() {
+			_, exists := yaMap[a.Date.Year]
+			if !exists {
+				yaMap[a.Date.Year] = &yearArticles{Year: a.Date.Year, Articles: make([]*Article, 0)}
+			}
+			yaMap[a.Date.Year].Articles = append(yaMap[a.Date.Year].Articles, a)
+		}
 	}
-	sort.Sort(result)
-	return result
+
+  // Turn the map into a reverse-sorted array of articles-by-year.
+  i := 0
+  yas := make([]*yearArticles, len(yaMap))
+	for _, ya := range yaMap {
+    // Also reverse-sort articles within each year.
+		sort.Sort(articlesSortedBackwards(ya.Articles))
+    yas[i] = ya
+    i++
+	}
+  sort.Sort(yearArticlesSortedBackwards(yas))
+
+	return yas
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
+
 	err := tmpl.ExecuteTemplate(w, "index", &indexData{mergeAndSortArticles()})
 	if err != nil {
 		http.Error(w, "Unexpected error", 500)
@@ -156,6 +194,7 @@ func addProvider(init func(pork.Router, *template.Template) (ArticleProvider, er
 func main() {
 	// Flags.
 	addr := flag.String("addr", ":8080", "The address to use")
+  prod := flag.Bool("prod", false, "productionize, and run from the compiled output")
 	flag.Parse()
 
 	// Parse site templates.
@@ -167,7 +206,7 @@ func main() {
 
 	// Setup a simple router.
 	r := pork.NewRouter(func(status int, r *http.Request) {
-		log.Printf("%d %s %s %s", status, r.RemoteAddr, r.Method, r.URL.String())
+		// log.Printf("%d %s %s %s", status, r.RemoteAddr, r.Method, r.URL.String())
 	}, nil, nil)
 
 	// Index page handler.
@@ -182,9 +221,16 @@ func main() {
 
 	// Preprocessed content (scripts and styles).
 	config := pork.Config{Level: pork.None}
+
+  if *prod {
+    pork.Content(&config, http.Dir("slides")).Productionize(http.Dir("out/slides"))
+  }
+
 	r.Handle("/scss/", pork.Content(&config, http.Dir(".")))
 	r.Handle("/jsx/", pork.Content(&config, http.Dir(".")))
 	r.Handle("/img/", pork.Content(&config, http.Dir(".")))
+	r.Handle("/fonts/", pork.Content(&config, http.Dir(".")))
+	r.Handle("/html/", pork.Content(&config, http.Dir(".")))
 
 	// Little experiments.
 	r.Handle("/photo/", pork.Content(&config, http.Dir(".")))

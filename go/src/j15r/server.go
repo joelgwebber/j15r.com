@@ -65,7 +65,7 @@ const sharedTemplates = `
 {{define "header"}}
   <div class='header'>
     <div class='header-main'>
-      <a href='/' class='logo'>j15r.com</a>
+      <a href='/' class='logo'>as simple as possible, but no simpler</a>
       <a class='reflink' href='https://plus.google.com/u/0/111111598146968769323'><img src='/img/gplus.png'></a>
       <a class='reflink' href='http://twitter.com/jgw'><img src='/img/twitter.png'></a>
       <a class='reflink' href='https://github.com/joelgwebber'><img src='/img/github.png'></a>

@@ -29,7 +29,9 @@ body {
 }
 
 .logo {
-  font: 48px MuseoSlab700;
+  display: inline-block;
+  font: 24px MuseoSlab300;
+  width: 256px;
   text-decoration: none;
   color: black;
 }

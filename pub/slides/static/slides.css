@@ -41,7 +41,8 @@ svg polygon { fill:rgb(0, 0, 0); stroke-width:0; }
   color: black;
   margin-bottom: 2em;
   page-break-after: always;
-  -webkit-transition: opacity .5s linear, -webkit-transform .5s linear, visibility 1s linear;
+/* Having trouble keeping this from screwing up hide/showAllSlides() */
+/*  -webkit-transition: opacity .5s linear, -webkit-transform .5s linear, visibility 1s linear; */
 }
 
 .content {

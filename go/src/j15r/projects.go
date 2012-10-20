@@ -61,6 +61,18 @@ func InitProjects(r pork.Router, tmpl *template.Template) (ArticleProvider, erro
         Date:  SimpleDate{2006, 5, 16},
       },
       &Article{
+        Title: "Google AdWords",
+        Url: "https://adwords.google.com/",
+        Icon: "/img/adwords.png",
+        Date:  SimpleDate{2008, 0, 0},
+      },
+      &Article{
+        Title: "Google Wave",
+        Url: "http://en.wikipedia.org/wiki/Google_Wave",
+        Icon: "/img/wave.png",
+        Date:  SimpleDate{2009, 5, 0},
+      },
+      &Article{
         Title: "Quake II HTML5",
         Url: "http://code.google.com/p/quake2-gwt-port/",
         Icon: "/img/quake2.jpg",

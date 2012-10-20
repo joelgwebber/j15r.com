@@ -17,9 +17,9 @@ body {
 }
 
 .header {
-  background: white;
+  background: #99b2d0;
   position: fixed;
-  width: 100%; height: 64px;
+  width: 100%; height: 70px;
   z-index: 32767;
 }
 
@@ -28,9 +28,15 @@ body {
   padding: 8px;
 }
 
+.logo {
+  font: 48px MuseoSlab700;
+  text-decoration: none;
+  color: black;
+}
+
 .header-gradient {
   position: absolute;
-  top: 64px;
+  top: 70px;
   width: 100%; height: 8px;
 
   // TODO: cross-browser.
@@ -51,29 +57,28 @@ body {
 }
 
 .outer {
-  text-align: center;
+  padding-top: 80px;
+  margin: 0px 8px 8px 8px;
+}
+
+.intro-wrapper {
+  text-align: right;
+  margin: 32px 0;
+}
+
+.intro {
+  display: inline-block;
+  text-align: left;
+  font-size: 120%;
+  max-width: 640px;
 }
 
 .content {
-  padding-top: 60px;
-  margin: 0px 8px 8px 8px;
   max-width: 1280px;
 }
 
-.article {
-  display: inline-block;
-  position: relative;
-  vertical-align: top;
-  background-size: cover;
-  text-decoration: none;
-  width: 256px;
-  height: 256px;
-  margin: 8px;
-  box-shadow: -1px 3px 15px rgba(0, 0, 0, 0.3);
-}
-
 .year {
-  margin: 96px 0px;
+  margin-bottom: 96px;
   position: relative;
 }
 
@@ -106,6 +111,18 @@ body {
     top: 40%;
     -webkit-transform: rotate(90deg);
   }
+}
+
+.article {
+  display: inline-block;
+  position: relative;
+  vertical-align: top;
+  background-size: cover;
+  text-decoration: none;
+  width: 256px;
+  height: 256px;
+  margin: 8px;
+  box-shadow: -1px 3px 15px rgba(0, 0, 0, 0.3);
 }
 
 .date {

@@ -73,9 +73,6 @@ class Slides {
   }
 
   function hideAllSlides() : void {
-    var outer = dom.window.document.querySelector('.slides') as HTMLElement;
-    outer.style.display = 'none';
-
     for (var i in this.slides) {
       this.hide(this.slides[i]);
 
@@ -83,8 +80,6 @@ class Slides {
       s.position = 'absolute';
       s.left = s.top = '1em';
     }
-
-    outer.style.display = '';
   }
 
   function showAllSlides() : void {

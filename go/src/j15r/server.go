@@ -20,6 +20,15 @@ const indexTemplate = `
     {{template "header"}}
 
     <div class='outer'>
+      <div class='intro-wrapper'>
+        <div class='intro'>
+          <div style='display:inline-block; margin-right:16px; float:left; font-size:48px;'>Hi.</div>
+          I'm Joel Webber. I'm an engineer who occasionally writes about software development, games,
+          and a few other odds and ends. Above you'll find a list of ways to reach me. Below you'll
+          find a chronology of things I've written and built, places I've worked, and so forth.
+        </div>
+      </div>
+
       <div class='content'>
         {{range .YearArticles}}
           <div class='year'>
@@ -27,7 +36,12 @@ const indexTemplate = `
 
           {{range .Articles}}
             <a class='article' style='background-image: url({{.Icon}})' {{if .Url}}href='{{.Url}}'{{end}}>
-              <div class='date'>{{.Date.Year}}.{{.Date.Month}}.{{.Date.Date}}</div>
+              {{if .Date.Month}}
+              <div class='date'>
+                {{if .Date.Date}}{{.Date.Date}}{{end}}
+                {{monthString .Date.Month}}
+              </div>
+              {{end}}
               <div class='title'>{{.Title}}</div>
             </a>
           {{end}}
@@ -51,11 +65,13 @@ const sharedTemplates = `
 {{define "header"}}
   <div class='header'>
     <div class='header-main'>
-      <a href='/'><img src='/img/j15r.png'></a>
-      <a class='reflink' href='https://github.com/joelgwebber'><img src='/img/github.png'></a>
-      <a class='reflink' href='https://code.google.com/u/joelgwebber/'><img src='/img/googlecode.png'></a>
+      <a href='/' class='logo'>j15r.com</a>
       <a class='reflink' href='https://plus.google.com/u/0/111111598146968769323'><img src='/img/gplus.png'></a>
       <a class='reflink' href='http://twitter.com/jgw'><img src='/img/twitter.png'></a>
+      <a class='reflink' href='https://github.com/joelgwebber'><img src='/img/github.png'></a>
+      <a class='reflink' href='https://code.google.com/u/joelgwebber/'><img src='/img/google_icon.png'></a>
+      <a class='reflink' href='http://j15r.com/blog/feed' style='font-size:48px'><img width='48px' height='48px' src='/img/rss.png'></a>
+      <a class='reflink' href='mailto:jgw@pobox.com' style='font-size:48px'><img width='48px' height='48px' src='/img/email.png'></a>
     </div>
     <div class='header-gradient'></div>
   </div>
@@ -136,6 +152,15 @@ func (ya yearArticlesSortedBackwards) Len() int           { return len(ya) }
 func (ya yearArticlesSortedBackwards) Swap(i, j int)      { ya[i], ya[j] = ya[j], ya[i] }
 func (ya yearArticlesSortedBackwards) Less(i, j int) bool { return ya[i].Year > ya[j].Year }
 
+var monthStrings = []string{"jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"}
+
+func monthString(i int) string {
+	if i >= 1 && i <= 12 {
+		return monthStrings[i-1]
+	}
+	panic("illegal month index")
+}
+
 func mergeAndSortArticles() []*yearArticles {
 	// Build a map from year to articles-by-year.
 	yaMap := make(map[int]*yearArticles, 0)
@@ -177,7 +202,8 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func initTemplates() (err error) {
-	tmp := template.New("index")
+	tmp := template.New("index").Funcs(template.FuncMap{"monthString": monthString})
+
 	tmp, err = tmp.Parse(sharedTemplates)
 	if err != nil {
 		return err
@@ -187,6 +213,7 @@ func initTemplates() (err error) {
 		return err
 	}
 	tmpl = tmp
+
 	return nil
 }
 

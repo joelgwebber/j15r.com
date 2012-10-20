@@ -26,10 +26,11 @@ const blogTemplate = `
   <body>
   {{template "header"}}
 
-  <div class='content'>
-	  <h1>{{.Title}}</h1>
-
-	  {{.Content}}
+  <div class='outer'>
+	  <div class='content'>
+		  <h1>{{.Title}}</h1>
+		  {{.Content}}
+		</div>
 	</div>
 
   {{template "disqus-crap" .OrigUrl}}

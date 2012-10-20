@@ -39,7 +39,7 @@ func InitJobs(r pork.Router, tmpl *template.Template) (ArticleProvider, error) {
 				Title: "Holistic Design",
 				Icon:  "/img/holistic.png",
 				Date:  SimpleDate{1997, 0, 0},
-				Url:   "http://en.wikipedia.org/wiki/Holistic_Design",
+				Url:   "http://www.holistic-design.com/",
 			},
 			&Article{
 				Title: "AppForge",

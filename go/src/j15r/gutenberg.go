@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	PAGE_SIZE = 512
+	PAGE_SIZE = 1024
 )
 
 type book []string
@@ -24,7 +24,7 @@ func readBook(bookId string) (book, error) {
 		return nil, err
 	}
 
-  text := strings.Replace(string(bytes), "\r\n\r\n", " <br><br> ", -1)
+  text := strings.Replace(string(bytes), "\r\n\r\n", " <br> <br> ", -1)
   text = strings.Replace(text, "\r\n", " ", -1)
 
 	words := strings.Split(text, " ")

@@ -1,7 +1,7 @@
 import 'js/web.jsx';
 
 class Reader {
-  static const PAGE_SIZE = 512;
+  static const PAGE_SIZE = 1024;
 
   var _bookId : string;
   var _curPageElem : HTMLElement;
@@ -57,9 +57,8 @@ class Reader {
       var words = text.split(' ');
       var wordCount = this._pageSize(words, offset, false);
 
-      var bounds = this._bound(offset, offset + wordCount, Reader.PAGE_SIZE * 2);
-      this._curPageElem.innerHTML = words.slice(bounds[0], bounds[1]).join(' ');
-      this._endPosition = bounds[1];
+      this._curPageElem.innerHTML = words.slice(offset, offset + wordCount).join(' ');
+      this._endPosition = this._position + wordCount;
     });
   }
 
@@ -67,10 +66,13 @@ class Reader {
     // Keep in bounds.
     // TODO: Need a book manifest to know the upper bound.
     this._endPosition = pos;
-    if (this._endPosition < 0) this._endPosition = 0;
+    if (this._endPosition < 0) {
+      this._setPosition(0);
+      return;
+    }
 
     // Fetch the new page
-    var page = Math.floor(this._endPosition / Reader.PAGE_SIZE) - 2;
+    var page = Math.floor(this._endPosition / Reader.PAGE_SIZE) - 1;
     if (page < 0) page = 0;
     this._fetch(this._bookId, page, 2, function(text : string) : void {
       var offset = this._endPosition - (page * Reader.PAGE_SIZE);
@@ -79,17 +81,20 @@ class Reader {
       var words = text.split(' ');
       var wordCount = this._pageSize(words, offset, true);
 
-      var bounds = this._bound(offset - wordCount, offset, Reader.PAGE_SIZE * 2);
-      this._curPageElem.innerHTML = words.slice(bounds[0], bounds[1]).join(' ');
-      this._position = bounds[0];
+      this._curPageElem.innerHTML = words.slice(offset - wordCount, offset).join(' ');
+      this._position = this._endPosition - wordCount;
     });
   }
 
   function _pageSize(words : string[], offset : int, backwards : boolean) : int {
-    var min = 0, max = Reader.PAGE_SIZE * 2;
-    while (true) {
-      var trialSize = ((min + max) / 2) as int;
+    var min = 0; var max : int;
+    if (!backwards) {
+      max = (Reader.PAGE_SIZE * 2) - offset;
+    } else {
+      max = offset;
+    }
 
+    return this._binarySearch(min, max, (trialSize) -> {
       var start : int, end : int;
       if (!backwards) {
         start = offset;
@@ -98,31 +103,44 @@ class Reader {
         start = offset - trialSize;
         end = offset;
       }
-      var bounds = this._bound(start, end, words.length);
-      var slice = words.slice(bounds[0], bounds[1]);
+      start = this._bound(start, words.length);
+      end = this._bound(end, words.length);
+      var slice = words.slice(start, end);
 
       this._curPageElem.innerHTML = slice.join(' ');
       var height = this._curPageElem.offsetHeight;
 
-      if (height < dom.window.innerHeight) {
+      return (height > dom.window.innerHeight);
+    });
+  }
+
+  function _binarySearch(min : int, max : int, fn : function(:int):boolean) : int {
+    var trialSize = 0;
+    var lastResult = false;
+    while (true) {
+      if (min >= max) {
+        break;
+      }
+
+      trialSize = ((min + max) / 2) as int;
+      lastResult = fn(trialSize);
+      if (!lastResult) {
         min = trialSize + 1;
       } else {
         max = trialSize - 1;
       }
-
-      if (min == max) {
-        break;
-      }
     }
-    return max;
+
+    if (fn(min) == true) {
+      --min;
+    }
+    return min;
   }
 
-  function _bound(start : int, end : int, size : int) : int[] {
-    if (start < 0) start = 0;
-    if (end   < 0) end  = 0;
-    if (start > size - 1) start = size - 1;
-    if (end   > size)     end   = size;
-    return [start, end] : int[];
+  function _bound(x : int, size : int) : int {
+    if (x < 0) x = 0;
+    if (x > size - 1) x = size - 1;
+    return x;
   }
 
   function _fetch(bookId : string, firstPage : int, pageCount : int, callback : function(:string):void) : void {

@@ -1,7 +1,26 @@
+@font-face {
+  font-family: 'MinionPro';
+  src: url("/fonts/MinionPro.woff") format('woff'), url('/fonts/MinionPro.ttf') format('truetype'); }
+@font-face {
+  font-family: 'MinionProItalic';
+  src: url("/fonts/MinionProItalic.woff"); }
+@font-face {
+  font-family: 'MinionProBold';
+  src: url("/fonts/MinionProBold.woff"); }
+@font-face {
+  font-family: 'MinionProBoldItalic';
+  src: url("/fonts/MinionProBoldItalic.woff"); }
+
 body {
-  font: Arial;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
 }
 
 .page {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  font-family: MinionPro;
+  font-size: 20px;
   text-align: justify;
+  padding: 8px;
 }

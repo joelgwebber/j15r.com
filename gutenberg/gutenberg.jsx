@@ -2,35 +2,79 @@ import 'js/web.jsx';
 
 class Reader {
   static const PAGE_SIZE = 1024;
+  static const TOUCH_CLICK_DIST_2 = 8 * 8;
+  static const BOOKMARK_LAST = 'last';
 
   var _bookId : string;
-  var _curPageElem : HTMLElement;
+  var _pageElem : HTMLElement;
   var _pageCache = {} : Map.<string>;
   var _position : int;
   var _endPosition : int;
+  var _touchStartX : int;
+  var _touchStartY : int;
 
   function constructor(bookId : string) {
     this._bookId = bookId;
 
     var doc = dom.window.document;
-    this._curPageElem = doc.createElement('div') as HTMLElement;
-    this._curPageElem.className = 'page';
-    doc.body.appendChild(this._curPageElem);
+    this._pageElem = doc.createElement('div') as HTMLElement;
+    this._pageElem.className = 'page';
+    doc.body.appendChild(this._pageElem);
 
-    dom.window.onkeydown = function(e:Event):void { this._onKeyDown(e as KeyboardEvent); };
-    dom.window.onmousedown = function(e:Event):void { this._onTap(e as MouseEvent); };
+    // Hook up events.
+    dom.window.onkeydown = (e) -> { this._onKeyDown(e as KeyboardEvent); };
+    dom.window.onresize = (e) -> { this._onResize(); }; // TODO: Detect font-size change.
 
-    this._setPosition(0);
+    this._pageElem.onmousedown = (e) -> { var me = e as MouseEvent; this._onTouchStart(me.clientX, me.clientY); };
+    this._pageElem.onmouseup = (e) -> { var me = e as MouseEvent; this._onTouchEnd(me.clientX, me.clientY); };
+    this._pageElem.addEventListener('touchstart', (e) -> {var te = e as TouchEvent; this._onTouchStart(te.touches[0].clientX, te.touches[0].clientY); }, false);
+    this._pageElem.addEventListener('touchend', (e) -> {var te = e as TouchEvent; this._onTouchEnd(te.touches[0].clientX, te.touches[0].clientY); }, false);
+
+    this._loadBookmark(Reader.BOOKMARK_LAST);
+  }
+
+  function _onResize() : void {
+    this._setPosition(this._position);
   }
 
   function _onKeyDown(e : KeyboardEvent) : void {
+    switch (e.keyCode) {
+      case 32: {
+        if (e.shiftKey) {
+          this._prevPage();
+        } else {
+          this._nextPage();
+        }
+        break;
+      }
+      case 37:
+      case 38: {
+        this._prevPage();
+        break;
+      }
+      case 39:
+      case 40: {
+        this._nextPage();
+        break;
+      }
+    }
   }
 
-  function _onTap(e : MouseEvent) : void {
-    if (e.clientX < dom.window.innerWidth / 2) {
-      this._prevPage();
-    } else {
-      this._nextPage();
+  function _onTouchStart(x : int, y : int) : void {
+    this._touchStartX = x;
+    this._touchStartY = y;
+  }
+
+  function _onTouchEnd(x : int, y : int) : void {
+    var dx = x - this._touchStartX, dy = y - this._touchStartY;
+
+    if (dx * dx + dy * dy < Reader.TOUCH_CLICK_DIST_2) {
+      var w = dom.window.innerWidth;
+      if (x < w / 4) {
+        this._prevPage();
+      } else if (x > w - w / 4) {
+        this._nextPage();
+      }
     }
   }
 
@@ -57,8 +101,10 @@ class Reader {
       var words = text.split(' ');
       var wordCount = this._pageSize(words, offset, false);
 
-      this._curPageElem.innerHTML = words.slice(offset, offset + wordCount).join(' ');
+      this._pageElem.innerHTML = words.slice(offset, offset + wordCount).join(' ');
       this._endPosition = this._position + wordCount;
+
+      this._storeBookmark(Reader.BOOKMARK_LAST);
     });
   }
 
@@ -81,8 +127,10 @@ class Reader {
       var words = text.split(' ');
       var wordCount = this._pageSize(words, offset, true);
 
-      this._curPageElem.innerHTML = words.slice(offset - wordCount, offset).join(' ');
+      this._pageElem.innerHTML = words.slice(offset - wordCount, offset).join(' ');
       this._position = this._endPosition - wordCount;
+
+      this._storeBookmark(Reader.BOOKMARK_LAST);
     });
   }
 
@@ -107,8 +155,8 @@ class Reader {
       end = this._bound(end, words.length);
       var slice = words.slice(start, end);
 
-      this._curPageElem.innerHTML = slice.join(' ');
-      var height = this._curPageElem.offsetHeight;
+      this._pageElem.innerHTML = slice.join(' ');
+      var height = this._pageElem.offsetHeight;
 
       return (height > dom.window.innerHeight);
     });
@@ -165,7 +213,7 @@ class Reader {
     xhr.onreadystatechange = function(e:Event):void {
       if (xhr.readyState == 4) {
         if (xhr.status != 200) {
-          this._networkError(xhr.responseText);
+          this._networkError();
           return;
         }
 
@@ -183,8 +231,8 @@ class Reader {
     xhr.send();
   }
 
-  function _networkError(text : string) : void {
-    dom.window.alert(text);
+  function _networkError() : void {
+    dom.window.alert('Network trouble. Check your connection and try refreshing.');
   }
 
   function _stringTogether(firstPage : int, pageCount : int) : string {
@@ -196,10 +244,24 @@ class Reader {
     }
     return text;
   }
+
+  function _storeBookmark(name : string) : void {
+    dom.window.localStorage['mark:' + name + ':' + this._bookId] = this._position as string;
+  }
+
+  function _loadBookmark(name : string) : void {
+    var stored = dom.window.localStorage['mark:' + name + ':' + this._bookId];
+    if (stored) {
+      this._setPosition(Number.parseInt(stored));
+    } else {
+      this._setPosition(0);
+    }
+  }
 }
 
 class _Main {
   static function main() : void {
-    new Reader('pg1184');
+//    new Reader('pg1184');
+    new Reader('pg17989');
   }
 }

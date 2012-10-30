@@ -7,7 +7,6 @@ class Reader {
 
   var _bookId : string;
   var _pageElem : HTMLElement;
-  var _pageCache = {} : Map.<string>;
   var _position : int;
   var _endPosition : int;
   var _touchStartX : int;
@@ -195,7 +194,7 @@ class Reader {
     // If all pages are available, call back synchronously.
     var hasAllPages = true;
     for (var i = firstPage; i < firstPage + pageCount; ++i) {
-      if (!((i as string) in this._pageCache)) {
+      if (!this._hasCachedPage(i)) {
         hasAllPages = false;
         break;
       }
@@ -219,7 +218,7 @@ class Reader {
 
         var pageArray = xhr.responseText.split('\0');
         for (var i = 0; i < pageArray.length; ++i) {
-          this._pageCache[(firstPage + i) as string] = pageArray[i];
+          this._cachePage(firstPage + i, pageArray[i]);
         }
         callback(this._stringTogether(firstPage, pageCount));
       }
@@ -238,8 +237,7 @@ class Reader {
   function _stringTogether(firstPage : int, pageCount : int) : string {
     var text = '';
     for (var i = firstPage; i < firstPage + pageCount; ++i) {
-      assert (i as string) in this._pageCache;
-      text += this._pageCache[i as string];
+      text += this._getCachedPage(i);
       text += ' ';
     }
     return text;
@@ -256,6 +254,18 @@ class Reader {
     } else {
       this._setPosition(0);
     }
+  }
+
+  function _cachePage(index : int, page : string) : void {
+    dom.window.localStorage['page:' + (index as string) + ':' + this._bookId] = page;
+  }
+
+  function _hasCachedPage(index : int) : boolean {
+    return dom.window.localStorage['page:' + (index as string) + ':' + this._bookId] != null;
+  }
+
+  function _getCachedPage(index : int) : string {
+    return dom.window.localStorage['page:' + (index as string) + ':' + this._bookId];
   }
 }
 

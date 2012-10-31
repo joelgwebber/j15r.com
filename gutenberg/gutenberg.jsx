@@ -6,10 +6,12 @@ class Reader {
   static const BOOKMARK_LAST = 'last';
 
   var _bookId : int;
-  var _pageElem : HTMLElement;
-  var _hiddenElem : HTMLElement;
   var _position : int;
   var _endPosition : int;
+
+  var _controls : Controls;
+  var _pageElem : HTMLElement;
+  var _hiddenElem : HTMLElement;
   var _touchStartX : int;
   var _touchStartY : int;
 
@@ -34,7 +36,16 @@ class Reader {
     this._pageElem.addEventListener('touchstart', (e) -> {var te = e as TouchEvent; this._onTouchStart(te.touches[0].clientX, te.touches[0].clientY); }, false);
     this._pageElem.addEventListener('touchend', (e) -> {var te = e as TouchEvent; this._onTouchEnd(te.touches[0].clientX, te.touches[0].clientY); }, false);
 
+    this._controls = new Controls(this);
+    this._controls.setRange(235000);  // HACK
+    doc.body.appendChild(this._controls._elem);
+
     this._loadBookmark(Reader.BOOKMARK_LAST);
+  }
+
+  function setColor(light : boolean) : void {
+    if (light) { this._pageElem.classList.remove('dark'); }
+    else       { this._pageElem.classList.add('dark'); }
   }
 
   function _onResize() : void {
@@ -78,6 +89,8 @@ class Reader {
         this._prevPage();
       } else if (x > w - w / 4) {
         this._nextPage();
+      } else {
+        this._controls.toggle();
       }
     }
   }
@@ -108,7 +121,7 @@ class Reader {
       this._pageElem.innerHTML = words.slice(offset, offset + wordCount).join(' ');
       this._endPosition = this._position + wordCount;
 
-      this._storeBookmark(Reader.BOOKMARK_LAST);
+      this._positionChanged();
     });
   }
 
@@ -140,7 +153,7 @@ class Reader {
         return;
       }
 
-      this._storeBookmark(Reader.BOOKMARK_LAST);
+      this._positionChanged();
     });
   }
 
@@ -254,6 +267,11 @@ class Reader {
     return text;
   }
 
+  function _positionChanged() : void {
+    this._controls.setPosition(this._position);
+    this._storeBookmark(Reader.BOOKMARK_LAST);
+  }
+
   function _storeBookmark(name : string) : void {
     dom.window.localStorage['mark:' + name + ':' + (this._bookId as string)] = this._position as string;
   }
@@ -277,6 +295,81 @@ class Reader {
 
   function _getCachedPage(index : int) : string {
     return dom.window.localStorage['page:' + (index as string) + ':' + (this._bookId as string)];
+  }
+}
+
+class Controls {
+  var _reader : Reader;
+
+  var _elem : HTMLElement;
+  var _colorButton : HTMLButtonElement;
+  var _positionText : HTMLInputElement;
+  var _slider : HTMLInputElement;
+
+  var _hidden = false;
+  var _light = false;
+  var _position : int;
+  var _range : int;
+
+  function constructor(reader : Reader) {
+    this._reader = reader;
+
+    var doc = dom.window.document;
+    this._elem = doc.createElement('div') as HTMLElement;
+    this._elem.className = 'controls';
+
+    this._colorButton = doc.createElement('button') as HTMLButtonElement;
+    this._colorButton.className = 'colorButton';
+    this._colorButton.onclick = (e) -> { this.toggleColor(); };
+    this.toggleColor();
+    this._elem.appendChild(this._colorButton);
+
+    this._positionText = doc.createElement('input') as HTMLInputElement;
+    this._positionText.type = 'text';
+    this._positionText.className = 'positionText';
+    this._positionText.onchange = (e) -> { this._onPosText(); };
+    this._elem.appendChild(this._positionText);
+
+    this._slider = doc.createElement('input') as HTMLInputElement;
+    this._slider.type = 'range';
+    this._slider.className = 'slider';
+    this._slider.onchange = (e) -> { this._onSlide(); };
+    this._elem.appendChild(this._slider);
+
+    this.toggle();
+  }
+
+  function setRange(range : int) : void {
+    this._range = range;
+    this._slider.max = range as string;
+  }
+
+  function setPosition(pos : int) : void {
+    this._position = pos;
+    this._positionText.value = this._position as string;
+    this._slider.value = this._position as string;
+  }
+
+  function toggleColor() : void {
+    this._light = !this._light;
+    this._colorButton.textContent = this._light ? 'light' : 'dark';
+    this._reader.setColor(this._light);
+  }
+
+  function toggle() : void {
+    this._hidden = !this._hidden;
+    this._elem.style.setProperty('display', this._hidden ? 'none' : '');
+  }
+
+  function _onPosText() : void {
+    var pos = Number.parseInt(this._positionText.value);
+    if (!Number.isNaN(pos)) {
+      this._reader._setPosition(pos);
+    }
+  }
+
+  function _onSlide() : void {
+    this._reader._setPosition(this._slider.valueAsNumber);
   }
 }
 

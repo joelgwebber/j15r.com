@@ -31,3 +31,26 @@ body {
   left: 0; top: 0;
   right: 0; bottom: 0;
 }
+
+.page.dark {
+  background-color: black;
+  color: #ccc;
+}
+
+.controls {
+  position: absolute;
+  left: 0; right: 0;
+  top: 0; height: 128px;
+  background-color: gray;
+}
+
+.controls .colorButton {
+}
+
+.controls .positionText {
+}
+
+.controls .slider {
+  display: block;
+  width: 90%;
+}

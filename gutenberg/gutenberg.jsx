@@ -5,19 +5,24 @@ class Reader {
   static const TOUCH_CLICK_DIST_2 = 8 * 8;
   static const BOOKMARK_LAST = 'last';
 
-  var _bookId : string;
+  var _bookId : int;
   var _pageElem : HTMLElement;
+  var _hiddenElem : HTMLElement;
   var _position : int;
   var _endPosition : int;
   var _touchStartX : int;
   var _touchStartY : int;
 
-  function constructor(bookId : string) {
+  function constructor(bookId : int) {
     this._bookId = bookId;
 
     var doc = dom.window.document;
     this._pageElem = doc.createElement('div') as HTMLElement;
-    this._pageElem.className = 'page';
+    this._pageElem.className = 'textFormat page';
+    this._hiddenElem = doc.createElement('div') as HTMLElement;
+    this._hiddenElem.className = 'textFormat';
+    this._hiddenElem.style.setProperty('visibility', 'hidden');
+    doc.body.appendChild(this._hiddenElem);
     doc.body.appendChild(this._pageElem);
 
     // Hook up events.
@@ -129,6 +134,12 @@ class Reader {
       this._pageElem.innerHTML = words.slice(offset - wordCount, offset).join(' ');
       this._position = this._endPosition - wordCount;
 
+      // Quick hack -- keep from showing an invisible first page.
+      if (wordCount == 0) {
+        this._setPosition(0);
+        return;
+      }
+
       this._storeBookmark(Reader.BOOKMARK_LAST);
     });
   }
@@ -154,8 +165,8 @@ class Reader {
       end = this._bound(end, words.length);
       var slice = words.slice(start, end);
 
-      this._pageElem.innerHTML = slice.join(' ');
-      var height = this._pageElem.offsetHeight;
+      this._hiddenElem.innerHTML = slice.join(' ');
+      var height = this._hiddenElem.offsetHeight;
 
       return (height > dom.window.innerHeight);
     });
@@ -190,7 +201,7 @@ class Reader {
     return x;
   }
 
-  function _fetch(bookId : string, firstPage : int, pageCount : int, callback : function(:string):void) : void {
+  function _fetch(bookId : int, firstPage : int, pageCount : int, callback : function(:string):void) : void {
     // If all pages are available, call back synchronously.
     var hasAllPages = true;
     for (var i = firstPage; i < firstPage + pageCount; ++i) {
@@ -212,7 +223,7 @@ class Reader {
     xhr.onreadystatechange = function(e:Event):void {
       if (xhr.readyState == 4) {
         if (xhr.status != 200) {
-          this._networkError();
+          this._error();
           return;
         }
 
@@ -224,14 +235,14 @@ class Reader {
       }
     };
     xhr.open('GET', '/gutenberg/book' +
-      '?bookId=' + bookId +
+      '?bookId=' + (bookId as string) +
       '&firstPage=' + (firstPage as string) +
       '&pageCount=' + (pageCount as string));
     xhr.send();
   }
 
-  function _networkError() : void {
-    dom.window.alert('Network trouble. Check your connection and try refreshing.');
+  function _error() : void {
+    dom.window.location.replace('/gutenberg/examples.html');
   }
 
   function _stringTogether(firstPage : int, pageCount : int) : string {
@@ -244,11 +255,11 @@ class Reader {
   }
 
   function _storeBookmark(name : string) : void {
-    dom.window.localStorage['mark:' + name + ':' + this._bookId] = this._position as string;
+    dom.window.localStorage['mark:' + name + ':' + (this._bookId as string)] = this._position as string;
   }
 
   function _loadBookmark(name : string) : void {
-    var stored = dom.window.localStorage['mark:' + name + ':' + this._bookId];
+    var stored = dom.window.localStorage['mark:' + name + ':' + (this._bookId as string)];
     if (stored) {
       this._setPosition(Number.parseInt(stored));
     } else {
@@ -257,21 +268,31 @@ class Reader {
   }
 
   function _cachePage(index : int, page : string) : void {
-    dom.window.localStorage['page:' + (index as string) + ':' + this._bookId] = page;
+    dom.window.localStorage['page:' + (index as string) + ':' + (this._bookId as string)] = page;
   }
 
   function _hasCachedPage(index : int) : boolean {
-    return dom.window.localStorage['page:' + (index as string) + ':' + this._bookId] != null;
+    return dom.window.localStorage['page:' + (index as string) + ':' + (this._bookId as string)] != null;
   }
 
   function _getCachedPage(index : int) : string {
-    return dom.window.localStorage['page:' + (index as string) + ':' + this._bookId];
+    return dom.window.localStorage['page:' + (index as string) + ':' + (this._bookId as string)];
   }
 }
 
+// TODO: Need to find a way to ensure the fonts are loaded before we start trying to measure.
+// Otherwise, the first page can render slightly off, usually cutting off a bit of text.
 class _Main {
   static function main() : void {
-//    new Reader('pg1184');
-    new Reader('pg17989');
+    var id = 1;
+    var hash = dom.window.location.hash;
+    if (hash) {
+      hash = hash.substring(1);
+      id = Number.parseInt(hash);
+      if (Number.isNaN(id)) {
+        id = 1;
+      }
+    }
+    new Reader(id);
   }
 }

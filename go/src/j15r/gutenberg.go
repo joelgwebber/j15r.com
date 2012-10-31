@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"errors"
 	"strconv"
 	"strings"
 	"io/ioutil"
@@ -13,19 +13,27 @@ const (
 	PAGE_SIZE = 1024
 )
 
-type book []string
+type Book []string
 
-var bookCache map[string]book
+var bookCache map[string]Book
 
-func readBook(bookId string) (book, error) {
-	relPath := fmt.Sprintf("gutenberg/%v.txt", bookId)
-	bytes, err := ioutil.ReadFile(relPath)
+func readBook(bookId string) (Book, error) {
+	// Fetch from Gutenberg.
+	rsp, err := http.Get("http://www.gutenberg.org/ebooks/" + bookId + ".txt.utf-8")
+	if err != nil {
+		return nil, err
+	}
+	if rsp.ContentLength == 0 {
+		return nil, errors.New("ContentLength 0")
+	}
+	defer rsp.Body.Close()
+	bytes, err := ioutil.ReadAll(rsp.Body)
 	if err != nil {
 		return nil, err
 	}
 
-  text := strings.Replace(string(bytes), "\r\n\r\n", " <br> <br> ", -1)
-  text = strings.Replace(text, "\r\n", " ", -1)
+	text := strings.Replace(string(bytes), "\r\n\r\n", " <br> <br> ", -1)
+	text = strings.Replace(text, "\r\n", " ", -1)
 
 	words := strings.Split(text, " ")
 	var pageCount int = (len(words) / PAGE_SIZE) + 1
@@ -50,8 +58,7 @@ func bookHandler(w http.ResponseWriter, r *http.Request) {
 
 	book, exists := bookCache[bookId]
 	if !exists {
-		var err error
-		book, err = readBook(bookId)
+		book, err := readBook(bookId)
 		if err != nil {
 			http.NotFound(w, r)
 			return
@@ -68,7 +75,7 @@ func bookHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func InitGutenberg(r pork.Router) error {
-	bookCache = make(map[string]book)
+	bookCache = make(map[string]Book)
 
 	config := pork.Config{Level: pork.None}
 	r.Handle("/gutenberg/", pork.Content(&config, http.Dir(".")))

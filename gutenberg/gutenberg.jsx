@@ -24,8 +24,8 @@ class Reader {
     this._hiddenElem = doc.createElement('div') as HTMLElement;
     this._hiddenElem.className = 'textFormat';
     this._hiddenElem.style.setProperty('visibility', 'hidden');
-    doc.body.appendChild(this._hiddenElem);
     doc.body.appendChild(this._pageElem);
+//    doc.body.appendChild(this._hiddenElem);
 
     // Hook up events.
     dom.window.onkeydown = (e) -> { this._onKeyDown(e as KeyboardEvent); };
@@ -118,7 +118,10 @@ class Reader {
       var words = text.split(' ');
       var wordCount = this._pageSize(words, offset, false);
 
+      this._pageElem.style.removeProperty('height');
       this._pageElem.innerHTML = words.slice(offset, offset + wordCount).join(' ');
+      this._pageElem.style.setProperty('height', ((dom.window.innerHeight - 16) as string) + 'px');
+
       this._endPosition = this._position + wordCount;
 
       this._positionChanged();
@@ -144,7 +147,10 @@ class Reader {
       var words = text.split(' ');
       var wordCount = this._pageSize(words, offset, true);
 
+      this._pageElem.style.removeProperty('height');
       this._pageElem.innerHTML = words.slice(offset - wordCount, offset).join(' ');
+      this._pageElem.style.setProperty('height', ((dom.window.innerHeight - 16) as string) + 'px');
+
       this._position = this._endPosition - wordCount;
 
       // Quick hack -- keep from showing an invisible first page.
@@ -165,7 +171,9 @@ class Reader {
       max = offset;
     }
 
-    return this._binarySearch(min, max, (trialSize) -> {
+    var doc = dom.window.document;
+    doc.body.appendChild(this._hiddenElem);
+    var wordCount = this._binarySearch(min, max, (trialSize) -> {
       var start : int, end : int;
       if (!backwards) {
         start = offset;
@@ -181,8 +189,10 @@ class Reader {
       this._hiddenElem.innerHTML = slice.join(' ');
       var height = this._hiddenElem.offsetHeight;
 
-      return (height > dom.window.innerHeight);
+      return (height > dom.window.innerHeight - 0);
     });
+    doc.body.removeChild(this._hiddenElem);
+    return wordCount;
   }
 
   function _binarySearch(min : int, max : int, fn : function(:int):boolean) : int {

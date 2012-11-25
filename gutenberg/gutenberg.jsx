@@ -5,7 +5,9 @@ class Reader {
   static const TOUCH_CLICK_DIST_2 = 8 * 8;
   static const BOOKMARK_LAST = 'last';
 
-  var _bookId : int;
+  var _bookId : string;
+  var _chunkCount : int;
+
   var _position : int;
   var _endPosition : int;
 
@@ -15,9 +17,7 @@ class Reader {
   var _touchStartX : int;
   var _touchStartY : int;
 
-  function constructor(bookId : int) {
-    this._bookId = bookId;
-
+  function constructor(bookId : string) {
     var doc = dom.window.document;
     this._pageElem = doc.createElement('div') as HTMLElement;
     this._pageElem.className = 'textFormat page';
@@ -25,11 +25,10 @@ class Reader {
     this._hiddenElem.className = 'textFormat';
     this._hiddenElem.style.setProperty('visibility', 'hidden');
     doc.body.appendChild(this._pageElem);
-//    doc.body.appendChild(this._hiddenElem);
 
     // Hook up events.
     dom.window.onkeydown = (e) -> { this._onKeyDown(e as KeyboardEvent); };
-    dom.window.onresize = (e) -> { this._onResize(); }; // TODO: Detect font-size change.
+    dom.window.onresize = (e) -> { this._onResize(); }; // TODO: Detect font-size/zoom change.
 
     this._pageElem.onmousedown = (e) -> { var me = e as MouseEvent; this._onTouchStart(me.clientX, me.clientY); };
     this._pageElem.onmouseup = (e) -> { var me = e as MouseEvent; this._onTouchEnd(me.clientX, me.clientY); };
@@ -40,7 +39,7 @@ class Reader {
     this._controls.setRange(235000);  // HACK
     doc.body.appendChild(this._controls._elem);
 
-    this._loadBookmark(Reader.BOOKMARK_LAST);
+    this._loadBook(bookId);
   }
 
   function setColor(light : boolean) : void {
@@ -105,7 +104,6 @@ class Reader {
 
   function _setPosition(pos : int) : void {
     // Keep in bounds.
-    // TODO: Need a book manifest to know the upper bound.
     this._position = pos;
     if (this._position < 0) this._position = 0;
 
@@ -224,7 +222,7 @@ class Reader {
     return x;
   }
 
-  function _fetch(bookId : int, firstPage : int, pageCount : int, callback : function(:string):void) : void {
+  function _fetch(bookId : string, firstPage : int, pageCount : int, callback : function(:string):void) : void {
     // If all pages are available, call back synchronously.
     var hasAllPages = true;
     for (var i = firstPage; i < firstPage + pageCount; ++i) {
@@ -257,7 +255,7 @@ class Reader {
         callback(this._stringTogether(firstPage, pageCount));
       }
     };
-    xhr.open('GET', '/gutenberg/book' +
+    xhr.open('GET', '/gutenberg/page' +
       '?bookId=' + (bookId as string) +
       '&firstPage=' + (firstPage as string) +
       '&pageCount=' + (pageCount as string));
@@ -283,11 +281,30 @@ class Reader {
   }
 
   function _storeBookmark(name : string) : void {
-    dom.window.localStorage['mark:' + name + ':' + (this._bookId as string)] = this._position as string;
+    dom.window.localStorage['mark:' + name + ':' + this._bookId] = this._position as string;
+  }
+
+  function _loadBook(bookId : string) : void {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function(e:Event):void {
+      if (xhr.readyState == 4) {
+        if (xhr.status != 200) {
+          this._error();
+          return;
+        }
+
+        var bookSummary = JSON.parse(xhr.responseText) as Map.<variant>;
+        this._bookId = bookId;
+        this._chunkCount = bookSummary['chunkCount'] as int;
+        this._loadBookmark(Reader.BOOKMARK_LAST);
+      }
+    };
+    xhr.open('GET', '/gutenberg/book' + '?bookId=' + bookId);
+    xhr.send();
   }
 
   function _loadBookmark(name : string) : void {
-    var stored = dom.window.localStorage['mark:' + name + ':' + (this._bookId as string)];
+    var stored = dom.window.localStorage['mark:' + name + ':' + this._bookId];
     if (stored) {
       this._setPosition(Number.parseInt(stored));
     } else {
@@ -296,15 +313,15 @@ class Reader {
   }
 
   function _cachePage(index : int, page : string) : void {
-    dom.window.localStorage['page:' + (index as string) + ':' + (this._bookId as string)] = page;
+    dom.window.localStorage['page:' + (index as string) + ':' + this._bookId] = page;
   }
 
   function _hasCachedPage(index : int) : boolean {
-    return dom.window.localStorage['page:' + (index as string) + ':' + (this._bookId as string)] != null;
+    return dom.window.localStorage['page:' + (index as string) + ':' + this._bookId] != null;
   }
 
   function _getCachedPage(index : int) : string {
-    return dom.window.localStorage['page:' + (index as string) + ':' + (this._bookId as string)];
+    return dom.window.localStorage['page:' + (index as string) + ':' + this._bookId];
   }
 }
 
@@ -387,15 +404,7 @@ class Controls {
 // Otherwise, the first page can render slightly off, usually cutting off a bit of text.
 class _Main {
   static function main() : void {
-    var id = 1;
-    var hash = dom.window.location.hash;
-    if (hash) {
-      hash = hash.substring(1);
-      id = Number.parseInt(hash);
-      if (Number.isNaN(id)) {
-        id = 1;
-      }
-    }
-    new Reader(id);
+    var bookId = dom.window.location.hash.substring(1);
+    new Reader(bookId);
   }
 }

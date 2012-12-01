@@ -53,36 +53,9 @@ func readFromGutenberg(bookPath string) ([]byte, error) {
 	return ioutil.ReadAll(rsp.Body)
 }
 
-// Reads the given book from the local cache, if it's available. If not,
-// it will retrieve the book from a Gutenberg mirror, and cache it locally.
-func readBook(bookPath string, contentType string) (*Book, error) {
-	// See if we have a local copy.
-	lastSlash := strings.LastIndex(bookPath, "/")
-	relPath := fmt.Sprintf("gutenberg/cache/%v", bookPath[:lastSlash])
-	relFile := relPath + bookPath[lastSlash:]
-	log.Println(relFile)
-	os.MkdirAll(relPath, 0750)
-
-	bytes, err := ioutil.ReadFile(relFile)
-	if err != nil {
-		// Fetch from Gutenberg.
-		bytes, err = readFromGutenberg(bookPath)
-		if err != nil {
-			return nil, err
-		}
-
-		// Cache it locally.
-		err = ioutil.WriteFile(relFile, bytes, 0640)
-		if err != nil {
-			log.Printf("Error writing '%v': %v", relFile, err)
-			return nil, err
-		}
-	} else {
-		log.Printf("Read %v from cache", bookPath)
-	}
-
-	// Process it into something palatable.
-	// TODO: Cache the processed form so we can memory map it or something similarly efficient.
+// Takes the raw book byte stream and processes it into a Book. Performs
+// all necessary mangling and formatting to make the client happy.
+func processBook(bytes []byte, contentType string) *Book {
 	text := string(bytes)
 	text = strings.Replace(text, "\r\n\r\n", " <br> <br> ", -1)
 	text = strings.Replace(text, "\r\n", " ", -1)
@@ -107,7 +80,49 @@ func readBook(bookPath string, contentType string) (*Book, error) {
 			ContentType: contentType,
 		},
 		chunks,
-	}, nil
+	}
+}
+
+// Reads the given book from the local cache, if it's available. If not,
+// it will retrieve the book from a Gutenberg mirror, and cache it locally.
+func readBook(bookPath string, contentType string) (*Book, error) {
+	// See if we have a local copy.
+	lastSlash := strings.LastIndex(bookPath, "/")
+	relPath := fmt.Sprintf("gutenberg/cache/%v", bookPath[:lastSlash])
+	relFile := relPath + bookPath[lastSlash:]
+	log.Println(relFile)
+	os.MkdirAll(relPath, 0750)
+
+	inFile, err := os.OpenFile(relFile, os.O_RDONLY, 0)
+	if err != nil {
+		// Fetch from Gutenberg.
+		bytes, err := readFromGutenberg(bookPath)
+		if err != nil {
+			return nil, err
+		}
+
+		// Process it into something palatable.
+		book := processBook(bytes, contentType)
+
+		// Cache it locally.
+		outFile, err := os.OpenFile(relFile, os.O_CREATE|os.O_WRONLY, 0660)
+		if err != nil {
+			log.Printf("Error writing '%v': %v", relFile, err)
+			return nil, err
+		}
+		gob.NewEncoder(outFile).Encode(&book)
+		outFile.Close()
+
+		// And return it.
+		return book, nil
+	}
+
+	// Read the cached book.
+	log.Printf("Read %v from cache", bookPath)
+	var book Book
+	gob.NewDecoder(inFile).Decode(&book)
+	inFile.Close()
+	return &book, nil
 }
 
 // GetBook retrieves the given book, by its numeric id.

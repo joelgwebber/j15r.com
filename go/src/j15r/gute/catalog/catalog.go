@@ -1,10 +1,16 @@
 package main
 
 import (
-	"os"
-	"fmt"
 	"encoding/xml"
+	"errors"
+	"fmt"
 	"j15r/gute"
+	"os"
+	"strings"
+)
+
+const (
+	CATALOG_NAME = "catalog.rdf"
 )
 
 type Etext struct {
@@ -30,7 +36,7 @@ type Catalog struct {
 }
 
 func loadCatalog() (*Catalog, error) {
-	file, err := os.Open("catalog.rdf")
+	file, err := os.Open(CATALOG_NAME)
 	if err != nil {
 		return nil, err
 	}
@@ -44,6 +50,35 @@ func loadCatalog() (*Catalog, error) {
 	var cat Catalog
 	dec.Decode(&cat)
 	return &cat, nil
+}
+
+// Picks the preferred file path and content type from a group of File objects.
+// Returns a non-nil error if no appropriate format is found.
+func chooseFormat(formats map[string]File) (string, string, error) {
+	var chosen File
+	chosenPriority := 0
+
+	// Pick the highest-priority available format.
+	for format, file := range formats {
+		// Only pick formats whose paths start with "dirs/" (others aren't available on the mirror).
+		if strings.HasPrefix(file.Path, "dirs/") {
+			priority := map[string]int{
+				"text/plain; charset=\"utf-8\"":      4,
+				"text/plain; charset=\"iso-8859-1\"": 3,
+				"text/plain; charset=\"us-ascii\"":   2,
+				"text/plain":                         1,
+			}[format]
+			if priority > chosenPriority {
+				chosenPriority = priority
+				chosen = file
+			}
+		}
+	}
+
+	if chosenPriority == 0 {
+		return "", "", errors.New("Unable to find acceptable format")
+	}
+	return chosen.Path[len("/dirs"):], chosen.Format, nil
 }
 
 func buildIndex(cat *Catalog) gute.Index {
@@ -60,14 +95,16 @@ func buildIndex(cat *Catalog) gute.Index {
 
 	index := make(map[string]gute.IndexEntry)
 	for _, text := range cat.Etexts {
-		index[text.Id] = gute.IndexEntry{
-			Title:    text.FriendlyTitle,
-			Language: text.Language,
-			Files:    make(map[string]string),
+		path, contentType, err := chooseFormat(fileIndex[text.Id])
+		if err != nil {
+			continue
 		}
 
-		for format, file := range fileIndex[text.Id] {
-			index[text.Id].Files[format] = file.Path
+		index[text.Id] = gute.IndexEntry{
+			Title:       text.FriendlyTitle,
+			Language:    text.Language,
+			Path:        path,
+			ContentType: contentType,
 		}
 	}
 
@@ -86,7 +123,7 @@ func main() {
 	index := buildIndex(cat)
 
 	fmt.Println("Saving index...")
-	err = index.Save("index.gob")
+	err = index.Save()
 	if err != nil {
 		fmt.Println(err)
 		return

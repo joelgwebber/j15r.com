@@ -1,2 +1,2 @@
 #!/bin/sh
-ssh -i j15r.com.pem ec2-user@ec2-184-73-41-211.compute-1.amazonaws.com
+ssh -i ~/.ssh/j15r.com.pem ec2-user@ec2-184-73-41-211.compute-1.amazonaws.com

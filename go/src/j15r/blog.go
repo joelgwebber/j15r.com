@@ -1,20 +1,20 @@
 package main
 
 import (
-	"strings"
-	"sort"
 	"bytes"
-	"fmt"
-	"os"
-	"io"
-	"io/ioutil"
-	"path/filepath"
-	"strconv"
-	"net/http"
-	"html/template"
 	"encoding/xml"
+	"fmt"
 	"github.com/kellegous/pork"
 	"github.com/russross/blackfriday"
+	"html/template"
+	"io"
+	"io/ioutil"
+	"net/http"
+	"os"
+	"path/filepath"
+	"sort"
+	"strconv"
+	"strings"
 )
 
 const blogTemplate = `
@@ -24,11 +24,14 @@ const blogTemplate = `
   {{template "head"}}
 
   <body>
-  {{template "header"}}
+  <div class='header'>
+    {{template "header-main"}}
+	  <h1>{{.Title}}</h1>
+    <div class='header-gradient'></div>
+  </div>
 
   <div class='outer'>
 	  <div class='content'>
-		  <h1>{{.Title}}</h1>
 		  {{.Content}}
 		</div>
 	</div>
@@ -130,9 +133,11 @@ type atomData struct {
 	Articles []fullArticle
 }
 
-func (a atomData) Len() int           { return len(a.Articles) }
-func (a atomData) Swap(i, j int)      { a.Articles[i], a.Articles[j] = a.Articles[j], a.Articles[i] }
-func (a atomData) Less(i, j int) bool { return a.Articles[i].Article.Date.abs() > a.Articles[j].Article.Date.abs() }
+func (a atomData) Len() int      { return len(a.Articles) }
+func (a atomData) Swap(i, j int) { a.Articles[i], a.Articles[j] = a.Articles[j], a.Articles[i] }
+func (a atomData) Less(i, j int) bool {
+	return a.Articles[i].Article.Date.abs() > a.Articles[j].Article.Date.abs()
+}
 
 var reverseUrls = make(map[string]string)
 

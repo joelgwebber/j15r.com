@@ -11,21 +11,38 @@
 @font-face { font-family: 'MuseoSlab1000'; src: url('/fonts/MuseoSlab1000.woff'); }
 @font-face { font-family: 'MuseoSlab1000Italic'; src: url('/fonts/MuseoSlab1000Italic.woff'); }
 
+$headerHeight: 192px;
+
 body {
   margin: 0px;
   font: 12pt MuseoSlab300, Helvetica, Arial, sans-serif;
+  background-image: url(/img/bgpattern.png);
 }
 
 .header {
-  background: #99b2d0;
+  background-image: url(/img/darkPattern.png);
   position: fixed;
-  width: 100%; height: 70px;
+  width: 100%; height: $headerHeight;
   z-index: 32767;
+  overflow: hidden;
 }
 
-.header-main {
+.header-main, .header-main-right {
   width: 100%;
   padding: 8px;
+}
+
+.header-main-right {
+  position: absolute;
+  right: 16px;
+  top: 8px;
+  width: 260px;
+  height: 40px;
+}
+
+.header h1 {
+  padding: 8px;
+  color: white;
 }
 
 .logo {
@@ -33,12 +50,17 @@ body {
   font: 24px MuseoSlab300;
   width: 256px;
   text-decoration: none;
-  color: black;
+  color: white;
+  letter-spacing: -1px;
+}
+
+.reflink {
+  margin-right: 8px;
 }
 
 .header-gradient {
   position: absolute;
-  top: 70px;
+  top: $headerHeight;
   width: 100%; height: 8px;
 
   // TODO: cross-browser.
@@ -53,25 +75,19 @@ body {
   );
 }
 
-.reflink {
-  float: right;
-  margin-right: 8px;
-}
-
 .outer {
-  padding-top: 80px;
-  margin: 0px 8px 8px 8px;
+  padding-top: $headerHeight + 8px;
+  margin: 0px 8px 8px 5%;
 }
 
 .intro-wrapper {
   text-align: right;
-  margin: 32px 0;
+  color: white;
 }
 
 .intro {
   display: inline-block;
   text-align: left;
-  font-size: 120%;
   max-width: 640px;
 }
 
@@ -82,11 +98,12 @@ body {
 .year {
   margin-bottom: 96px;
   position: relative;
-}
 
-.year-header {
-  font-family: MuseoSlab300;
-  font-size: 64px;
+  >.year-header {
+    font-family: MuseoSlab900;
+    font-size: 64px;
+    color: #888;
+  }
 }
 
 .year:nth-child(odd) {
@@ -97,7 +114,7 @@ body {
     text-align: left;
     position: absolute;
     left: -40px;
-    top: 40%;
+    top: 64px;
     -webkit-transform: rotate(-90deg);
   }
 }
@@ -110,7 +127,7 @@ body {
     text-align: right;
     position: absolute;
     right: -40px;
-    top: 40%;
+    top: 64px;
     -webkit-transform: rotate(90deg);
   }
 }
@@ -147,4 +164,9 @@ body {
   color: white;
   background-color: black;
   opacity: 0.75;
+}
+
+#disqus_thread {
+  margin: 32px 8px 8px 5%;
+  max-width: 1280px;
 }

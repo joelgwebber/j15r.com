@@ -1,0 +1,80 @@
+body {
+  font: 14px Arial;
+  overflow: hidden;
+}
+
+.animateTransform {
+  -webkit-transition-property: -webkit-transform, margin, opacity;
+  -moz-transition-property: -moz-transform, margin, opacity;
+  -ms-transition-property: -ms-transform, margin, opacity;
+  -o-transition-property: -o-transform, margin, opacity;
+  transition-property: transform, margin, opacity;
+
+  -webkit-transition-duration: 0.5s;
+  -moz-transition-duration: 0.5s;
+  -ms-transition-duration: 0.5s;
+  -o-transition-duration: 0.5s;
+  transition-duration: 0.5s;
+
+  -webkit-transition-timing-function: ease-out;
+  -moz-transition-timing-function: ease-out;
+  -ms-transition-timing-function: ease-out;
+  -o-transition-timing-function: ease-out;
+  transition-timing-function: ease-out;
+}
+
+/* Navigation */
+.NavBar {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 32px;
+  background-color: #ccc;
+}
+
+/* Cards */
+.CardsView {
+  background-image: url(http://www.google.com/images/logo.gif);
+  background-size: cover;
+  position: absolute;
+  overflow-y: auto;
+}
+
+.Card {
+  position: absolute;
+  width: 180px; height: 240px;
+  border: 1px solid black;
+  background-color: white;
+}
+
+/* List */
+.ListView {
+  background-image: url(http://www.google.com/images/logo.gif);
+  background-size: cover;
+  position: absolute;
+  overflow-y: auto;
+}
+
+.ListHeader {
+  text-align: center;
+  font-weight: bold;
+}
+
+.ListItem {
+  border-bottom: 1px solid black;
+}
+
+.ListItem .title {
+  font-weight: bold;
+}
+
+.ListItem .summary {
+  font-style: italic;
+}
+
+/* Detail */
+.DetailView {
+  background-image: url(http://www.google.com/images/logo.gif);
+  background-size: cover;
+  position: absolute;
+  overflow-y: auto;
+}

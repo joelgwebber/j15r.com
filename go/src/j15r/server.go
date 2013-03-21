@@ -3,11 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
-	"sort"
-	"net/http"
-	"html/template"
 	"github.com/kellegous/pork"
+	"html/template"
+	"log"
+	"net/http"
+	"sort"
 )
 
 const indexTemplate = `
@@ -17,38 +17,39 @@ const indexTemplate = `
   {{template "head"}}
 
   <body>
-    {{template "header"}}
-
-    <div class='outer'>
-      <div class='intro-wrapper'>
-        <div class='intro'>
-          <div style='display:inline-block; margin-right:16px; float:left; font-size:48px;'>Hi.</div>
-          I'm Joel Webber. I'm an engineer who occasionally writes about software development, games,
-          and a few other odds and ends. Above you'll find a list of ways to reach me. Below you'll
-          find a chronology of things I've written and built, places I've worked, and so forth.
-        </div>
-      </div>
-
-      <div class='content'>
-        {{range .YearArticles}}
-          <div class='year'>
-          <div class='year-header'>{{.Year}}</div>
-
-          {{range .Articles}}
-            <a class='article' style='background-image: url({{.Icon}})' {{if .Url}}href='{{.Url}}'{{end}}>
-              {{if .Date.Month}}
-              <div class='date'>
-                {{if .Date.Date}}{{.Date.Date}}{{end}}
-                {{monthString .Date.Month}}
-              </div>
-              {{end}}
-              <div class='title'>{{.Title}}</div>
-            </a>
-          {{end}}
-          </div>
-        {{end}}
+  <div class='header'>
+    {{template "header-main"}}
+    <div class='intro-wrapper'>
+      <div class='intro'>
+        <div style='display:inline-block; margin-right:16px; float:left; font-size:48px;'>Hi.</div>
+        I'm Joel Webber. I'm an engineer who occasionally writes about software development, games,
+        and a few other odds and ends. Above you'll find a list of ways to reach me. Below you'll
+        find a chronology of things I've written and built, places I've worked, and so forth.
       </div>
     </div>
+  </div>
+
+  <div class='outer'>
+    <div class='content'>
+      {{range .YearArticles}}
+        <div class='year'>
+        <div class='year-header'>{{.Year}}</div>
+
+        {{range .Articles}}
+          <a class='article' style='background-image: url({{.Icon}})' {{if .Url}}href='{{.Url}}'{{end}}>
+            {{if .Date.Month}}
+            <div class='date'>
+              {{if .Date.Date}}{{.Date.Date}}{{end}}
+              {{monthString .Date.Month}}
+            </div>
+            {{end}}
+            <div class='title'>{{.Title}}</div>
+          </a>
+        {{end}}
+        </div>
+      {{end}}
+    </div>
+  </div>
   </body>
 </html>
 {{end}}
@@ -59,22 +60,23 @@ const sharedTemplates = `
   <head>
     <title>j15r.com</title>
     <link rel='stylesheet' href='/scss/j15r.css'>
+    <meta name='viewport' content='width=device-width, user-scalable=no'>
+    <script src='/page.js'></script>
   </head>
 {{end}}
 
-{{define "header"}}
-  <div class='header'>
+{{define "header-main"}}
     <div class='header-main'>
       <a href='/' class='logo'>as simple as possible, but no simpler</a>
-      <a class='reflink' href='https://plus.google.com/u/0/111111598146968769323'><img src='/img/gplus.png'></a>
-      <a class='reflink' href='http://twitter.com/jgw'><img src='/img/twitter.png'></a>
-      <a class='reflink' href='https://github.com/joelgwebber'><img src='/img/github.png'></a>
-      <a class='reflink' href='https://code.google.com/u/joelgwebber/'><img src='/img/google_icon.png'></a>
-      <a class='reflink' href='http://j15r.com/blog/feed' style='font-size:48px'><img width='48px' height='48px' src='/img/rss.png'></a>
-      <a class='reflink' href='mailto:jgw@pobox.com' style='font-size:48px'><img width='48px' height='48px' src='/img/email.png'></a>
     </div>
-    <div class='header-gradient'></div>
-  </div>
+    <div class='header-main-right'>
+      <a class='reflink' href='mailto:jgw@pobox.com'><img width='32px' height='32px' src='/img/email_white.png'></a>
+      <a class='reflink' href='http://j15r.com/blog/feed'><img width='32px' height='32px' src='/img/rss_white.png'></a>
+      <a class='reflink' href='https://code.google.com/u/joelgwebber/'><img width='32px' height='32px' src='/img/google_icon_white.png'></a>
+      <a class='reflink' href='https://github.com/joelgwebber'><img width='32px' height='32px' src='/img/github_white.png'></a>
+      <a class='reflink' href='http://twitter.com/jgw'><img width='32px' height='32px' src='/img/twitter_white.png'></a>
+      <a class='reflink' href='https://plus.google.com/u/0/111111598146968769323'><img width='32px' height='32px' src='/img/gplus_white.png'></a>
+    </div>
 {{end}}
 
 {{define "pardot-crap"}}

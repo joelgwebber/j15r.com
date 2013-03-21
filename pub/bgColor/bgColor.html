@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+
+<body>
+  <form style='background-color: white' id='colorForm'>
+    <input type='text' id='rgbText'></input>
+    <span id='colorOut'></span>
+    <span id='rgbOut'></span>
+  </form>
+  <div style='display:none' id='swatch'></div>
+
+  <script src='words.js'></script>
+
+  <script>
+  function toHex1(x) {
+    if (x < 10) {
+      return String.fromCharCode(48 + x);
+    }
+    return String.fromCharCode(97 + x - 10);
+  }
+
+  function toHex2(x) {
+    var s = toHex1(x & 0xf);
+    if (x > 15) {
+      return toHex1((x & 0xf0) >> 4) + s;
+    }
+    return '0' + s;
+  }
+
+  function rgbToHex(rgb) {
+    if (0 != rgb.indexOf('rgb(')) {
+      return '#invalid';
+    }
+    var vals = parseRgb(rgb).map(toHex2);
+    return '#' + vals[0] + vals[1] + vals[2];
+  }
+
+  function parseRgb(rgb) {
+    if (0 != rgb.indexOf('rgb(')) {
+      throw 'invalid rgb';
+    }
+    return rgb.substring(4, rgb.length - 1).split(',').map(function(x) { return parseInt(x); });
+  }
+
+  function findNearestEntry(x, colors) {
+    if (x in colors) {
+      return colors[x];
+    }
+
+    for (var i = 0; i < 255; ++i) {
+      var lo = x - i, hi = x + i;
+      if (lo >= 0    && (lo in colors))  return colors[lo];
+      if (hi < 0x100 && (hi in colors))  return colors[hi];
+    }
+
+    throw 'inconceivable!'
+  }
+
+  function randInt(n) {
+    return Math.floor(Math.random() * n);
+  }
+
+  function wordFor(color, len) {
+    var words = findNearestEntry(color, _words_[len]);
+    return words[randInt(words.length)];
+  }
+
+  function colorWords(rgb) {
+    var len = 5 + randInt(4);
+    var words = '';
+    for (var i = 0; i < 3; ++i) {
+      words += wordFor(rgb[i], len);
+    }
+    return words;
+  }
+
+  function testes(colorName) {
+    document.body.bgColor = colorName;
+    console.log(rgbToHex(getComputedStyle(document.body).backgroundColor));
+  }
+
+  var colorForm = document.getElementById('colorForm');
+  var rgbText = document.getElementById('rgbText');
+  var colorOut = document.getElementById('colorOut');
+  var rgbOut = document.getElementById('rgbOut');
+  var swatch = document.getElementById('swatch');
+
+  colorForm.onsubmit = function(e) {
+    swatch.style.backgroundColor = rgbText.value;
+    var rgb = parseRgb(getComputedStyle(swatch).backgroundColor);
+    var words = colorWords(rgb);
+    colorOut.textContent = words;
+    document.body.bgColor = words;
+    rgbOut.textContent = rgbToHex(getComputedStyle(document.body).backgroundColor);
+    e.preventDefault();
+  }
+  </script>
+</body>
+</html>

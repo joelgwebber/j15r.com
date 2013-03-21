@@ -114,3 +114,5 @@ experiments to confirm or disprove them.
 
 [cuthbert] https://plus.google.com/109603191376504998413/posts/cHeke4TaUCw
 [pike] http://www.informit.com/articles/article.aspx?p=1941206
+
+http://blog.regehr.org/archives/199

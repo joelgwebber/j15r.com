@@ -9,11 +9,15 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"unicode"
+	"unicode/utf8"
 )
 
 const (
-	PAGE_SIZE  = 1024
-	INDEX_NAME = "index.gob"
+	PAGE_SIZE    = 1024
+	INDEX_NAME   = "index.gob"
+	MAX_WORD_LEN = 100
+	MAX_WORDS    = 100
 )
 
 type IndexEntry struct {
@@ -55,12 +59,18 @@ func readFromGutenberg(bookPath string) ([]byte, error) {
 
 // Takes the raw book byte stream and processes it into a Book. Performs
 // all necessary mangling and formatting to make the client happy.
-func processBook(bytes []byte, contentType string) *Book {
-	text := string(bytes)
-	text = strings.Replace(text, "\r\n\r\n", " <br> <br> ", -1)
-	text = strings.Replace(text, "\r\n", " ", -1)
+func processBook(raw []byte, contentType string) *Book {
+	words := make([]string, PAGE_SIZE)
+	wordPos := 0
+	for {
+		wordCount := 0
+		raw, wordCount = processLine(raw, words[wordPos:])
+		wordPos += wordCount
+		if wordPos == PAGE_SIZE {
+			break
+		}
+	}
 
-	words := strings.Split(text, " ")
 	var chunkCount int = (len(words) / PAGE_SIZE) + 1
 
 	chunks := make([]string, chunkCount)
@@ -83,6 +93,50 @@ func processBook(bytes []byte, contentType string) *Book {
 	}
 }
 
+func processLine(raw []byte, words []string) (newRaw []byte, wordCount int) {
+	runes := make([]rune, MAX_WORD_LEN)
+	pos := 0
+	bytePos := 0
+	wordCount = 0
+	max := len(raw)
+
+	makeWord := func() bool {
+		words[wordCount] = string(runes[0:bytePos])
+		bytePos = 0
+		wordCount++
+		return wordCount == len(words)
+	}
+
+	for {
+		if pos == max {
+			break
+		}
+
+		r, size := utf8.DecodeRune(raw)
+		pos++
+		bytePos += size
+		raw = raw[bytePos:]
+
+		if r == '\r' {
+			if r, size = utf8.DecodeRune(raw); r == '\n' {
+				pos++
+				bytePos += size
+				raw = raw[bytePos:]
+			}
+			makeWord()
+			break
+		}
+
+		runes[pos] = r
+		if unicode.IsSpace(r) {
+			if makeWord() {
+				break
+			}
+		}
+	}
+	return raw, wordCount
+}
+
 // Reads the given book from the local cache, if it's available. If not,
 // it will retrieve the book from a Gutenberg mirror, and cache it locally.
 func readBook(bookPath string, contentType string) (*Book, error) {
@@ -96,13 +150,13 @@ func readBook(bookPath string, contentType string) (*Book, error) {
 	inFile, err := os.OpenFile(relFile, os.O_RDONLY, 0)
 	if err != nil {
 		// Fetch from Gutenberg.
-		bytes, err := readFromGutenberg(bookPath)
+		raw, err := readFromGutenberg(bookPath)
 		if err != nil {
 			return nil, err
 		}
 
 		// Process it into something palatable.
-		book := processBook(bytes, contentType)
+		book := processBook(raw, contentType)
 
 		// Cache it locally.
 		outFile, err := os.OpenFile(relFile, os.O_CREATE|os.O_WRONLY, 0660)

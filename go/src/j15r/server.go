@@ -75,7 +75,7 @@ const sharedTemplates = `
       <a class='reflink' href='https://code.google.com/u/joelgwebber/'><img width='32px' height='32px' src='/img/google_icon_white.png'></a>
       <a class='reflink' href='https://github.com/joelgwebber'><img width='32px' height='32px' src='/img/github_white.png'></a>
       <a class='reflink' href='http://twitter.com/jgw'><img width='32px' height='32px' src='/img/twitter_white.png'></a>
-      <a class='reflink' href='https://plus.google.com/u/0/111111598146968769323'><img width='32px' height='32px' src='/img/gplus_white.png'></a>
+      <a class='reflink' href='https://plus.google.com/u/0/111111598146968769323?rel=author'><img width='32px' height='32px' src='/img/gplus_white.png'></a>
     </div>
 {{end}}
 

@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"sort"
+	"time"
 )
 
 const indexTemplate = `
@@ -267,7 +268,13 @@ func main() {
 
 	// Let 'er rip.
 	log.Printf("Listening on port %s", *addr)
-	err = http.ListenAndServe(*addr, r)
+	server := http.Server{
+		Addr:        *addr,            // TCP address to listen on, ":http" if empty
+		Handler:     r,                // handler to invoke, http.DefaultServeMux if nil
+		ReadTimeout: 10 * time.Minute, // maximum duration before timing out read of the request
+	}
+
+	err = server.ListenAndServe()
 	if err != nil {
 		log.Fatal(err)
 	}

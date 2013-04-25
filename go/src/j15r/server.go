@@ -15,7 +15,7 @@ const indexTemplate = `
 {{define "index"}}
 <!DOCTYPE html>
 <html>
-  {{template "head"}}
+  {{template "head" "j15r.com"}}
 
   <body>
   <div class='header'>
@@ -59,7 +59,7 @@ const indexTemplate = `
 const sharedTemplates = `
 {{define "head"}}
   <head>
-    <title>j15r.com</title>
+    <title>{{.}}</title>
     <link rel='stylesheet' href='/scss/j15r.css'>
     <meta name='viewport' content='width=device-width, user-scalable=no'>
     <script src='/page.js'></script>

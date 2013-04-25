@@ -21,7 +21,7 @@ const blogTemplate = `
 {{define "blog"}}
 <!DOCTYPE html>
 <html>
-  {{template "head"}}
+  {{template "head" .Title}}
 
   <body>
   <div class='header'>

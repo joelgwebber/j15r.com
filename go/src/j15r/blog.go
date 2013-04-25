@@ -65,7 +65,7 @@ const blogTemplate = `
   <updated>{{template "atom-date" .Updated}}</updated>
 
   <link rel='self' type='application/atom+xml' href='http://j15r.com/blog/feed'/>
-  <link rel='alternate' type='text/html' href='http://j15r.com/blog'/>
+  <link rel='alternate' type='text/html' href='http://j15r.com/'/>
 
   <author>
     <name>Joel Webber</name>
@@ -184,8 +184,8 @@ func (b *blog) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path
 
 	// If it's a raw file, just serve it.
-	_, err := os.Stat(path[1:])
-	if err == nil {
+	fi, err := os.Stat(path[1:])
+	if err == nil && !fi.IsDir() {
 		http.ServeFile(w, r, path[1:])
 		return
 	}

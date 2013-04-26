@@ -26,8 +26,12 @@ const blogTemplate = `
   <body>
   <div class='header'>
     {{template "header-main"}}
-	  <h1>{{.Title}}</h1>
-    <div class='header-gradient'></div>
+  </div>
+
+  <div class='intro-wrapper'>
+  	<div class='intro'>
+		  <h1>{{.Title}}</h1>
+		</div>
   </div>
 
   <div class='outer'>

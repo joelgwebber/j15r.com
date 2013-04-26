@@ -11,7 +11,7 @@
 @font-face { font-family: 'MuseoSlab1000'; src: url('/fonts/MuseoSlab1000.woff'); }
 @font-face { font-family: 'MuseoSlab1000Italic'; src: url('/fonts/MuseoSlab1000Italic.woff'); }
 
-$headerHeight: 192px;
+$headerHeight: 60px;
 
 body {
   margin: 0px;
@@ -20,24 +20,22 @@ body {
 }
 
 .header {
-  background-image: url(/img/darkPattern.png);
-  position: fixed;
-  width: 100%; height: $headerHeight;
-  z-index: 32767;
+  background: #666;
   overflow: hidden;
 }
 
 .header-main, .header-main-right {
-  width: 100%;
+//  width: 100%;
   padding: 8px;
 }
 
 .header-main-right {
-  position: absolute;
-  right: 16px;
+  float: right;
+/*  position: absolute;
+  right: 8px;
   top: 8px;
-  width: 260px;
-  height: 40px;
+  width: 220px;
+  height: 40px; */
 }
 
 .header h1 {
@@ -47,8 +45,8 @@ body {
 
 .logo {
   display: inline-block;
-  font: 24px MuseoSlab300;
-  width: 256px;
+  float: left;
+  font: 18px MuseoSlab300;
   text-decoration: none;
   color: white;
   letter-spacing: -1px;
@@ -58,29 +56,10 @@ body {
   margin-right: 8px;
 }
 
-.header-gradient {
-  position: absolute;
-  top: $headerHeight;
-  width: 100%; height: 8px;
-
-  // TODO: cross-browser.
-  background: -webkit-gradient(linear, left top, left bottom,
-    from(rgba(0, 0, 0, .2)),
-    to(transparent));
-
-  -webkit-mask-box-image: -webkit-gradient(linear, left top, right top,
-    color-stop(0.0, rgba(0, 0, 0,   0)),
-    color-stop(0.5, rgba(0, 0, 0, 0.8)),
-    color-stop(1.0, rgba(0, 0, 0,   0))
-  );
-}
-
-.outer {
-  padding-top: $headerHeight + 8px;
-  margin: 0px 8px 8px 5%;
-}
-
 .intro-wrapper {
+  padding-top: /*$headerHeight +*/ 8px;
+  padding-bottom: 8px;
+  background: #666;
   text-align: right;
   color: white;
 }
@@ -89,10 +68,15 @@ body {
   display: inline-block;
   text-align: left;
   max-width: 640px;
+  padding-right: 8px;
+}
+
+.outer {
+  margin: 0px 5% 8px 5%;
 }
 
 .content {
-  max-width: 1280px;
+//  max-width: 1280px;
 }
 
 .year {
@@ -141,7 +125,6 @@ body {
   width: 256px;
   height: 256px;
   margin: 8px;
-  box-shadow: -1px 3px 15px rgba(0, 0, 0, 0.3);
 }
 
 .date {
@@ -168,7 +151,7 @@ body {
 
 #disqus_thread {
   margin: 32px 8px 8px 5%;
-  max-width: 1280px;
+//  max-width: 1280px;
 }
 
 table td {

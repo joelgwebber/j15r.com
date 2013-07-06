@@ -25,17 +25,11 @@ body {
 }
 
 .header-main, .header-main-right {
-//  width: 100%;
   padding: 8px;
 }
 
 .header-main-right {
   float: right;
-/*  position: absolute;
-  right: 8px;
-  top: 8px;
-  width: 220px;
-  height: 40px; */
 }
 
 .header h1 {
@@ -57,7 +51,7 @@ body {
 }
 
 .intro-wrapper {
-  padding-top: /*$headerHeight +*/ 8px;
+  padding-top: 8px;
   padding-bottom: 8px;
   background: #666;
   text-align: right;
@@ -151,7 +145,6 @@ body {
 
 #disqus_thread {
   margin: 32px 8px 8px 5%;
-//  max-width: 1280px;
 }
 
 table td {

@@ -174,3 +174,5 @@ http://kellegous.com/j/2013/01/26/layout-performance/
 http://aerotwist.com/blog/on-translate3d-and-layer-creation-hacks/
 http://updates.html5rocks.com/2013/02/Profiling-Long-Paint-Times-with-DevTools-Continuous-Painting-Mode
 https://plus.google.com/u/0/115133653231679625609/posts/gv92WXBBkgU
+http://www.html5rocks.com/en/tutorials/speed/unnecessary-paints/
+http://aerotwist.com/blog/making-a-60fps-mobile-app/

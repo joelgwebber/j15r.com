@@ -1,3 +1,33 @@
+*Update (2012.07.09)*
+
+With some helpful hints from Alon Zakai (see the comments) and others, I was able to
+determine that the tip-of-trunk build of [Emscripten][4] produces significantly
+better results on Firefox 22 and Chrome 30 (canary), as seen below. Firefox 22
+definitely includes asm.js optimized code-generation, and based upon the degree
+of improvement (from a mean of 23ms/f to 7ms/f), Chrome 30 must be doing something
+similar. Note that Alon is seeing somewhat better results than I am on his desktop machine,
+for reasons that we haven't quite teased out, but they're close enough that I
+believe we have a fairly accurate representation of reality here.
+
+I find this rather exciting, because it puts asm.js within a stone's throw of NaCl
+and raw native code on Firefox, and is within 3x of native on an upcoming Chrome
+version. If a clever solution to the "allocate all your heap up front" problem can
+be found in asm.js, it might even turn out to be a good solution on mobile, where
+it's badly needed.
+
+<center>
+
+|                           | ms/frame | 5th %ile | 95th %ile | Ratio to C |
+|---------------------------|----------|----------|-----------|------------|
+| asm.js (Firefox 22)       | 4.80     |4.0       | 6.0       | 1.94       |
+| asm.js (Chrome 30)        | 7.10     |6.0       | 8.0       | 2.86       |
+
+![](graph_updated.png)
+
+</center>
+
+---
+
 I've been meaning to follow up on [this post][1] for a few months now, but as
 you can imagine, life has a habit of getting in the way. But I finally have a
 bit of spare time this holiday weekend, so I'll try to address a few of the
@@ -6,24 +36,25 @@ issues raised by that post.
 First, the updated results, as of today:
 
 <center>
-  <table>
-    <tr><th></th>                           <th>ms/frame</th><th>5th %ile</th><th>95th %ile</th><th>Ratio to C</th></tr>
-    <tr><td>C (gcc 4.8)</td>                <td>2.48</td><td>2.17</td><td>2.80</td><td>1.00</td></tr>
-    <tr><td>NaCl (x86-32)</td>              <td>3.31</td><td>2.94</td><td>3.70</td><td>1.34</td></tr>
-    <tr><td>Java (1.8)</td>                 <td>5.95</td><td>5.00</td><td>7.00</td><td>2.40</td></tr>
-    <tr><td>Flash/Crossbridge (\*)</td>     <td>5.98</td><td>4.98</td><td>6.98</td><td>2.41</td></tr>
-    <tr><td>asm.js (\*\*)</td>              <td>6.72</td><td>6.00</td><td>8.00</td><td>2.71</td></tr>
-    <tr><td>AS3</td>                        <td>10.4</td><td>9.00</td><td>12.0</td><td>4.19</td></tr>
-    <tr><td>asm.js (Firefox)</td>           <td>14.2</td><td>13.0</td><td>16.0</td><td>5.73</td></tr>
-    <tr><td>Dart</td>                       <td>18.6</td><td>17.0</td><td>20.0</td><td>7.50</td></tr>
-    <tr><td>Box2dWeb (Safari)</td>          <td>20.0</td><td>18.0</td><td>23.0</td><td>8.07</td></tr>
-    <tr><td>asm.js (Chrome)</td>            <td>23.0</td><td>17.0</td><td>29.0</td><td>9.27</td></tr>
-    <tr><td>Box2dWeb (Chrome)</td>          <td>26.9</td><td>23.0</td><td>42.0</td><td>10.9</td></tr>
-    <tr><td>Box2dWeb (Firefox)</td>         <td>29.5</td><td>27.0</td><td>32.0</td><td>12.0</td></tr>
-    <tr><td>asm.js (IE10) (\*\*\*)</td>     <td>33.7</td><td>26.6</td><td>42.0</td><td>13.6</td></tr>
-    <tr><td>Box2dWeb (IE10) (\*\*\*)</td>   <td>37.9</td><td>35.0</td><td>48.3</td><td>15.3</td></tr>
-    <tr><td>asm.js (Safari) (\*\*\*\*)</td> <td>-</td><td>-</td><td>-</td><td>-</td></tr>
-  </table>
+
+|                           | ms/frame | 5th %ile | 95th %ile | Ratio to C |
+|---------------------------|----------|----------|-----------|------------|
+|C (gcc 4.8)                | 2.48     | 2.17     | 2.80      | 1.00       |
+|NaCl (x86-32)              | 3.31     | 2.94     | 3.70      | 1.34       |
+|Java (1.8)                 | 5.95     | 5.00     | 7.00      | 2.40       |
+|Flash/Crossbridge (\*)     | 5.98     | 4.98     | 6.98      | 2.41       |
+|asm.js (\*\*)              | 6.72     | 6.00     | 8.00      | 2.71       |
+|AS3                        | 10.4     | 9.00     | 12.0      | 4.19       |
+|asm.js (Firefox)           | 14.2     | 13.0     | 16.0      | 5.73       |
+|Dart                       | 18.6     | 17.0     | 20.0      | 7.50       |
+|Box2dWeb (Safari)          | 20.0     | 18.0     | 23.0      | 8.07       |
+|asm.js (Chrome)            | 23.0     | 17.0     | 29.0      | 9.27       |
+|Box2dWeb (Chrome)          | 26.9     | 23.0     | 42.0      | 10.9       |
+|Box2dWeb (Firefox)         | 29.5     | 27.0     | 32.0      | 12.0       |
+|asm.js (IE10) (\*\*\*)     | 33.7     | 26.6     | 42.0      | 13.6       |
+|Box2dWeb (IE10) (\*\*\*)   | 37.9     | 35.0     | 48.3      | 15.3       |
+|asm.js (Safari) (\*\*\*\*) | -        | -        | -         | -          |
+
 </center>
 
 [Test platform: MacBook Pro, 2.5 GHz i7, 16G memory, Mac OS X 10.8.4.
@@ -209,3 +240,4 @@ mitigate this issue.
 [1]: http://j15r.com/blog/2013/04/25/Box2d_Revisited
 [2]: https://github.com/joelgwebber/bench2d
 [3]: http://mrale.ph/blog/2011/11/05/the-trap-of-the-performance-sweet-spot.html
+[4]: https://github.com/kripken/emscripten

@@ -1,4 +1,4 @@
-*Update (2012.07.09)*
+*Update (2013.07.09)*
 
 With some helpful hints from Alon Zakai (see the comments) and others, I was able to
 determine that the tip-of-trunk build of [Emscripten][4] produces significantly

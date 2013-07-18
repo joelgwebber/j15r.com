@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    #header {
+      position: absolute;
+      left: 0; right: 0;
+      top: 0; height: 2em;
+    }
+
+    #scroller {
+      position: absolute;
+      left: 0; right: 0;
+      top: 2em; bottom: 0;
+      overflow: scroll;
+    }
+
+    #container {
+      position: absolute;
+      left: 0; right: 0;
+    }
+
+    .box {
+      position: absolute;
+      width: 256px; height: 256px;
+      border: 1px solid black;
+      background: white;
+    }
+  </style>
+</head>
+
+<body>
+  <div id='header'>
+    Try inertial scrolling in the area below. If you do it with the cursor over the boxes, you'll find that it frequently grinds to a halt early.
+    If you do it in the whitespace gutter to the right, you'll see no such problem.
+  </div>
+  <div id='scroller'><div id='container'></div></div>
+  <script>
+    var scroller = document.getElementById('scroller');
+    var container = document.getElementById('container');
+    var boxen = [];
+
+    for (var i = 0; i < 100; ++i) {
+      boxen.push(null);
+    }
+
+    function Box() {
+      this.e = document.createElement('div');
+      this.e.className = 'box';
+    }
+
+    Box.prototype.setPosition = function(x, y) {
+      this.x = x; this.y = y;
+      this.e.style.left = x + 'px';
+      this.e.style.top = y + 'px';
+    };
+
+    function layout() {
+      var width = scroller.offsetWidth, height = scroller.offsetHeight;
+      var top = scroller.scrollTop, bottom = top + height;
+
+      var x = 0, y = 0;
+      for (var i = 0; i < 100; ++i) {
+        // See if the box is in-bounds.
+        if ((y + 256 < top) || (y > bottom)) {
+          // Nope. Remove it if it already exists.
+          if (boxen[i]) {
+            container.removeChild(boxen[i].e);
+            boxen[i] = null;
+          }
+        } else {
+          // Yup. create it if it doesn't exist.
+          if (boxen[i] == null) {
+            boxen[i] = new Box();
+            container.appendChild(boxen[i].e);
+          }
+
+          // Position it absolutely.
+          boxen[i].setPosition(x, y);
+        }
+
+        x += 256;
+        if (x + 256 > width) {
+          x = 0;
+          y += 256;
+        }
+      }
+
+      container.style.height = y + 'px';
+    }
+
+    scroller.onscroll = layout;
+    window.onresize  = layout;
+    layout();
+  </script>
+</body>
+</html>

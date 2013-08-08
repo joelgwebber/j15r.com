@@ -1,8 +1,8 @@
 package main
 
 import (
-	"html/template"
 	"github.com/kellegous/pork"
+	"html/template"
 )
 
 type jobs struct {
@@ -59,10 +59,10 @@ func InitJobs(r pork.Router, tmpl *template.Template) (ArticleProvider, error) {
 				Url:   "http://www.google.com/",
 			},
 			&Article{
-				Title: "Monetology",
-				Icon:  "/img/mn.jpg",
+				Title: "Homebase.io",
+				Icon:  "/img/homebaseio.png",
 				Date:  SimpleDate{2012, 3, 5},
-				Url:   "http://www.monetology.com/",
+				Url:   "http://homebase.io/",
 			},
 		},
 	}, nil

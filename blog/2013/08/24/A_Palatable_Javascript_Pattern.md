@@ -239,7 +239,7 @@ function IntTextBox(_initValue) {
 Ok, so this is a bit more work than inheritance, but not much -- you have to enumerate all of the
 methods you want to delegate to -- but honestly, it's not that bad to write `method:_delegate.method,`
 a few times, is it? I know it might seem a bit weird if you're used to inheritance, but I've been
-writing a fair amount of [Go][15] lately, which comes down hard on the side of composition over
+writing a fair amount of [Go][12] lately, which comes down hard on the side of composition over
 inheritence, and I don't miss it at all. And let's look at what it buys you.
 
 For one thing, it gives you the ability to hide methods on the delegatee. This is hugely valuable --
@@ -365,7 +365,7 @@ so I doubt this would become a serious problem if you need to do so.
 
 This works well for me, but I'm curious to hear what others think. Have you arrived at similar
 patterns, or different ones? Do you see obvious flaws or useful extensions? Please let me know
-in the comments!
+in the comments, on [Google+][13], [Hacker News][14], or [Reddit][15]!
 
 
 [1]: http://www.gwtproject.org/
@@ -378,4 +378,7 @@ in the comments!
 [9]: http://www.jetbrains.com/idea/
 [10]: http://javascript.crockford.com/private.html
 [11]: http://addyosmani.com/blog/essential-js-namespacing/
-[15]: http://golang.org/
+[12]: http://golang.org/
+[13]: https://plus.google.com/u/0/111111598146968769323/posts/3EAxYy6Fo7n
+[14]: https://news.ycombinator.com/item?id=6269503
+[15]: http://www.reddit.com/r/programming/comments/1l0lq4/a_palatable_javascript_pattern/

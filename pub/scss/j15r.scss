@@ -16,11 +16,15 @@ $headerHeight: 60px;
 body {
   margin: 0px;
   font: 12pt MuseoSlab300, Helvetica, Arial, sans-serif;
-  background-image: url(/img/bgpattern.png);
+}
+
+.top-wrapper {
+  background: url(/img/moss.jpg) fixed;
+  background-position-y: 50%;
+  background-size: 100%;
 }
 
 .header {
-  background: #666;
   overflow: hidden;
 }
 
@@ -53,7 +57,6 @@ body {
 .intro-wrapper {
   padding-top: 8px;
   padding-bottom: 8px;
-  background: #666;
   text-align: right;
   color: white;
 }
@@ -150,4 +153,8 @@ body {
 table td {
   padding-left: 16px;
   padding-right: 16px;
+}
+
+.syntaxhighlighter, code {
+ font-size: 15px;
 }

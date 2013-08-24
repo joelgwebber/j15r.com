@@ -24,15 +24,27 @@ const blogTemplate = `
   {{template "head" .Title}}
 
   <body>
-  <div class='header'>
-    {{template "header-main"}}
-  </div>
+  <script type='text/javascript' src='/slides/decks/syntax/scripts/shCore.js'></script>
+  <script type='text/javascript' src='/slides/decks/syntax/scripts/shBrushJava.js'></script>
+  <script type='text/javascript' src='/slides/decks/syntax/scripts/shBrushJScript.js'></script>
+  <script type='text/javascript' src='/slides/decks/syntax/scripts/shBrushCss.js'></script>
+  <link type='text/css' rel='stylesheet' href='/slides/decks/syntax/styles/shCoreEclipse.css'/>
+  <script type='text/javascript'>
+    SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.all();
+  </script>
 
-  <div class='intro-wrapper'>
-  	<div class='intro'>
-		  <h1>{{.Title}}</h1>
+	<div class='top-wrapper'>
+		<div class='header'>
+			{{template "header-main"}}
 		</div>
-  </div>
+
+		<div class='intro-wrapper'>
+			<div class='intro'>
+				<h1>{{.Title}}</h1>
+			</div>
+		</div>
+	</div>
 
   <div class='outer'>
 	  <div class='content'>

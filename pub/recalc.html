@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+<head>
+  <style>
+    .container {
+      position: absolute;
+      border: 1px solid black;
+      top: 128px; left: 0;
+      width: 512px; height: 512px;
+      overflow: hidden;
+    }
+
+    .circle {
+      border: 1px solid black;
+      width: 25px;
+      height: 25px;
+      position: absolute;
+      border-radius: 25px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+<h1>RecalcStyles manipulation Demo </h1>
+<p>This will take a moment to add all 20k elements. Please be patient.</p>
+<div id='container' class='container'></div>
+<script>
+  function RecalcStylesDemo() {
+    this.id = 0;
+  }
+
+  RecalcStylesDemo.prototype.nextId = function() {
+    this.id += 1;
+    return this.id;
+  };
+
+  RecalcStylesDemo.prototype.init = function() {
+    this.container = document.getElementById('container');
+    this.container.style.webkitTransform = 'translate3d(0px,0px,0px)';
+    this.container.addEventListener('mousedown', RecalcStylesDemo.prototype.down.bind(this), false);
+    this.container.addEventListener('mouseup', RecalcStylesDemo.prototype.up.bind(this), false);
+    this.container.addEventListener('mousemove', RecalcStylesDemo.prototype.move.bind(this), false);
+  };
+
+  RecalcStylesDemo.prototype.down = function(event) {
+    this.targetId = event.target.attributes.id.value;
+    this.target = event.target;
+    if(this.targetId !== 'container') {
+      this.tracking = true;
+      var r = event.target.getBoundingClientRect();
+      this.ofsx = event.clientX - r.left;
+      this.ofsy = event.clientY - r.top;
+
+      var x = event.clientX - this.ofsx;
+      var y = event.clientY - this.ofsy - 128;
+      this.target.style.zIndex = '100';
+      this.target.style.webkitTransform = 'translate3d('+x+'px,'+y+'px,0px)';
+      console.log('down on target:', this.targetId);
+      event.preventDefault();
+    }
+  };
+
+  RecalcStylesDemo.prototype.up = function(event) {
+    if(this.tracking) {
+      console.log('up');
+      this.tracking = false;
+      var x = event.clientX - this.ofsx;
+      var y = event.clientY - this.ofsy - 128;
+      this.target.style.zIndex = '';
+      this.target.style.webkitTransform = 'translate('+x+'px,'+y+'px)';
+      event.preventDefault();
+    }
+  };
+
+  RecalcStylesDemo.prototype.move = function(event) {
+    if (this.tracking) {
+      var x = event.clientX - this.ofsx;
+      var y = event.clientY - this.ofsy - 128;
+      this.target.style.webkitTransform = 'translate3d('+x+'px,'+y+'px,0px)';
+      event.preventDefault();
+    }
+  };
+
+  RecalcStylesDemo.prototype.addElements = function(number) {
+    var i, element, x, y, z, colors = ['white', 'darkorange', 'yellow', 'green', 'red','purple', 'blue'];
+    for (i = 0; i < number; i= i + 1) {
+      x = Math.floor(Math.random()*1000);
+      y = Math.floor(Math.random()*1000);
+      z = Math.floor(Math.random()*1000);
+      element = document.createElement('div');
+      element.id = this.nextId();
+      element.className = 'circle';
+      element.style.background =colors[Math.floor(Math.random()*colors.length)];
+      element.style.webkitTransform = 'translate('+x+'px,'+y+'px)';
+      this.container.appendChild(element);
+    }
+  };
+
+  var main = new RecalcStylesDemo();
+  main.init();
+  window.setTimeout(function() {
+    main.addElements(20000);
+  }, 0);
+</script>
+</body>
+</html>

@@ -1,3 +1,18 @@
+#### *Pre-caveat*
+
+Plenty of people have chimed in to let me know that I'm dumb, *dumb*, **dumb** because this
+pattern can be quite inefficient if used on performance-critical (memory or time) code.
+Don't do that. As I point out in the introduction, I don't write large programs this way,
+because... well, I don't write large programs in raw Javascript, because I'm not a
+masochist.
+
+If you *like* writing large amounts of raw Javascript, please don't waste your breath telling
+me how much I should love it. I'm not telling you not to do so, just humbly pointing out
+that I've done a fair amount of it, and find it quite painful. If it works for you, then by
+all means carry on.
+
+---
+
 ### *I don't always write raw Javascript, but when I do I use this pattern to make it less painful.*
 
 Love the language, or hate it -- I don't think it's debatable that its

@@ -55,6 +55,7 @@ const blogTemplate = `
   {{template "disqus-crap" .OrigUrl}}
   {{template "analytics-crap"}}
   {{template "pardot-crap"}}
+  {{template "segment-crap"}}
   </body>
 </html>
 {{end}}

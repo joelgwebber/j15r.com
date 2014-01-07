@@ -55,7 +55,7 @@ const indexTemplate = `
     </div>
   </div>
 
-  {{template "segment-crap"}}
+  {{template "fullstory-crap"}}
   </body>
 </html>
 {{end}}
@@ -112,11 +112,19 @@ const sharedTemplates = `
   </script>
 {{end}}
 
-{{define "segment-crap"}}
-	<script type="text/javascript">
-		var analytics=analytics||[];(function(){var e=["identify","track","trackLink","trackForm","trackClick","trackSubmit","page","pageview","ab","alias","ready","group"],t=function(e){return function(){analytics.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var n=0;n<e.length;n++)analytics[e[n]]=t(e[n])})(),analytics.load=function(e){var t=document.createElement("script");t.type="text/javascript",t.async=!0,t.src=("https:"===document.location.protocol?"https://":"http://")+"d2dq2ahtl5zl1z.cloudfront.net/analytics.js/v1/"+e+"/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(t,n)};
-		analytics.load("8qvdujnx7b");
-	</script>
+{{define "fullstory-crap"}}
+  <script>
+    var _fs_debug = false;
+    var _fs_host='www.thefullstory.com',_fs_org='ag5zfmZ1bGxzdG9yeWFwcHIQCxIDT3JnGICAgIDA-pMKDA';
+    var _fs_ready = function() {
+      // FS.setUid(
+      //    'app-specific-user-id',           // required
+      //    'User Name',                      // optional
+      //    { any: 'meta', data: 'you like' } // optional
+      // );
+    };
+    (function(w,a,t){a=w.createElement('script');a.async=1;a.src='https://'+_fs_host+'/s/fs.js';w.body.appendChild(a)})(document);
+  </script>
 {{end}}
 `
 

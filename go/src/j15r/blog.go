@@ -55,7 +55,7 @@ const blogTemplate = `
   {{template "disqus-crap" .OrigUrl}}
   {{template "analytics-crap"}}
   {{template "pardot-crap"}}
-  {{template "segment-crap"}}
+  {{template "fullstory-crap"}}
   </body>
 </html>
 {{end}}
@@ -228,7 +228,7 @@ func (b *blog) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	err = b.renderArticle(path, w)
 	if err != nil {
-		http.Error(w, "Unexpected error", 500)
+		http.Error(w, err.Error(), 500)
 	}
 }
 

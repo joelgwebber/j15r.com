@@ -114,15 +114,9 @@ const sharedTemplates = `
 
 {{define "fullstory-crap"}}
   <script>
-    var _fs_debug = false;
-    var _fs_host='www.thefullstory.com',_fs_org='ag5zfmZ1bGxzdG9yeWFwcHIQCxIDT3JnGICAgIDA-pMKDA';
-    var _fs_ready = function() {
-      // FS.setUid(
-      //    'app-specific-user-id',           // required
-      //    'User Name',                      // optional
-      //    { any: 'meta', data: 'you like' } // optional
-      // );
-    };
+    var _fs_debug = true;
+    var _fs_host='fs-staging.appspot.com',_fs_org='agxzfmZzLXN0YWdpbmdyEAsSA09yZxiAgICAsPvqCww';
+    var _fs_ready = function() { };
     (function(w,a,t){a=w.createElement('script');a.async=1;a.src='https://'+_fs_host+'/s/fs.js';w.body.appendChild(a)})(document);
   </script>
 {{end}}

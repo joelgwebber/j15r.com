@@ -102,7 +102,9 @@
       ctx.fill();
 
       // Time text.
-      var text = ((hour + myZone) % 24) + ':' + pad1(minute);
+      var realHour = hour + myZone;
+      if (realHour < 0) realHour += 24;
+      var text = (realHour % 24) + ':' + pad1(minute);
       ctx.lineWidth = 8;
       ctx.strokeStyle = 'rgba(0, 0, 255, 0.25)';
       ctx.fillStyle = 'rgb(0, 0, 255)';

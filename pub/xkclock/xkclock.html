@@ -5,13 +5,19 @@
   <style>
   body { overflow:hidden; cursor:pointer; }
   #clock { position:absolute; }
-  #credit { position:absolute; bottom:4px; right:4px; font-family:"Comic Sans MS"; font-size:12px; text-decoration:none; color:black; }
+  #credit { position:absolute; bottom:4px; right:4px; font-family:"Comic Sans MS"; font-size:12px; text-decoration:none; color:white; }
+  #osxwidget { position:absolute; bottom:20px; right:4px; font-family:"Comic Sans MS"; font-size:12px; text-decoration:none; color:white; }
+  #__app__, #__phone__ { background-color: black; }
+  #__phone__ #osxwidget { display: none; }
+  #__widget__ #credit { display: none; }
+  #__widget__ #osxwidget { display: none; }
   </style>
 </head>
 
-<body style='margin:0; background-color:black;'>
+<body id="__app__" style='margin:0;'>
   <canvas id='clock'></canvas>
   <a id='credit' target='_blank' href='http://xkcd.com/1335/'>credit : xkcd</a>
+  <a id='osxwidget' target='_blank' href='widget/XKClock.wdgt.zip'>osx widget</a>
 
   <script>
     var outer = document.createElement('img');

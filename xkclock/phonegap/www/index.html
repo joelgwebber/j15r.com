@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, user-scalable=no">
+  <style>
+  body { overflow:hidden; cursor:pointer; }
+  #clock { position:absolute; }
+  #credit { position:absolute; bottom:4px; right:4px; font-family:"Comic Sans MS"; font-size:12px; text-decoration:none; color:black; }
+  </style>
+</head>
+
+<body style='margin:0; background-color:black;'>
+  <canvas id='clock'></canvas>
+  <a id='credit' target='_blank' href='http://xkcd.com/1335/'>credit : xkcd</a>
+
+  <script>
+    var outer = document.createElement('img');
+    var inner = document.createElement('img');
+    var canvas = document.getElementById('clock');
+    var slider = document.getElementById('slider');
+
+    var TAU = Math.PI * 2; // The one, true circle constant.
+    var size, halfSize;
+    var halfSize = size/2;
+    var myZone = 0;
+
+    function timeInRadians(hours, minutes) {
+      return TAU * (hours / 24 + minutes / (60 * 24));
+    }
+
+    function pad1(x) {
+      if (x < 10) return '0' + x;
+      return '' + x;
+    }
+
+    function setZone(zone) {
+      if (zone == myZone) return;
+      myZone = zone % 24;
+      localStorage['tz'] = myZone;
+      render();
+    }
+
+    function initZone() {
+      myZone = parseInt(localStorage['tz']);
+      if (isNaN(myZone)) {
+        myZone = 0;
+      }
+    }
+
+    function resize() {
+      // Ugly -5 hacks to work around slightly-off image.
+      var docElem = document.documentElement;
+      var width = docElem.clientWidth, height = docElem.clientHeight;
+      size = width > height ? height : width;
+      halfSize = size/2;
+      canvas.width = size; canvas.height = size;
+      canvas.style.left = ((width - size) / 2) + 'px';
+      canvas.style.top = ((height - size) / 2) + 'px';
+      render();
+    }
+
+    function render() {
+      var now = new Date();
+      var hour = now.getUTCHours(), minute = now.getUTCMinutes();
+
+      var ctx = canvas.getContext('2d');
+
+      ctx.save();
+      ctx.clearRect(0, 0, size, size);
+      ctx.translate(halfSize, halfSize);
+
+      // Outer ring.
+      ctx.save();
+      ctx.scale(0.994, 0.994); // inner image was a bit off, and code is easier than photoshop
+      ctx.drawImage(outer, -halfSize, -halfSize, size, size);
+      ctx.restore();
+
+      ctx.translate(0, -size*.005); // The inside is all slightly off-kilter. Again, code over photoshop.
+
+      // Inner ring, rotated.
+      ctx.save();
+      ctx.rotate(TAU/2 + timeInRadians(hour, minute));
+      ctx.drawImage(inner, -halfSize*.855, -halfSize*.855, size*.855, size*.855);
+      ctx.restore();
+
+      // Timezone wedge.
+      r = halfSize*0.855;
+      var alpha0 = TAU/4 + timeInRadians(hour + myZone, minute - 30), x0 = Math.cos(alpha0)*r, y0 = Math.sin(alpha0)*r;
+      var alpha1 = TAU/4 + timeInRadians(hour + myZone, minute + 30), x1 = Math.cos(alpha1)*r, y1 = Math.sin(alpha1)*r;
+      ctx.fillStyle = 'rgba(0, 0, 255, 0.25)';
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(x0, y0);
+      ctx.arc(0, 0, r, alpha0, alpha1, false);
+      ctx.closePath();
+      ctx.fill();
+
+      // Time text.
+      var text = ((hour + myZone) % 24) + ':' + pad1(minute);
+      ctx.lineWidth = 8;
+      ctx.strokeStyle = 'rgba(0, 0, 255, 0.25)';
+      ctx.fillStyle = 'rgb(0, 0, 255)';
+      ctx.font = "40px Comic Sans MS";
+      ctx.beginPath();
+      var width = ctx.measureText(text).width;
+      ctx.strokeText(text, -width/2, 10);
+      ctx.fillText(text, -width/2, 10);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    initZone();
+
+    var down = false;
+    function zonePicker(x, y) {
+      var now = new Date(), hour = now.getUTCHours(), minute = now.getUTCMinutes();
+      x -= (canvas.offsetLeft + halfSize), y -= (canvas.offsetTop + halfSize);
+      var angle = -TAU/4 - Math.atan2(-y, x);
+      setZone(Math.round(angle * 24 / TAU - (minute / 60)) - hour);
+    }
+    window.onmousedown = function(e) { down = true; zonePicker(e.x, e.y); };
+    window.onmouseup   = function(e) { down = false; };
+    window.onmousemove = function(e) { if (down) zonePicker(e.x, e.y); };
+    window.ontouchmove = function(e) { down = true; zonePicker(e.touches[0].clientX, e.touches[0].clientY); };
+
+    outer.onload = inner.onload = render;
+    outer.src = 'outer.png';
+    inner.src = 'inner.png';
+
+    window.onresize = resize;
+    resize();
+
+    setInterval(render, 60000);
+    render();
+  </script>
+</body>
+</html>

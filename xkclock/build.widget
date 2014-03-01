@@ -1,0 +1,10 @@
+#!/bin/sh
+rm -rf widget/XKClock.wdgt
+mkdir widget/XKClock.wdgt
+cp *.png widget/XKClock.wdgt
+sed 's/background-color:black;//' xkclock.html >widget/XKClock.wdgt/xkclock.html
+pushd widget
+cp Default.png XKClock.wdgt/
+cp Info.plist XKClock.wdgt/
+zip -r XKClock.wdgt.zip XKClock.wdgt
+popd

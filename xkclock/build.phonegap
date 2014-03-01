@@ -1,0 +1,7 @@
+#!/bin/sh
+cp xkclock.html phonegap/www/index.html
+cp *.png phonegap/www
+pushd phonegap
+phonegap build android
+phonegap build ios
+popd

@@ -1,6 +1,0 @@
-<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'>
-	<div>
-		<a href='#' ui:field='likeElem'><img ui:field='likeImageElem' src='smile.png'/></a>
-		<a href='#' ui:field='commentElem'><img src='comment.png'/></a>
-	</div>
-</ui:UiBinder>

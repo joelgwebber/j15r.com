@@ -1,7 +1,0 @@
-<module rename-to='Flickr'>
-  <inherits name='com.j15r.common.Common'/>
-  <inherits name='com.google.gwt.layout.Layout'/>
-  <inherits name='com.google.gwt.jsonp.Jsonp' />
-
-	<entry-point class="com.j15r.flickr.client.Flickr"/>
-</module>

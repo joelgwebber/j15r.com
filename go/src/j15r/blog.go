@@ -1,10 +1,9 @@
-package main
+package j15r
 
 import (
 	"bytes"
 	"encoding/xml"
 	"fmt"
-	"github.com/kellegous/pork"
 	"github.com/russross/blackfriday"
 	"html/template"
 	"io"
@@ -53,8 +52,6 @@ const blogTemplate = `
 	</div>
 
   {{template "disqus-crap" .OrigUrl}}
-  {{template "analytics-crap"}}
-  {{template "pardot-crap"}}
   {{template "fullstory-crap"}}
   </body>
 </html>
@@ -340,24 +337,24 @@ func (b *blog) GetArticles() []*Article {
 	return b.articles
 }
 
-func InitBlog(r pork.Router, tmpl *template.Template) (ArticleProvider, error) {
+func InitBlog(tmpl *template.Template) (ArticleProvider, error) {
 	var b = &blog{tmpl: tmpl}
 	b.initArticleIndex()
 
 	// Handlers.
-	r.Handle("/blog/", b)
+	http.Handle("/blog/", b)
 
 	// Special-cases ("/2011/", et al) to URLs from the old Blogger site.
-	r.Handle("/2011/", b)
-	r.Handle("/2010/", b)
-	r.Handle("/2009/", b)
-	r.Handle("/2007/", b)
-	r.Handle("/2005/", b)
-	r.Handle("/2004/", b)
+	http.Handle("/2011/", b)
+	http.Handle("/2010/", b)
+	http.Handle("/2009/", b)
+	http.Handle("/2007/", b)
+	http.Handle("/2005/", b)
+	http.Handle("/2004/", b)
 
 	// Atom (old & new).
-	r.HandleFunc("/feeds/posts/default", b.atomServer())
-	r.HandleFunc("/blog/feed", b.atomServer())
+	http.HandleFunc("/feeds/posts/default", b.atomServer())
+	http.HandleFunc("/blog/feed", b.atomServer())
 
 	// Calculate the reverse url map.
 	for k, v := range originalUrls {

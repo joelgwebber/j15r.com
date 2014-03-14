@@ -1,9 +1,6 @@
-package main
+package j15r
 
-import (
-	"html/template"
-	"github.com/kellegous/pork"
-)
+import "html/template"
 
 type slides struct {
 	tmpl     *template.Template
@@ -15,59 +12,59 @@ func (s *slides) GetArticles() []*Article {
 }
 
 func (s *slides) GetIcon() string {
-	return "img/icon-slides.png"
+	return "/s/img/icon-slides.png"
 }
 
-func InitSlides(r pork.Router, tmpl *template.Template) (ArticleProvider, error) {
+func InitSlides(tmpl *template.Template) (ArticleProvider, error) {
 	return &slides{
 		tmpl: tmpl,
 		articles: []*Article{
 			&Article{
 				Title: "Fast is Better Than Slow",
 				Url:   "http://ptgmedia.pearsoncmg.com/imprint_downloads/voicesthatmatter/gwt2007/presentations/Performance_Webber.pdf",
-				Icon:  "/slides/presentation.jpg",
+				Icon:  "/s/slides/presentation.jpg",
 				Date:  SimpleDate{2007, 12, 3},
 			},
 			&Article{
 				Title: "Creating Widgets",
 				Url:   "http://ptgmedia.pearsoncmg.com/imprint_downloads/voicesthatmatter/gwt2007/presentations/CreatingWidgets_Webber.pdf",
-				Icon:  "/slides/presentation.jpg",
+				Icon:  "/s/slides/presentation.jpg",
 				Date:  SimpleDate{2007, 12, 3},
 			},
 			&Article{
 				Title: "GWT's UI overhaul",
 				Url:   "http://www.google.com/events/io/2010/sessions/gwt-ui-overhaul.html",
-				Icon:  "/slides/presentation.jpg",
+				Icon:  "/s/slides/presentation.jpg",
 				Date:  SimpleDate{2010, 5, 19},
 			},
 			&Article{
 				Title: "Architecting for Performance",
 				Url:   "http://www.google.com/events/io/2010/sessions/architecting-performance-gwt.html",
-				Icon:  "/slides/presentation.jpg",
+				Icon:  "/s/slides/presentation.jpg",
 				Date:  SimpleDate{2010, 5, 19},
 			},
 			&Article{
 				Title: "GWT + HTML5 can do What?!",
 				Url:   "http://www.google.com/events/io/2010/sessions/gwt-html5.html",
-				Icon:  "/slides/presentation.jpg",
+				Icon:  "/s/slides/presentation.jpg",
 				Date:  SimpleDate{2010, 5, 19},
 			},
 			&Article{
 				Title: "Angry Birds on HTML5",
-				Url:   "/slides/decks/ab.html",
-				Icon:  "/slides/angrybirds.jpg",
+				Url:   "/s/slides/decks/ab.html",
+				Icon:  "/s/slides/angrybirds.jpg",
 				Date:  SimpleDate{2011, 10, 10},
 			},
 			&Article{
 				Title: "Introduction to Native Client",
-				Url:   "/slides/decks/nacl.html",
-				Icon:  "/slides/nacl.jpg",
+				Url:   "/s/slides/decks/nacl.html",
+				Icon:  "/s/slides/nacl.jpg",
 				Date:  SimpleDate{2012, 3, 21},
 			},
 			&Article{
 				Title: "Introduction to the PlayN Game Library",
-				Url:   "/slides/decks/playn.html",
-				Icon:  "/slides/playn.jpg",
+				Url:   "/s/slides/decks/playn.html",
+				Icon:  "/s/slides/playn.jpg",
 				Date:  SimpleDate{2012, 3, 22},
 			},
 		},

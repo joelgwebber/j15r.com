@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'/>
+  <meta http-equiv='X-UA-Compatible' content='IE=Edge;chrome=1'/>
+  <link rel='stylesheet' href='/s/slides/static/slides.css'/>
+  <title>Introduction to the PlayN Game Library</title>
+
+  <!-- syntax highlighting -->
+  <script type='text/javascript' src='syntax/scripts/shCore.js'></script>
+  <script type='text/javascript' src='syntax/scripts/shBrushJScript.js'></script>
+  <script type='text/javascript' src='syntax/scripts/shBrushJava.js'></script>
+  <script type='text/javascript' src='syntax/scripts/shBrushXml.js'></script>
+  <script type='text/javascript' src='syntax/scripts/shBrushCss.js'></script>
+  <link type='text/css' rel='stylesheet' href='syntax/styles/shCoreEclipse.css'/>
+  <script type='text/javascript'>
+  SyntaxHighlighter.defaults['gutter'] = false;
+  SyntaxHighlighter.all();
+  </script>
+
+  <style>
+  .slide.html5 header {
+    background-image: url(html5-logo.png);
+    background-repeat: no-repeat;
+    background-position: top right;
+  }
+
+  .slide.playn header {
+    background-image: url(playn-logo.png);
+    background-repeat: no-repeat;
+    background-position: top right;
+  }
+  </style>
+</head>
+
+<body>
+  <div class='slides'>
+    <div class='slide'>
+      <div class='content segue blue'>
+        <section class='intro'>
+          <h2>Introduction to the PlayN Game Library</h2>
+          <hr> <br>
+          <div>Joel Webber  &lt;joel@monetology.com&gt;</div>
+        </section>
+        <section class='intro'>
+          <div>dev nexus</div>
+          <div>atlanta</div>
+          <div>2012</div>
+        </section>
+      </div>
+    </div>
+
+    <div class='slide html5'>
+      <div class='content'>
+        <header> <h1>HTML5 Games</h1> <hr> </header>
+        <section style='positoin:relative'>
+          <div style='text-align:center;position:absolute;left:0px:top:0px;width:480px;height:400px'>
+            <img src='playn/bejeweled.jpg' width='480' height='320'>
+            Bejeweled
+          </div>
+          <div style='text-align:center;position:absolute;left:420px;top:340px;width:480px;height:400px'>
+            <img src='playn/quake2.png' width='480' height='320'>
+            Quake II
+          </div>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide html5'>
+      <div class='content'>
+        <header> <h1>HTML5 Games</h1> <hr> </header>
+        <section style='positoin:relative'>
+          <div style='text-align:center;position:absolute;left:0px:top:0px;width:480px;height:400px'>
+            <img src='playn/emberwind.jpg' width='480' height='320'>
+            Emberwind
+          </div>
+          <div style='text-align:center;position:absolute;left:420px;top:340px;width:480px;height:400px'>
+            <img src='playn/tankworld.jpg' width='480' height='320'>
+            Tank World
+          </div>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide' id='_abDemo'>
+      <script>
+      function abDemo_onShow(slide) {
+        var placeholder = slide.querySelector('.content .placeholder');
+        var demo = slide.querySelector('.content .demo');
+        var frame = demo.querySelector('iframe');
+
+        placeholder.style.display = 'none';
+        demo.style.display = '';
+        frame.src = frame.getAttribute('_src');
+      }
+
+      function abDemo_onHide(slide) {
+        var placeholder = slide.querySelector('.content .placeholder');
+        var demo = slide.querySelector('.content .demo');
+        var frame = demo.querySelector('iframe');
+
+        placeholder.style.display = '';
+        demo.style.display = 'none';
+        frame.src = 'about:blank';
+      }
+      </script>
+      <style>
+        .demo {
+          position: absolute;
+          left: -10px; top: 0px;
+          right: -10px; bottom: 0px;
+        }
+        .demo iframe {
+          border: 0px;
+        }
+      </style>
+      <div class='content' style='text-align:center'>
+        <img class='placeholder' src='ab/splash.png' width='900' height='700'>
+        <div class='demo' style='display:none'>
+          <iframe width='100%' height='100%' scrolling='no' _src='http://chrome.angrybirds.com/'></iframe>
+        </div>
+      </div>
+      <div class='notes'>
+        You may remember Angry Birds. PlayN is the library we began building in the service of the porting effort.
+      </div>
+    </div>
+
+    <div class='slide html5'>
+      <div class='content'>
+        <header> <h1>Why the web?</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>No install</li>
+            <li>Reach</li>
+            <li>Seamless update</li>
+            <li>Embeddable and linkable</li>
+          </ul>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide html5'>
+      <div class='content'>
+        <header> <h1>The reality of game development</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Consoles:
+              <ul><li>C++, completely proprietary SDKs</li></ul>
+            </li>
+            <li>Mobile devices:
+              <ul>
+                <li>C++, Objective C, Java</li>
+                <li>OpenGL, OpenAL, otherwise proprietary</li>
+              </ul>
+            </li>
+            <li>Web:
+              <ul>
+                <li>Actionscript, Flash APIs</li>
+                <li>Javascript, HTML5 APIs</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide html5'>
+      <div class='content'>
+        <header> <h1>HTML5 Gaming: Rendering</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>2D:
+              <ul>
+                <li>DOM</li>
+                <li>Canvas</li>
+                <li>SVG</li>
+              </ul>
+            </li>
+            <li>3D:
+              <ul>
+                <li>WebGL</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide html5'>
+      <div class='content'>
+        <header> <h1>HTML5 Gaming: Audio</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>&lt;audio&gt;:
+              <ul><li>Crude, high-latency</li></ul>
+            </li>
+            <li>WebAudio:
+              <ul><li>Game-quality low-latency, filter trees, etc.</li></ul>
+            </li>
+          </ul>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide html5'>
+      <div class='content'>
+        <header> <h1>HTML5 Gaming: Input</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Touch and Gamepad events</li>
+            <li>Fullscreen
+              <ul><li>Important to most games; used to require Flash</li></ul>
+            </li>
+            <li>Mouse Capture
+              <ul><li>Extremely important for first-person games</li></ul>
+            </li>
+         </ul>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide html5'>
+      <div class='content'>
+        <header> <h1>HTML5 Gaming: Network</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>XMLHttpRequest
+              <ul>
+                <li>TypedArrays and xhr.responseBuffer</li>
+              </ul>
+            </li>
+            <li>Web Sockets
+              <ul><li>Finally, something suitable for realtime games!</li></ul>
+            </li>
+          </ul>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide'>
+      <div class='content segue green'>
+        <section class='intro'>
+          <h2>PlayN</h2>
+          <hr> <br>
+        </section>
+      </div>
+    </div>
+
+    <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>What is PlayN?</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Java library for casual games
+              <ul>
+                <li>Introduced as 'ForPlay' at Google I/O 2011</li>
+              </ul>
+            </li>
+            <li>Targets: HTML5, Flash, Android (iOS nearly working)</li>
+            <li>Desktop JVM used for development and debugging</li>
+            <li>code.google.com/p/playn
+              <ul>
+                <li>Open source</li>
+                <li>Already seeing significant contributions</li>
+                <li>Early days: contributions welcome!</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>PlayN: Goals</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Simple</li>
+            <li>Reductionist</li>
+            <li>Cross-platform</li>
+            <li>Focused on the 'middle of the bell-curve'</li>
+          </ul>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>Components: Game Loop</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Simply implement playn.core.Game</li>
+            <li>Ensures update() and paint() happen at the right time</li>
+          </ul>
+          <pre class='brush:java'>
+  public class MyGame implements Game {
+
+    public void init() {
+      // initialize game.
+    }
+
+    public void update(float delta) {
+      // update world:
+      //   delta indicates the time-step
+    }
+
+    public void paint(float alpha) {
+      // render world:
+      //   alpha indicates time in the range [0, 1) between world frames
+    }
+  }
+          </pre>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>Components: Input</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Simple abstractions for input devices
+              <ul>
+                <li>Pointer, Mouse, Touch</li>
+                <li>Keyboard</li>
+              </ul>
+            </li>
+          </ul>
+          <pre class='brush:java'>
+  pointer().setListener(new Pointer.Adapter() {
+    public void onPointerStart(Pointer.Event event) {
+      // Handle mouse down event.
+    }
+  });
+
+  keyboard().setListener(new Keyboard.Adapter() {
+    public void onKeyDown(Event event) {
+      // Handle key down event.
+    }
+  });
+          </pre>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>Components: Graphics</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Two main concepts
+              <ul>
+                <li>Layers: retained structures (similar to DOM)</li>
+                <li>Surfaces: immediate rendering (similar to Canvas)</li>
+              </ul>
+            </li>
+            <li>Implemented using a combination of DOM, Canvas, <em>and</em> WebGL</li>
+          </ul>
+          <pre class='brush:java'>
+  public void init() {
+    bg = graphics().createSurfaceLayer();
+    graphics.rootLayer().add(bg);
+
+    Layer catGirl = graphics().createImageLayer('catGirl.png');
+    graphics.rootLayer().add(catGirl);
+  }
+
+  public void paint(float alpha) {
+    Surface surf = bg.surf();
+    surf.clear();
+    surf.drawImage(cloud, cloudX, cloudY);
+  }
+          </pre>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>Components: Audio</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Simple audio API</li>
+          </ul>
+          <pre class='brush:java'>
+  public void init() {
+    Sound music = assets().getSound('ambient.mp3');
+    music.setLooping(true);
+    music.play();
+
+    squawk = assets().getSound('squawk.mp3');
+  }
+
+  public void somethingHappened() {
+    squawk.play();
+  }
+          </pre>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>Components: Asset Management</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Simple loading methods for images, sounds, and text</li>
+          </ul>
+          <pre class='brush:java'>
+  public void init() {
+    Image image = assets().getImage('bird.png');
+    Sound sound = assets().getSound('squawk.mp3');
+
+    // Completion callbacks are available
+    image.addCallback(new ResourceCallback&lt;Image&gt;() {
+      public void done(Image resource) { imageReady = true; }
+      public void error(Throwable err) { imageFailed(); }
+    });
+
+    // Text is necessarily async
+    assets().getText('level.json', new ResourceCallback&lt;String&gt;() {
+      public void done(String resource) { loadLevel(json().parse(resource)); }
+      public void error(Throwable err) { gameOver(); }
+    });
+  }
+          </pre>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>Components: Network</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Some network access already handled by AssetManager</li>
+            <li>You can also make direct HTTP requests</li>
+          </ul>
+          <pre class='brush:java'>
+  public void saveState() {
+    Writer json = json().newWriter();
+    json.key('id');    json.value(playerId);
+    json.key('score'); json.value(playerScore);
+
+    net().post('/saveState', json.write(), new Callback&lt;String&gt;() {
+      public void onSuccess(String result) { }
+      public void onFailure(Throwable cause) { tryAgain();}
+    });
+  }
+          </pre>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>Components: Box2D</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Box2D baked into the library</li>
+            <li>Why embedded?
+              <ul>
+                <li>Somewhat tricky to do it yourself with JBox2D</li>
+                <li>We can do some platform-specific optimizations</li>
+              </ul>
+            </li>
+          </ul>
+          <pre class='brush:java'>
+  public void init() {
+    world = new World(gravity, true);
+
+    Body ground = world.createBody(new BodyDef());
+    PolygonShape groundShape = new PolygonShape();
+    groundShape.setAsEdge(new Vec2(0, height), new Vec2(width, height));
+    ground.createFixture(groundShape, 0.0f);
+
+    world.setContactListener(new ContactListener() {
+      public void beginContact(Contact contact) { ... }
+      public void endContact(Contact contact) { ... }
+      // ...
+    }
+  }
+
+  public void update(float delta) {
+    // Fix physics at 30f/s for stability.
+    world.step(0.033f, 10, 10);
+  }
+          </pre>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide'>
+      <div class='content segue green'>
+        <section class='intro'>
+          <h2>PlayN 101</h2>
+          <hr> <br>
+        </section>
+      </div>
+    </div>
+
+    <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>Every game should start with a blue sky</h1> <hr> </header>
+        <section>
+          <pre class='brush:java'>
+  public class MyGame implements Game {
+    public void init() {
+      int width = 640;
+      int height = 480;
+      CanvasImage bgImage = graphics().createImage(width, height);
+      Canvas canvas = bgImage.canvas();
+      canvas.setFillColor(0xff87ceeb);
+      canvas.fillRect(0, 0, width, height);
+      ImageLayer bg = graphics().createImageLayer(bgImage);
+      graphics().rootLayer().add(bg);
+    }
+  }
+          </pre>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>Every game should start with a blue sky</h1> <hr> </header>
+        <section style='text-align:center'>
+          <img src='playn/screen0.png'>
+        </section>
+      </div>
+    </div>
+
+    <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>And some white clouds</h1> <hr> </header>
+        <section>
+          <pre class='brush:java'>
+  Image cloudImage = assets().getImage("images/cloud.png");
+  ImageLayer cloud = graphics().createImageLayer(cloudImage);
+  graphics().rootLayer().add(cloud);
+  float x = 24.0f;
+  float y = 3.0f;
+  cloud.setTranslation(x, y);
+          </pre>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>And some white clouds</h1> <hr> </header>
+        <section style='text-align:center'>
+          <img src='playn/screen1.png'>
+        </section>
+      </div>
+    </div>
+
+    <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>The layer can be animated</h1> <hr> </header>
+        <section>
+          <pre class='brush:java'>
+  public void paint(float delta) {
+    x += 0.1f * delta;
+    if (x > bgImage.width() + cloudImage.width()) {
+      x = -cloudImage.width();
+    }
+    cloud.setTranslation(x, y);
+  }
+          </pre>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>The layer can be animated</h1> <hr> </header>
+        <section style='text-align:center'>
+          <img src='playn/screen2.png'>
+        </section>
+      </div>
+    </div>
+
+    <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>You can hook clicks to create new layers</h1> <hr> </header>
+        <section>
+          <pre class='brush:java'>
+  Image ballImage = assetManager().getImage("images/ball.png");
+  GroupLayer ballsLayer = graphics().createGroupLayer();
+  graphics().rootLayer().add(ballsLayer);
+  pointer().setListener(new Pointer.Adapter() {
+    @Override
+    public void onPointerEnd(Pointer.Event event) {
+      ImageLayer ball = graphics().createImageLayer(ballImage);
+      ball.setTranslation(event.x(), event.y());
+      ballsLayer.add(ball);
+    }
+  });
+          </pre>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>You can hook clicks to create new layers</h1> <hr> </header>
+        <section style='text-align:center'>
+          <img src='playn/screen3.png'>
+        </section>
+      </div>
+    </div>
+
+    <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>Time to add some physics</h1> <hr> </header>
+        <section>
+          <pre class='brush:java'>
+  float physUnitPerScreenUnit = 1 / 26.666667f;
+  Vec2 gravity = new Vec2(0.0f, 10.0f);
+  world = new World(gravity, true);
+  ballsLayer.setScale(1f / physUnitPerScreenUnit);
+          </pre>
+          <pre class='brush:java'>
+  class Ball {
+    public initPhysics() {
+      BodyDef bodyDef = new BodyDef();
+      bodyDef.type = BodyType.DYNAMIC;
+      body = world.createBody(bodyDef);
+      FixtureDef fixtureDef = new FixtureDef();
+      fixtureDef.shape = new CircleShape();
+      fixtureDef.circleShape.m_radius = 0.5f;
+      fixtureDef.density = 1.0f;
+      body.createFixture(fixtureDef);
+    }
+  }
+        </pre>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>Time to add some physics</h1> <hr> </header>
+        <section style='text-align:center'>
+          <img src='playn/screen4.png'>
+        </section>
+      </div>
+    </div>
+
+    <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>Don't forget to add the ground!</h1> <hr> </header>
+        <section>
+          <pre class='brush:java'>
+  float worldWidth = physUnitPerScreenUnit * width;
+  float worldHeight = physUnitPerScreenUnit * height;
+  Body ground = world.createBody(new BodyDef());
+  PolygonShape groundShape = new PolygonShape();
+  groundShape.setAsEdge(new Vec2(0, worldHeight), new Vec2(worldWidth, worldHeight));
+  ground.createFixture(groundShape, 0.0f);
+          </pre>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>Don't forget ot add the ground</h1> <hr> </header>
+        <section style='text-align:center'>
+          <img src='playn/screen5.png'>
+        </section>
+      </div>
+    </div>
+
+    <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>Let's add more blocks</h1> <hr> </header>
+        <section>
+          <pre class='brush:java'>
+  Image blockImage = assetManager().getImage("images/block.png");
+  float blockWidth = blockImage.width() * physUnitPerScreenUnit;
+  float blockHeight = blockImage.height() * physUnitPerScreenUnit;
+  GroupLayer blocksLayer = graphics().createGroupLayer();
+  blocksLayer.setScale(1f / physUnitPerScreenUnit);
+  Body blocksBody = world.createBody(new BodyDef());
+          </pre>
+          <pre class='brush:java'>
+  for (int i = 0; i &lt; 4; i++) {
+    ImageLayer block = graphics().createImageLayer(blockImage);
+    block.setTranslation((1+2*i)*blockWidth, worldHeight-height);
+    blocksLayer.add(block);
+    PolygonShape shape = new PolygonShape();
+    shape.setAsBox(blockWidth/2f, blockHeight/2f,
+       block.transform().translation(), 0f);
+    blocksBody.createFixture(shape, 0.0f);
+  }
+        </pre>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>Let's add more blocks</h1> <hr> </header>
+        <section style='text-align:center'>
+          <img src='playn/screen6.png'>
+        </section>
+      </div>
+    </div>
+
+    <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>And some nails &mdash; パチンコ!</h1> <hr> </header>
+        <section>
+          <pre class='brush:java'>
+  public void initNails() {
+    for (int x = 100; x &lt; bgImage.width() - 100; x += 50) {
+      for (int y = 150; y &lt; 450; y+= 100) {
+        canvas.setFillColor(0xffaaaaaa);
+        canvas.fillCircle(x, y, radius);
+        CircleShape circleShape = new CircleShape();
+        circleShape.m_radius = 5f*physUnitPerScreenUnit;
+        circleShape.m_p.set(x*physUnitPerScreenUnit, y*physUnitPerScreenUnit);
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = circleShape;
+        fixtureDef.restitution = 0.6f;
+        ground.createFixture(fixtureDef);
+      }
+    }
+  }
+          </pre>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>And some nails &mdash; パチンコ!</h1> <hr> </header>
+        <section style='text-align:center'>
+          <img src='playn/screen7.png'>
+        </section>
+      </div>
+    </div>
+
+    <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>The only thing missing is a score</h1> <hr> </header>
+        <section>
+          <pre class='brush:java'>
+  int[] pointsTable = {-10, 10, 50, 10, -10};
+  int points = 0;
+
+  public void update(float delta) {
+    for (Ball ball : balls) {
+      Vector pos = ball.layer.transform().translation();
+      if (pos.y() >= scoringHeight) {
+        int slot = (int)pos.x() / (int)scoringWidth;
+        points += pointsTable[slot];
+        points = Math.max(0, points);
+        ballsLayer.remove(ball.layer);
+        world.destroyBody(ball.body);
+        removeBalls.add(ball);
+      }
+    }
+  }
+          </pre>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>Let's use a bitmap font for the score</h1> <hr> </header>
+        <section>
+          <pre class='brush:java'>
+Image pointsFontImage;
+
+void init() {
+  pointsLayer = graphics().createGroupLayer();
+  pointsLayer.setScale(3.0f, 3.0f);
+  pointsFontImage = assetManager().getImage("images/font.png");
+  graphics().rootLayer().add(pointsLayer);
+}
+
+void update {
+  float x = 0f;
+  pointsLayer.clear();
+  for (char c : Integer.toString(points).toCharArray()) {
+    ImageLayer digit = graphics().createImageLayer(pointsFontImage);
+    digit.setSourceRect((c - '0' + 9) % 10; * 16, 0, 16, 16);
+    pointsLayer.add(digit);
+    digit.setTranslation(x, 0f);
+    x += 16f;
+  }
+}
+          </pre>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>Looking good...</h1> <hr> </header>
+        <section style='text-align:center'>
+          <img src='playn/screen8.png'>
+        </section>
+      </div>
+    </div>
+
+<!--     <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>So let's run it on...</h1> <hr> </header>
+        <section style='text-align: center'>
+          <br>
+          <img src='html5-logo.png'></span>
+          <img src='flash-logo.png'>
+          <img src='android-logo.png'>
+          <img src='ios-logo.png'>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div> -->
+
+    <div class='slide playn'>
+      <div class='content'>
+        <header> <h1>Future work</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Cleanup, especially build/deploy</li>
+            <li>Game pads and other input devices</li>
+            <li>3d graphics API</li>
+            <li>Audio effects and spatialization</li>
+            <li>Web sockets</li>
+          </ul>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide'>
+      <div class='content'>
+        <header> <h1>Thanks</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Philip Rogers, Seth Ladd, Lilli Thompson, Johan Euphrosine (Google)</li>
+            <li>Serdar Soganci (Rovio)</li>
+            <li>Michael Bayne (Three Rings)</li>
+          </ul>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide'>
+      <div class='content segue red'>
+        <section class='intro'>
+          <h2>Questions?</h2>
+          <hr>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script src='/s/slides/slides.js'></script>
+  <script>
+    var _fs_debug = true;
+    var _fs_host='fs-staging.appspot.com',_fs_org='agxzfmZzLXN0YWdpbmdyEAsSA09yZxiAgICAsPvqCww';
+    var _fs_ready = function() { };
+    (function(w,a,t){a=w.createElement('script');a.async=1;a.src='https://'+_fs_host+'/s/fs.js';w.body.appendChild(a)})(document);
+  </script>
+</body>
+</html>

@@ -1,7 +1,0 @@
-#!/bin/sh
-sed 's/id="__app__"/id="__phone__"/' xkclock.html >phonegap/www/index.html
-cp *.png phonegap/www
-pushd phonegap
-phonegap build android
-phonegap build ios
-popd

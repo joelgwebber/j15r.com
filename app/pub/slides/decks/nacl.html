@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'/>
+  <meta http-equiv='X-UA-Compatible' content='IE=Edge;chrome=1'/>
+  <link rel='stylesheet' href='/s/slides/static/slides.css'/>
+  <title>Introduction to Native Client</title>
+
+  <!-- syntax highlighting -->
+  <script type='text/javascript' src='syntax/scripts/shCore.js'></script>
+  <script type='text/javascript' src='syntax/scripts/shBrushJScript.js'></script>
+  <script type='text/javascript' src='syntax/scripts/shBrushJava.js'></script>
+  <script type='text/javascript' src='syntax/scripts/shBrushXml.js'></script>
+  <script type='text/javascript' src='syntax/scripts/shBrushCss.js'></script>
+  <script type='text/javascript' src='syntax/scripts/shBrushCpp.js'></script>
+  <link type='text/css' rel='stylesheet' href='syntax/styles/shCoreEclipse.css'/>
+  <script type='text/javascript'>
+  SyntaxHighlighter.defaults['gutter'] = false;
+  SyntaxHighlighter.all();
+  </script>
+
+  <style>
+  .slide.chrome header {
+    background-image: url(chrome-logo.png);
+    background-repeat: no-repeat;
+    background-position: top right;
+  }
+  </style>
+</head>
+
+<body>
+  <div class='slides'>
+
+    <div class='slide'>
+      <div class='content segue blue'>
+        <section class='intro'>
+          <h2>Introduction to Native Client</h2>
+          <hr> <br>
+          <div>Joel Webber  &lt;joel@monetology.com&gt;</div>
+        </section>
+        <section class='intro'>
+          <div>dev nexus</div>
+          <div>atlanta</div>
+          <div>2012</div>
+        </section>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>Why</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Google is performance-obsessed</li>
+            <li>3 years ago:
+              <ul><li>What if we could run native code in the browser?</li></ul>
+            </li>
+            <li>Retain good parts of the web:
+              <ul><li>portability, security ease, reach, etc.</li></ul>
+            </li>
+            <li>Leverage bazillions of lines of existing C[++] code</li>
+            <li>Ultimately replace insecure NPAPI plugins</li>
+          </ul>
+        </section>
+      </div>
+      <div class='notes'>
+      Some stats suggest that, for some games, up to 90% of people who *want* to play abandon when prompted to install a plugin.
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>What</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Run untrusted x86 code safely in Chrome</li>
+            <li>Fully sandboxed</li>
+              <ul>
+                <li>No system API access</li>
+                <li>May only call blessed "Pepper" APIs</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>Performance</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Box2D: NaCl roughly 10x faster than best Javascript
+              <ul>
+                <li>Often closer to 20x for hand-written JS</li>
+                <li>Oddly, best JS results are for C++ cross-compiled to JS (!)</li>
+              </ul>
+              <li><a href='https://chrome.google.com/webstore/detail/hjoknlchfolpgpnehoelkgklihdipcmn'>Flocking Geese</a> benchmark</li>
+            </li>
+          </ul>
+          <a href='http://blog.j15r.com/2011/12/for-those-unfamiliar-with-it-box2d-is.html'>
+            <img src='nacl/box2d.png' width='640' style='position:absolute;bottom:32px;right:32px'>
+          </a>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>Security</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Same model as web</li>
+            <li><em>Not</em> NPAPI or ActiveX</li>
+            <li>Can <em>only</em> call Pepper APIs</li>
+            <li>Double-sandbox:
+              <ul>
+                <li>Proof-carrying code</li>
+                <li>Chrome renderer sandbox</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>Features</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Accelerated 3d rendering</li>
+            <li>Real-time stereo audio</li>
+            <li>Sandboxed local file storage</li>
+            <li>Full-screen, mouse-lock</li>
+            <li>Networking</li>
+            <li>URL loading</li>
+            <li>Async communication with Javascript</li>
+            <li>Shared-memory threads</li>
+            <li>Dynamic linking</li>
+            <li>GNU libc</li>
+          </ul>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>Applications</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Games</li>
+            <li>3D modeling, CAD</li>
+            <li>Media editing (photo/video/audio)</li>
+            <li>Scientific computing (any heavy number crunching)</li>
+          </ul>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>Support</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Chrome 14+ (Current is 17)</li>
+            <li>Not all machines support 3D rendering (see below)</li>
+            <li>Enabled when:
+              <ul>
+                <li>Command-line flag (for developers)</li>
+                <li>Triggered by Chrome Web Store</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide html5'>
+      <div class='content'>
+        <header> <h1>The reality of cross-platform development</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Consoles:
+              <ul><li>C++, completely proprietary SDKs</li></ul>
+            </li>
+            <li>Mobile devices:
+              <ul>
+                <li>C++, Objective C, Java</li>
+                <li>OpenGL, OpenAL, otherwise proprietary</li>
+              </ul>
+            </li>
+            <li>Native desktop machines:
+              <ul>
+                <li>C++, Objective C</li>
+                <li>OpenGL, DirectX, OpenAL, platform APIs</li>
+              </ul>
+            </li>
+            <li>Web:
+              <ul>
+                <li>Actionscript, Flash APIs</li>
+                <li>Javascript, HTML5 APIs</li>
+              </ul>
+            </li>
+            <li>Chrome:
+              <ul>
+                <li>C++, Pepper APIs</li>
+                <li>Javascript, HTML5 APIs</li>
+              </ul>
+            </li>
+          </ul>
+          <img src='nacl/devices.png' style='position:absolute;top:128px;right:32px;width:380px;height:240px'>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>Games and Apps</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Bastion (Supergiant)</li>
+            <li>Mini Ninjas (Square Enix)</li>
+            <li>Cordy &amp; Sleepy Jack (SilverTree Media)</li>
+            <li>Pirates of New Horizons &amp; Planet Buster (Exit Strategy Entertainment)</li>
+            <li>Various 3D Training tools (Heartwood Studios)</li>
+            <li>Lots of emulators &mdash; MAME, DOSBox, etc.</li>
+          </ul>
+        </section>
+        <br>
+        <section style='text-align:center'>
+          <img src='nacl/bastion.jpg' width='240' height='160'/>
+          <img src='nacl/minininjas.jpg' width='240' height='160'/>
+          <img src='nacl/cordy.jpg' width='240' height='160'/>
+          <img src='nacl/sleepyjack.jpg' width='240' height='160'/>
+          <img src='nacl/planetbuster.jpg' width='240' height='160'/>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>Middleware</h1> <hr> </header>
+        <section style='text-align:center'>
+          <br>
+          <img src='nacl/middleware.png' width='900'>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>Example: Star Legends</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>3D MMO for Android 2.0</li>
+            <li>Ported to NaCl in 14 days
+              <ul>
+                <li>1 programmer, 600k lines of code</li>
+              </ul>
+            </li>
+            <li>Runs across Android, iOS, &amp; NaCl</li>
+          </ul>
+        </section>
+        <img src='nacl/starlegends.png' style='position:absolute;bottom:32px;right:32px;width:512px;height:384px'>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>Distribution</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Through Chrome Web Store</li>
+            <li>Monetize with:
+              <ul>
+                <li>Ads</li>
+                <li>In-app purchase</li>
+                <li>Checkout</li>
+              </ul>
+            </li>
+            <li>Or through Chrome Extension</li>
+          </ul>
+        </section>
+        <img src='nacl/cws.png' style='position:absolute;bottom:32px;right:32px;width:512px;height:384px'>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide'>
+      <div class='content segue green'>
+        <section class='intro'>
+          <h2>Developing in NaCl</h2>
+          <hr>
+        </section>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>Application and deployment structure</h1> <hr> </header>
+        <section style='text-align:center'>
+          <a href='https://developers.google.com/native-client/devguide/coding/application-structure'>
+            <img src='nacl/structure.png'>
+          </a>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>Application lifecycle</h1> <hr> </header>
+        <section style='text-align:center'>
+          <img src='nacl/lifecycle.png'>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>GCC / G++ Compiler</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Make C++ code ISO/IEC 14882:1998 compliant
+              <ul>
+                <li>POSIX style coding / functions</li>
+                <li>OS specific calls not supported</li>
+              </ul>
+            </li>
+            <li>Removes / tests any unsafe code</li>
+            <li>Produces safe compiled x86 code</li>
+          </ul>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide'>
+      <div class='content segue red'>
+        <section class='intro'>
+          <h2>Pepper APIs</h2>
+          <hr>
+        </section>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>Architecture</h1> <hr> </header>
+        <section style='text-align:center'>
+          <img src='nacl/arch.png' width='900'>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>Rendering</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>OpenGL ES 2.0</li>
+            <li>Remember this is stricter than full OpenGL
+              <ul>
+                <li>Not all extensions available</li>
+                <li>But the same as most iOS and Android devices</li>
+              </ul>
+            </li>
+            <li>Can use ANGLE to test on Windows</li>
+          </ul>
+        </section>
+        <img src='nacl/sandboxrendering.png' style='position:absolute;bottom:128px;right:32px;width:900px;height:256px'>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>Audio</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Straightforward low-level audio API
+              <ul>
+                <li>Stereo</li>
+                <li>Real-time</li>
+              </ul>
+            </li>
+            <li><a href='https://developers.google.com/native-client/devguide/coding/audio'>More info</a></li>
+          </ul>
+        </section>
+        <img src='nacl/audio1.png' width='480' style='position:absolute;top:128px;right:32px'>
+        <img src='nacl/audio2.png' width='480' style='position:absolute;bottom:32px;left:32px'>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>Communication with Javascript</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Send messages to NaCl:
+              <pre class='brush:js'> myAppModule.postMessage('w00t?'); </pre>
+            </li>
+            <li>Receive messages from NaCl:
+              <pre class='brush:js'> myAppModule.addEventListener('message', messageFunc, false); </pre>
+            </li>
+            <li>Send messages to Javascript:
+              <pre class='brush:js'>
+pp::Var var;
+this->PostMessage(var);
+               </pre>
+            </li>
+            <li>Handle messages from Javascript:
+              <pre class='brush:js'> void MyAppInstance::HandleMessage(const pp::Var& var_message) { ... } </pre>
+            </li>
+            <li><a href='https://developers.google.com/native-client/devguide/coding/message-system'>More info</a></li>
+          </ul>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>Loading Resources</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Just like in Javascript, resource loading is async</li>
+            <li>pp:URLLoader() makes this relatively painless
+              <pre class='brush:cpp'>
+              void MyInstance::StartRequest(const std::string&amp; url) {
+                loader_ = pp::URLLoader(this);
+                loader_.Open(request, factory_.NewRequiredCallback(&amp;MyInstance::OnOpenComplete));
+              }
+
+              void MyInstance::OnOpenComplete(int32_t result) {
+                response_ = loader_.GetResponseInfo();
+
+                // etc.
+              }
+              </pre>
+            </li>
+          </ul>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide'>
+      <div class='content segue blue'>
+        <section class='intro'>
+          <h2>Threads</h2>
+          <hr>
+        </section>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>Pepper thread</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Do not call blocking functions on the main thread!</li>
+          </ul>
+          <br>
+          <img src='nacl/pepperthread.png' width='900'>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>Pepper APIs</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Pepper APIs calls are Asynchronous
+              <ul> <li>~1 'frame' to get results</li> </ul>
+            </li>
+            <li>Must be called from the main thread [will be fixed soon]</li>
+          </ul>
+        </section>
+        <pre class='brush:cpp'>
+  void fopen_mt(void* void_data, int32_t /* unused */) {
+    ASSERT_MAIN_THREAD();
+    FileIO::OpenParams* params = static_cast&lt;FileIO::OpenParams*&gt;(void_data);
+    file_io_->Open(*file_ref_, params->flags, pp::CompletionCallback(fopen_cb,params));
+  }
+
+  void fopen_cb(void* void_data, int32_t result) {
+    // Yay, do some stuff!
+  }
+        </pre>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>Working around thread restrictions</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>This is not how your game engine is designed</li>
+            <li>Best idea?
+              <ul>
+                <li>Run game logic on separate thread</li>
+                <li>Wrap platform functions to talk with main thread.</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+        <br>
+        <img src='nacl/logicthread.png' width='900'>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>Working around thread restrictions</h1> <hr> </header>
+        <section>
+          <pre class='brush:cpp'>
+  static int32_t RequestAndWait(void (*function)(void*, int32_t), void* param) {
+    ASSERT_WORKER_THREAD()
+    pp::Module::Get()-&gt;core()-&gt;CallOnMainThread(0,
+        pp::CompletionCallback(function, param), PP_OK);
+    pthread_cond_wait(&amp;gData_.cond, &amp;gData_.mutex);
+    return data_.result;
+  }
+
+  static void ReturnFromMainThread(void* void_data, int32_t result) {
+    ASSERT_MAIN_THREAD();
+    MainThreadData* data = static_cast&lt;MainThreadData*&gt;(void_data);
+    data-&gt;result = result;
+    pthread_cond_signal(&amp;data-&gt;cond);
+  }
+          </pre>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide'>
+      <div class='content segue green'>
+        <section class='intro'>
+          <h2>Development Tricks</h2>
+          <hr>
+        </section>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>Caching and Dev Tools</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Disable caching for fast iteration</li>
+            <li>Chrome dev tools
+              <ul>
+                <li>Debugging network issues, HTML/JS parts of the game, console</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+        <section style='text-align:center'>
+          <br>
+          <a href='http://code.google.com/chrome/devtools/docs/console.html'>
+            <img src='nacl/devtools.png' width='800'>
+          </a>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>about:tracing</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Trace of Chrome rendering internals</li>
+            <li>Can emit events from user code!</li>
+            <li>Load/Save traces</li>
+          </ul>
+        </section>
+        <br>
+        <img src='nacl/tracing.png' width='900'>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>Debugging</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Possible to use GDB, though still tricky
+              <ul>
+                <li><a href='http://www.chromium.org/nativeclient/how-tos/debuggingtips'>chromium.org/nativeclient/how-tos/debuggingtips</a></li>
+              </ul>
+            </li>
+            <li>Better debugging support and IDE integration coming soon</li>
+          </ul>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide'>
+      <div class='content segue green'>
+        <section class='intro'>
+          <h2>Deployment Issues</h2>
+          <hr>
+        </section>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>3D on the web</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>3D APIs can be malicious in the web</li>
+            <li>WebGL has a 'blacklist' of 3d drivers
+              <ul>
+                <li>Failure to create a webgl context</li>
+              </ul>
+            </li>
+            <li>Detect early and alert user!</li>
+          </ul>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>Blacklisted drivers: Detect in Javascript</h1> <hr> </header>
+        <section>
+          <pre class='brush:js'>
+  // Has blacklisted hardware / feature sets?
+  function textureSizeTest(size) {
+    var canvas = document.createElement('canvas');
+    var gl = canvas.getContext('webgl') ||
+             canvas.getContext('experimental-webgl');
+    if (gl)
+      return gl.getParameter(gl.MAX_TEXTURE_SIZE) >= size;
+  }
+          </pre>
+          <a href='http://mainroach.blogspot.com/2011/11/nacl-detecting-user-setup-problems.html'>Further info</a>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>NaCl Whitelisting</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Nacl not enabled until :
+              <ul>
+                <li>Devs - enable via flags</li>
+                <li>Users - Install from Chrome Web Store</li>
+              </ul>
+            </li>
+            <li>Origin of Location white listed
+              <ul>
+                <li>NMF and Nexe loc must match!</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>Can the user run NaCl?</h1> <hr> </header>
+        <section>
+          <pre class='brush:js'>
+  // Is using chrome?
+  var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+
+  // Is app installed?
+  if (window.chrome.app.isInstalled)
+    // You're running as an installed app, via the app launcher!
+  else
+    // You're running via a bookmark/link.
+          </pre>
+          <a href='http://mainroach.blogspot.com/2011/11/nacl-detecting-user-setup-problems.html'>Further info</a>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide'>
+      <div class='content segue green'>
+        <section class='intro'>
+          <h2>Future Developments</h2>
+          <hr>
+        </section>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>APIs</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>Web sockets</li>
+            <li>Gamepad support</li>
+            <li>Memory-mapped files</li>
+            <li>Track all new web features as they're added to Chrome</li>
+          </ul>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>pNaCl (Pinnacle)</h1> <hr> </header>
+        <section>
+          <ul>
+            <li>"Portable Native Client"</li>
+            <li>Already OS-neutral. pNaCl makes it instruction-set neutral</li>
+            <li>Uses LLVM bitcode rather than x86
+              <ul>
+                <li>Just as portable as Javascript</li>
+              </ul>
+            </li>
+            <li>Chrome Web Store restriction lifted</li>
+          </ul>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide chrome'>
+      <div class='content'>
+        <header> <h1>Further Reading</h1> <hr> </header>
+        <section>
+          <ul>
+            <li><a href='https://developers.google.com/native-client/'>Developer documentation</a></li>
+            <li><a href='https://developers.google.com/native-client/pepper18/video/gdc-2012'>Colt McAnlis' GDC Talk</a></li>
+          </ul>
+        </section>
+      </div>
+      <div class='notes'>
+      </div>
+    </div>
+
+    <div class='slide'>
+      <div class='content segue blue'>
+        <section class='intro'>
+          <h2>Questions?</h2>
+          <hr>
+        </section>
+      </div>
+    </div>
+
+  </div>
+
+  <script src='/s/slides/slides.js'></script>
+  <script>
+    var _fs_debug = true;
+    var _fs_host='fs-staging.appspot.com',_fs_org='agxzfmZzLXN0YWdpbmdyEAsSA09yZxiAgICAsPvqCww';
+    var _fs_ready = function() { };
+    (function(w,a,t){a=w.createElement('script');a.async=1;a.src='https://'+_fs_host+'/s/fs.js';w.body.appendChild(a)})(document);
+  </script>
+</body>
+</html>

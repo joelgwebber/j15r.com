@@ -1,4 +1,0 @@
-#!/bin/sh
-./build
-sudo killall j15r
-sudo nohup ./go/bin/j15r --prod --addr=:80 >stdout 2>stderr &

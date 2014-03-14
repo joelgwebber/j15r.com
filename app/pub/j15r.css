@@ -1,0 +1,163 @@
+@font-face {
+  font-family: 'MuseoSlab100';
+  src: url("fonts/MuseoSlab100.woff"); }
+
+@font-face {
+  font-family: 'MuseoSlab100Italic';
+  src: url("fonts/MuseoSlab100Italic.woff"); }
+
+@font-face {
+  font-family: 'MuseoSlab300';
+  src: url("fonts/MuseoSlab300.woff"); }
+
+@font-face {
+  font-family: 'MuseoSlab300Italic';
+  src: url("fonts/MuseoSlab300Italic.woff"); }
+
+@font-face {
+  font-family: 'MuseoSlab500';
+  src: url("fonts/MuseoSlab500.woff"); }
+
+@font-face {
+  font-family: 'MuseoSlab500Italic';
+  src: url("fonts/MuseoSlab500Italic.woff"); }
+
+@font-face {
+  font-family: 'MuseoSlab700';
+  src: url("fonts/MuseoSlab700.woff"); }
+
+@font-face {
+  font-family: 'MuseoSlab700Italic';
+  src: url("fonts/MuseoSlab700Italic.woff"); }
+
+@font-face {
+  font-family: 'MuseoSlab900';
+  src: url("fonts/MuseoSlab900.woff"); }
+
+@font-face {
+  font-family: 'MuseoSlab900Italic';
+  src: url("fonts/MuseoSlab900Italic.woff"); }
+
+@font-face {
+  font-family: 'MuseoSlab1000';
+  src: url("fonts/MuseoSlab1000.woff"); }
+
+@font-face {
+  font-family: 'MuseoSlab1000Italic';
+  src: url("fonts/MuseoSlab1000Italic.woff"); }
+
+body {
+  margin: 0px;
+  font: 12pt MuseoSlab300, Helvetica, Arial, sans-serif; }
+
+.top-wrapper {
+  background-color: mediumpurple; }
+
+.header {
+  overflow: hidden; }
+
+.header-main, .header-main-right {
+  padding: 8px; }
+
+.header-main-right {
+  float: right; }
+
+.header h1 {
+  padding: 8px;
+  color: white; }
+
+.logo {
+  display: inline-block;
+  float: left;
+  font: 18px MuseoSlab300;
+  text-decoration: none;
+  color: white;
+  letter-spacing: -1px; }
+
+.reflink {
+  margin-right: 8px; }
+
+.intro-wrapper {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  text-align: right;
+  color: white; }
+
+.intro {
+  display: inline-block;
+  text-align: left;
+  max-width: 640px;
+  padding-right: 8px; }
+
+.outer {
+  margin: 0px 5% 8px 5%; }
+
+.year {
+  margin-bottom: 96px;
+  position: relative; }
+  .year > .year-header {
+    font-family: MuseoSlab900;
+    font-size: 64px;
+    color: #888; }
+
+.year:nth-child(odd) {
+  text-align: left;
+  padding-left: 96px; }
+  .year:nth-child(odd) .year-header {
+    text-align: left;
+    position: absolute;
+    left: -40px;
+    top: 64px;
+    -webkit-transform: rotate(-90deg); }
+
+.year:nth-child(even) {
+  text-align: right;
+  padding-right: 96px; }
+  .year:nth-child(even) .year-header {
+    text-align: right;
+    position: absolute;
+    right: -40px;
+    top: 64px;
+    -webkit-transform: rotate(90deg); }
+
+.article {
+  display: inline-block;
+  position: relative;
+  vertical-align: top;
+  background-size: cover;
+  text-decoration: none;
+  width: 256px;
+  height: 256px;
+  margin: 8px; }
+
+.date {
+  font-family: MuseoSlab500;
+  position: absolute;
+  top: 4px;
+  left: 0;
+  padding: 4px;
+  margin-right: 32px;
+  color: white;
+  background-color: black;
+  opacity: 0.75; }
+
+.title {
+  font-family: MuseoSlab700;
+  position: absolute;
+  bottom: 4px;
+  right: 0;
+  padding: 4px;
+  margin-left: 32px;
+  color: white;
+  background-color: black;
+  opacity: 0.75; }
+
+#disqus_thread {
+  margin: 32px 8px 8px 5%; }
+
+table td {
+  padding-left: 16px;
+  padding-right: 16px; }
+
+.syntaxhighlighter, code {
+  font-size: 15px; }

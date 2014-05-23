@@ -51,8 +51,6 @@ const indexTemplate = `
       {{end}}
     </div>
   </div>
-
-  {{template "fullstory-crap"}}
   </body>
 </html>
 {{end}}
@@ -63,6 +61,7 @@ const sharedTemplates = `
   <head>
     <title>{{.}}</title>
     <link rel='stylesheet' href='/s/j15r.css'>
+		{{template "fullstory-crap"}}
   </head>
 {{end}}
 
@@ -81,12 +80,16 @@ const sharedTemplates = `
 {{end}}
 
 {{define "fullstory-crap"}}
-  <script>
-    var _fs_debug = true;
-    var _fs_host='fs-staging.appspot.com',_fs_org='agxzfmZzLXN0YWdpbmdyEAsSA09yZxiAgICAsPvqCww';
-    var _fs_ready = function() { };
-    (function(w,a,t){a=w.createElement('script');a.async=1;a.src='https://'+_fs_host+'/s/fs.js';w.body.appendChild(a)})(document);
-  </script>
+	<script>
+	var _fs_debug = false, _fs_host='fs-staging.appspot.com',_fs_org='j15r.com';
+	(function(m,n,e,t,l,o,g,y){
+		g=m[e]=function(a,b){g.q?g.q.push([a,b]):g._api(a,b);};g.q=[];
+		o=n.createElement(t);o.async=1;o.src='https://'+_fs_host+'/s/fs.js';
+		y=n.getElementsByTagName(t)[0];y.parentNode.insertBefore(o,y);
+		g.identify=function(i,v){g(l,{uid:i});if(v)g(l,v)};g.setUserVars=function(v){FS(l,v)};
+		g.setSessionVars=function(v){FS('session',v)};g.setPageVars=function(v){FS('page',v)};
+	})(window,document,'FS','script','user');
+	</script>
 {{end}}
 `
 

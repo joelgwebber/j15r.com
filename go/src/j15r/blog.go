@@ -48,28 +48,29 @@ const blogTemplate = `
   <div class='outer'>
 	  <div class='content'>
 		  {{.Content}}
+		  <hr>
+			<b>
+			Note: I'm moving to G+ comments, but also want to preserve the old blog comments in read-only form.
+			I just haven't gotten around to that last part yet, so they're temporarily unavailable.
+			</b>
 		</div>
 	</div>
 
-  {{template "disqus-crap" .OrigUrl}}
-  {{template "fullstory-crap"}}
+	{{template "gplus-crap" .Path}}
   </body>
 </html>
 {{end}}
 
-{{define "disqus-crap"}}
-  <div id="disqus_thread"></div>
-  <script type="text/javascript">
-    var disqus_shortname = 'j15r';
-    {{if .}}var disqus_url = "http://blog.j15r.com{{.}}";{{end}}
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+{{define "gplus-crap"}}
+<script src="https://apis.google.com/js/plusone.js"></script>
+<div style="margin-left: 80px">
+	<div class="g-comments"
+			data-href="http://www.j15r.com{{.}}"
+			data-width="800"
+			data-first_party_property="BLOGGER"
+			data-view_type="FILTERED_POSTMOD">
+	</div>
+</div>
 {{end}}
 
 {{define "atom"}}
@@ -134,6 +135,7 @@ var originalUrls = map[string]string{
 type articleData struct {
 	Title   string
 	Content template.HTML
+	Path    string
 	OrigUrl string
 }
 
@@ -194,6 +196,24 @@ func (b *blog) atomServer() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
+func (b *blog) draftServer() func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		path := r.URL.Path
+
+		// If it's a raw file, just serve it.
+		fi, err := os.Stat(path[1:])
+		if err == nil && !fi.IsDir() {
+			http.ServeFile(w, r, path[1:])
+			return
+		}
+
+		err = b.renderArticle(path, w)
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+		}
+	}
+}
+
 func (b *blog) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path
 
@@ -230,7 +250,11 @@ func (b *blog) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (b *blog) renderArticle(path string, w io.Writer) error {
+	var title string
 	article := b.articleIndex[path]
+	if article != nil {
+		title = article.Title
+	}
 
 	md, err := b.renderContent(path)
 	if err != nil {
@@ -238,10 +262,11 @@ func (b *blog) renderArticle(path string, w io.Writer) error {
 	}
 
 	return b.tmpl.ExecuteTemplate(w, "blog", &articleData{
-		Title:   article.Title,
-		Content: template.HTML(md),
-		OrigUrl: originalUrls[path],
-	})
+			Title:   title,
+			Content: template.HTML(md),
+			Path: path,
+			OrigUrl: originalUrls[path],
+		})
 }
 
 func (b *blog) renderContent(path string) (string, error) {
@@ -355,6 +380,9 @@ func InitBlog(tmpl *template.Template) (ArticleProvider, error) {
 	// Atom (old & new).
 	http.HandleFunc("/feeds/posts/default", b.atomServer())
 	http.HandleFunc("/blog/feed", b.atomServer())
+
+	// Drafts.
+	http.HandleFunc("/blog/drafts/", b.draftServer())
 
 	// Calculate the reverse url map.
 	for k, v := range originalUrls {

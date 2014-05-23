@@ -6,6 +6,17 @@
   <link rel='stylesheet' href='/s/slides/static/slides.css'/>
   <title>Creating High Performance Graphical Web Apps with HTML5</title>
 
+  <script>
+    var _fs_debug = false, _fs_host='fs-staging.appspot.com',_fs_org='j15r.com';
+    (function(m,n,e,t,l,o,g,y){
+      g=m[e]=function(a,b){g.q?g.q.push([a,b]):g._api(a,b);};g.q=[];
+      o=n.createElement(t);o.async=1;o.src='https://'+_fs_host+'/s/fs.js';
+      y=n.getElementsByTagName(t)[0];y.parentNode.insertBefore(o,y);
+      g.identify=function(i,v){g(l,{uid:i});if(v)g(l,v)};g.setUserVars=function(v){FS(l,v)};
+      g.setSessionVars=function(v){FS('session',v)};g.setPageVars=function(v){FS('page',v)};
+    })(window,document,'FS','script','user');
+  </script>
+
   <!-- syntax highlighting stuff -->
 	<script type="text/javascript" src="syntax/scripts/shCore.js"></script>
 	<script type="text/javascript" src="syntax/scripts/shBrushJScript.js"></script>
@@ -693,11 +704,5 @@
   </div> <!-- presentation -->
 
   <script src='/s/slides/slides.js'></script>
-  <script>
-    var _fs_debug = true;
-    var _fs_host='fs-staging.appspot.com',_fs_org='agxzfmZzLXN0YWdpbmdyEAsSA09yZxiAgICAsPvqCww';
-    var _fs_ready = function() { };
-    (function(w,a,t){a=w.createElement('script');a.async=1;a.src='https://'+_fs_host+'/s/fs.js';w.body.appendChild(a)})(document);
-  </script>
 </body>
 </html>

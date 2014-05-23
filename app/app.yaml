@@ -7,6 +7,5 @@ handlers:
 - url: /s/
   static_dir: pub
   application_readable: true
-  secure: always
 - url: /.*
   script: _go_app

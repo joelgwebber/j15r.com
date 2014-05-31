@@ -1,25 +1,29 @@
-@font-face { font-family: 'MuseoSlab100'; src: url('fonts/MuseoSlab100.woff'); }
-@font-face { font-family: 'MuseoSlab100Italic'; src: url('fonts/MuseoSlab100Italic.woff'); }
-@font-face { font-family: 'MuseoSlab300'; src: url('fonts/MuseoSlab300.woff'); }
-@font-face { font-family: 'MuseoSlab300Italic'; src: url('fonts/MuseoSlab300Italic.woff'); }
-@font-face { font-family: 'MuseoSlab500'; src: url('fonts/MuseoSlab500.woff'); }
-@font-face { font-family: 'MuseoSlab500Italic'; src: url('fonts/MuseoSlab500Italic.woff'); }
-@font-face { font-family: 'MuseoSlab700'; src: url('fonts/MuseoSlab700.woff'); }
-@font-face { font-family: 'MuseoSlab700Italic'; src: url('fonts/MuseoSlab700Italic.woff'); }
-@font-face { font-family: 'MuseoSlab900'; src: url('fonts/MuseoSlab900.woff'); }
-@font-face { font-family: 'MuseoSlab900Italic'; src: url('fonts/MuseoSlab900Italic.woff'); }
-@font-face { font-family: 'MuseoSlab1000'; src: url('fonts/MuseoSlab1000.woff'); }
-@font-face { font-family: 'MuseoSlab1000Italic'; src: url('fonts/MuseoSlab1000Italic.woff'); }
-
 $headerHeight: 60px;
 
 body {
   margin: 0px;
-  font: 12pt MuseoSlab300, Helvetica, Arial, sans-serif;
+  font-size: 12pt;
+  font-weight: 300;
+}
+
+.wf-loading body, .wf-inactive body {
+  font-family: Arial, sans-serif;
+}
+
+.wf-active body {
+  font-family: "museo-sans";
 }
 
 .top-wrapper {
-  background-color: mediumpurple;
+  background-color: #1dafec;
+}
+
+.wf-loading .top-wrapper, .wf-inactive .top-wrapper {
+  font-family: Arial, sans-serif;
+}
+
+.wf-active .top-wrapper {
+  font-family: "museo-slab";
 }
 
 .header {
@@ -42,7 +46,7 @@ body {
 .logo {
   display: inline-block;
   float: left;
-  font: 18px MuseoSlab300;
+  font: 18px;
   text-decoration: none;
   color: white;
   letter-spacing: -1px;
@@ -63,7 +67,7 @@ body {
   display: inline-block;
   text-align: left;
   max-width: 640px;
-  padding-right: 8px;
+  padding-right: 16px;
 }
 
 .outer {
@@ -79,10 +83,18 @@ body {
   position: relative;
 
   >.year-header {
-    font-family: MuseoSlab900;
+    font-weight: 700;
     font-size: 64px;
     color: #888;
   }
+}
+
+.wf-loading .year, .wf-inactive .year {
+  font-family: Arial, sans-serif;
+}
+
+.wf-active .year {
+  font-family: "museo-slab";
 }
 
 .year:nth-child(odd) {
@@ -123,7 +135,7 @@ body {
 }
 
 .date {
-  font-family: MuseoSlab500;
+  font-weight: 700;
   position: absolute;
   top: 4px; left: 0;
   padding: 4px;
@@ -134,7 +146,7 @@ body {
 }
 
 .title {
-  font-family: MuseoSlab700;
+  font-weight: 700;
   position: absolute;
   bottom: 4px; right: 0;
   padding: 4px;

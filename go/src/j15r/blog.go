@@ -59,10 +59,9 @@ const blogTemplate = `
 
 {{define "gplus-crap"}}
 <script src="https://apis.google.com/js/plusone.js"></script>
-<div style="margin-left: 80px">
+<div style="margin-top: 32px; text-align: center;">
 	<div class="g-comments"
 			data-href="http://www.j15r.com{{.}}"
-			data-width="800"
 			data-first_party_property="BLOGGER"
 			data-view_type="FILTERED_POSTMOD">
 	</div>

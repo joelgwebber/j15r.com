@@ -14,6 +14,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"log"
 )
 
 const blogTemplate = `
@@ -33,11 +34,8 @@ const blogTemplate = `
     SyntaxHighlighter.all();
   </script>
 
-	<div class='top-wrapper'>
-		<div class='header'>
-			{{template "header-main"}}
-		</div>
-
+	<div class='header'>
+		{{template "header-main"}}
 		<div class='intro-wrapper'>
 			<div class='intro'>
 				<h1>{{.Title}}</h1>
@@ -45,15 +43,13 @@ const blogTemplate = `
 		</div>
 	</div>
 
-  <div class='outer'>
-	  <div class='content'>
-		  {{.Content}}
-		  <hr>
-			<b>
-			Note: I'm moving to G+ comments, but also want to preserve the old blog comments in read-only form.
-			I just haven't gotten around to that last part yet, so they're temporarily unavailable.
-			</b>
-		</div>
+	<div class='content'>
+		{{.Content}}
+		<hr>
+		<b>
+		Note: I'm moving to G+ comments, but also want to preserve the old blog comments in read-only form.
+		I just haven't gotten around to that last part yet, so they're temporarily unavailable.
+		</b>
 	</div>
 
 	{{template "gplus-crap" .Path}}
@@ -226,7 +222,8 @@ func (b *blog) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// If it's an image request, but not found on-disk, serve a default image.
 	if strings.HasSuffix(path, ".jpg") {
-		http.ServeFile(w, r, "img/blog.jpg")
+		log.Printf(">>> " + path)
+		http.ServeFile(w, r, "pub/img/blog.png")
 		return
 	}
 

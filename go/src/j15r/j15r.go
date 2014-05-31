@@ -15,43 +15,39 @@ const indexTemplate = `
   {{template "head" "j15r.com"}}
 
   <body>
-  <div class='top-wrapper'>
 		<div class='header'>
 			{{template "header-main"}}
-		</div>
-
-		<div class='intro-wrapper'>
-			<div class='intro'>
-				<div style='display:inline-block; margin-right:16px; float:left; font-size:48px;'>Hi.</div>
-				I'm Joel Webber. I'm an engineer who occasionally writes about software development, games,
-				and a few other odds and ends. Above you'll find a list of ways to reach me. Below you'll
-				find a chronology of things I've written and built, places I've worked, and so forth.
+			<div class='intro-wrapper'>
+				<div class='intro'>
+					<div style='display:inline-block; margin-right:16px; float:left; font-size:48px;'>Hi.</div>
+					I'm Joel Webber. I'm an engineer who occasionally writes about software development, games,
+					and a few other odds and ends. Above you'll find a list of ways to reach me. Below you'll
+					find a chronology of things I've written and built, places I've worked, and so forth.
+				</div>
 			</div>
 		</div>
-	</div>
 
-  <div class='outer'>
-    <div class='content'>
-      {{range .YearArticles}}
-        <div class='year'>
-        <div class='year-header'>{{.Year}}</div>
+		<div class='content'>
+			{{range .YearArticles}}
+				<div class='year'>
+				<div class='year-header'>{{.Year}}</div>
 
-        {{range .Articles}}
-          <a class='article' style='background-image: url({{.Icon}})' {{if .Url}}href='{{.Url}}'{{end}}>
-            {{if .Date.Month}}
-            <div class='date'>
-              {{if .Date.Date}}{{.Date.Date}}{{end}}
-              {{monthString .Date.Month}}
-            </div>
-            {{end}}
-            <div class='title'>{{.Title}}</div>
-          </a>
-        {{end}}
-        </div>
-      {{end}}
-    </div>
-  </div>
-  </body>
+				{{range .Articles}}
+					<a class='article' {{if .Url}}href='{{.Url}}'{{end}}>
+						<div class='image' style='background-image: url({{.Icon}})'></div>
+						{{if .Date.Month}}
+						<div class='date'>
+							{{if .Date.Date}}{{.Date.Date}}{{end}}
+							{{monthString .Date.Month}}
+						</div>
+						{{end}}
+						<div class='title'>{{.Title}}</div>
+					</a>
+				{{end}}
+				</div>
+			{{end}}
+		</div>
+	</body>
 </html>
 {{end}}
 `

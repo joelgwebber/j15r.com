@@ -16,6 +16,12 @@ func InitJobs(tmpl *template.Template) (ArticleProvider, error) {
 		tmpl: tmpl,
 		articles: []*Article{
 			&Article{
+				Title: "ZSoft",
+				Icon:  "/s/img/zsoft.jpg",
+				Date:  SimpleDate{1991, 0, 0},
+				Url:   "http://en.wikipedia.org/wiki/ZSoft_Corporation",
+			},
+			&Article{
 				Title: "Lotus Development",
 				Icon:  "/s/img/lotus.jpg",
 				Date:  SimpleDate{1992, 0, 0},
@@ -28,7 +34,7 @@ func InitJobs(tmpl *template.Template) (ArticleProvider, error) {
 			},
 			&Article{
 				Title: "Heuristic Park",
-				Icon:  "/s/img/hp.png",
+				Icon:  "/s/img/heuristicpark.jpg",
 				Date:  SimpleDate{1995, 0, 0},
 				Url:   "http://www.heuristicpark.com/",
 			},
@@ -60,6 +66,12 @@ func InitJobs(tmpl *template.Template) (ArticleProvider, error) {
 				Icon:  "/s/img/homebaseio.png",
 				Date:  SimpleDate{2012, 3, 5},
 				Url:   "http://homebase.io/",
+			},
+			&Article{
+				Title: "FullStory",
+				Icon:  "/s/img/fullstory.png",
+				Date:  SimpleDate{2014, 1, 1},
+				Url:   "http://thefullstory.com/",
 			},
 		},
 	}, nil

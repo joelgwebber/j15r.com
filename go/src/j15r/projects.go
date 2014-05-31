@@ -31,19 +31,19 @@ func InitProjects(tmpl *template.Template) (ArticleProvider, error) {
         Title: "Cyberdillo",
         Url: "http://www.mobygames.com/game/3do/cyberdillo",
         Icon: "/s/img/dillo.jpg",
-        Date:  SimpleDate{1994, 0, 0},
+        Date:  SimpleDate{1993, 0, 0},
       },
       &Article{
         Title: "Wizards and Warriors",
         Url: "http://www.gamespot.com/wizards-and-warriors/",
         Icon: "/s/img/ww.jpg",
-        Date:  SimpleDate{1996, 0, 0},
+        Date:  SimpleDate{1995, 0, 0},
       },
       &Article{
         Title: "Fading Suns: Noble Armada",
         Url: "http://www.gamespot.com/fading-suns-noble-armada/",
         Icon: "/s/img/noblearmada.jpg",
-        Date:  SimpleDate{1998, 0, 0},
+        Date:  SimpleDate{1997, 0, 0},
       },
       &Article{
         Title: "AppForge Mobile VB",

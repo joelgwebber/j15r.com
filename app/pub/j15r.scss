@@ -1,10 +1,5 @@
 $headerHeight: 60px;
-
-body {
-  margin: 0px;
-  font-size: 12pt;
-  font-weight: 300;
-}
+$niceblue: #1dafec;
 
 .wf-loading body, .wf-inactive body {
   font-family: Arial, sans-serif;
@@ -12,81 +7,6 @@ body {
 
 .wf-active body {
   font-family: "museo-sans";
-}
-
-.top-wrapper {
-  background-color: #1dafec;
-}
-
-.wf-loading .top-wrapper, .wf-inactive .top-wrapper {
-  font-family: Arial, sans-serif;
-}
-
-.wf-active .top-wrapper {
-  font-family: "museo-slab";
-}
-
-.header {
-  overflow: hidden;
-}
-
-.header-main, .header-main-right {
-  padding: 8px;
-}
-
-.header-main-right {
-  float: right;
-}
-
-.header h1 {
-  padding: 8px;
-  color: white;
-}
-
-.logo {
-  display: inline-block;
-  float: left;
-  font: 18px;
-  text-decoration: none;
-  color: white;
-  letter-spacing: -1px;
-}
-
-.reflink {
-  margin-right: 8px;
-}
-
-.intro-wrapper {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  text-align: right;
-  color: white;
-}
-
-.intro {
-  display: inline-block;
-  text-align: left;
-  max-width: 640px;
-  padding-right: 16px;
-}
-
-.outer {
-  margin: 0px 5% 8px 5%;
-}
-
-.content {
-//  max-width: 1280px;
-}
-
-.year {
-  margin-bottom: 96px;
-  position: relative;
-
-  >.year-header {
-    font-weight: 700;
-    font-size: 64px;
-    color: #888;
-  }
 }
 
 .wf-loading .year, .wf-inactive .year {
@@ -97,67 +17,154 @@ body {
   font-family: "museo-slab";
 }
 
-.year:nth-child(odd) {
-  text-align: left;
-  padding-left: 96px;
-
-  .year-header {
-    text-align: left;
-    position: absolute;
-    left: -40px;
-    top: 64px;
-    -webkit-transform: rotate(-90deg);
-  }
+.wf-loading .header, .wf-inactive .header {
+  font-family: Times, serif;
 }
 
-.year:nth-child(even) {
-  text-align: right;
-  padding-right: 96px;
+.wf-active .header {
+  font-family: "museo-slab";
+}
 
-  .year-header {
+body {
+  margin: 0px;
+  font-size: 12pt;
+  font-weight: 300;
+}
+
+.header {
+  >.header-main {
+    float: left;
+    background-color: $niceblue;
+    padding: 8px;
+    padding-left: 48px;
+    margin-top: 24px;
+
+    >.logo {
+      font-size: 20px;
+      text-decoration: none;
+      color: white;
+      letter-spacing: -1px;
+    }
+  }
+
+  >.header-main-right {
+    float: right;
+    background-color: $niceblue;
+    padding: 8px;
+    padding-right: 32px;
+    margin-top: 8px;
+
+    >.reflink {
+      margin-right: 8px;
+    }
+  }
+
+  >.intro-wrapper {
+    clear: both;
     text-align: right;
-    position: absolute;
-    right: -40px;
-    top: 64px;
-    -webkit-transform: rotate(90deg);
+    color: white;
+
+    >.intro {
+      float: right;
+      background-color: $niceblue;
+      display: inline-block;
+      text-align: left;
+      max-width: 640px;
+      padding: 8px;
+      padding-right: 48px;
+      margin-top: 16px;
+      margin-bottom: 32px;
+
+      h1 {
+        margin: 8px 0px;
+      }
+    }
   }
 }
 
-.article {
-  display: inline-block;
-  position: relative;
-  vertical-align: top;
-  background-size: cover;
-  text-decoration: none;
-  width: 256px;
-  height: 256px;
-  margin: 8px;
-}
+.content {
+  margin: 8px 5% 8px 5%;
+  padding-top: 8px;
+  clear: both;
 
-.date {
-  font-weight: 700;
-  position: absolute;
-  top: 4px; left: 0;
-  padding: 4px;
-  margin-right: 32px;
-  color: white;
-  background-color: black;
-  opacity: 0.75;
-}
+  >.year {
+    margin-bottom: 96px;
+    position: relative;
 
-.title {
-  font-weight: 700;
-  position: absolute;
-  bottom: 4px; right: 0;
-  padding: 4px;
-  margin-left: 32px;
-  color: white;
-  background-color: black;
-  opacity: 0.75;
-}
+    >.year-header {
+      font-weight: 700;
+      font-size: 64px;
+      color: $niceblue;
+    }
 
-#disqus_thread {
-  margin: 32px 8px 8px 5%;
+    >.article {
+      display: inline-block;
+      position: relative;
+      text-decoration: none;
+      width: 256px;
+      height: 256px;
+      margin: 8px;
+
+      >.image {
+        position: absolute;
+        left: 0; right: 0;
+        top: 0; bottom: 0;
+        border-radius: 50%;
+        border: 2px solid $niceblue;
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-color: $niceblue;
+      }
+
+      >.date {
+        font-weight: 700;
+        position: absolute;
+        top: 4px; left: 0;
+        padding: 4px 16px;
+        color: white;
+        background-color: $niceblue;
+      }
+
+      >.title {
+        font-weight: 700;
+        position: absolute;
+        bottom: 4px; right: 0;
+        padding: 4px 16px;
+        color: white;
+        background-color: $niceblue;
+        max-width: 192px;
+        text-align: right;
+      }
+    }
+  }
+
+  >.year:nth-child(odd) {
+    text-align: left;
+    padding-left: 96px;
+
+    >.year-header {
+      text-align: left;
+      position: absolute;
+      left: -40px;
+      top: 64px;
+      -webkit-transform: rotate(-90deg);
+      transform: rotate(-90deg);
+    }
+  }
+
+  >.year:nth-child(even) {
+    text-align: right;
+    padding-right: 96px;
+
+    >.year-header {
+      text-align: right;
+      position: absolute;
+      right: -40px;
+      top: 64px;
+      -webkit-transform: rotate(90deg);
+      transform: rotate(90deg);
+    }
+  }
 }
 
 table td {

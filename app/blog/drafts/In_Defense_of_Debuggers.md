@@ -116,3 +116,6 @@ experiments to confirm or disprove them.
 [pike] http://www.informit.com/articles/article.aspx?p=1941206
 
 http://blog.regehr.org/archives/199
+http://airs.com/ian/essays/debug/debug.html
+https://drupalize.me/blog/201505/learning-debug-stop-thinking-and-look
+

@@ -88,10 +88,28 @@ Here is a partial list of things I would like from such an alternative:
   issue. There are others -- updating code in the running game, server-provided
   game logic, and so forth -- but slow C++ compilers tend to push developers to
   implement **too much** in script code.
+- **Target platforms**: For the foreseeable future, I care about MacOS, Windows,
+  Linux, Android, and iOS, in roughly that order. If I can't target these
+  platforms (without any installation complexity), it doesn't matter how much
+  I like the language.
 
 It turns out that Go does quite well on these constraints. Many are obvious,
 such as "reasonably safe" and "fast compiles", but there are some specific cases
 on which I'd like to into more detail.
+
+### Target platforms
+
+Go actually falls slightly short on this front -- iOS support's still not quite
+there yet. But for the desktop platforms and Android (NDK, which suffices),
+it works out of the box. My understanding is that they're working on iOS support,
+and I can afford to wait for it, so that shouldn't be a problem.
+
+Just as importantly, the Go compiler produces a single statically-linked binary,
+which is exactly what I want. There's a very small runtime, but apart from that
+it gets out of your way, and doesn't put any unnecessary hurdles between you
+and system calls. This suggests to me that it wouldn't be a massive undertaking
+to support console platforms, because it's a question of toolchain rather than
+a large runtime and/or VM.
 
 ### Memory layout and garbage collection
 
@@ -243,8 +261,8 @@ This is an experiment so I'm using Go and if you like writing games (or anything
 else, for that matter) in C++, then by all means continue to do so. But there are
 plenty of people who are frustrated with C++ for games (witness Jonathan Blow
 running off and creating his [own](https://www.youtube.com/user/jblow888)
-alternative, even while he’s in the middle of another
-[big project](http://the-witness.net/) in C++). So I think it’s a worthwhile
+alternative, even while he's in the middle of another
+[big project](http://the-witness.net/) in C++). So I think it's a worthwhile
 pursuit to look into alternatives, regardless of whether Go turns out to be
 viable for professional games.
 
@@ -286,3 +304,4 @@ libraries at some point. Stay tuned, and I'll follow up with more updates and
 working code. I'm also working on other parts of the engine for which I believe
 Go is uniquely well-suited (especially around concurrency and networking),
 and I'll be posting more about how well that goes.
+

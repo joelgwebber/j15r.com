@@ -55,6 +55,7 @@ const indexTemplate = `
 const sharedTemplates = `
 {{define "head"}}
   <head>
+		{{template "fullstory-crap"}}
     <title>{{.}}</title>
     <script type="text/javascript">
 		(function(d) {
@@ -63,7 +64,6 @@ const sharedTemplates = `
 		})(document);
 		</script>
     <link rel='stylesheet' href='/s/j15r.css'>
-		{{template "fullstory-crap"}}
   </head>
 {{end}}
 
@@ -82,31 +82,19 @@ const sharedTemplates = `
 {{end}}
 
 {{define "fullstory-crap"}}
-	<script>
-	var _fs_debug = false, _fs_host='staging.fullstory.com',_fs_org='j15r.com';
-	(function(m,n,e,t,l,o,g,y){
-		g=m[e]=function(a,b){g.q?g.q.push([a,b]):g._api(a,b);};g.q=[];
-		o=n.createElement(t);o.async=1;o.src='https://'+_fs_host+'/s/fs.js';
-		y=n.getElementsByTagName(t)[0];y.parentNode.insertBefore(o,y);
-		g.identify=function(i,v){g(l,{uid:i});if(v)g(l,v)};g.setUserVars=function(v){FS(l,v)};
-		g.setSessionVars=function(v){FS('session',v)};g.setPageVars=function(v){FS('page',v)};
-	})(window,document,'FS','script','user');
-	</script>
-{{end}}
-
-{{define "inspectlet-crap"}}
-<script type="text/javascript" id="inspectletjs">
-	window.__insp = window.__insp || [];
-	__insp.push(['wid', 856933072]);
-	(function() {
-		function __ldinsp(){var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x); }
-		if (window.attachEvent){
-			window.attachEvent('onload', __ldinsp);
-		}else{
-			window.addEventListener('load', __ldinsp, false);
-		}
-	})();
-</script>
+  <script>
+  window['_fs_debug'] = false;
+  window['_fs_host'] = 'staging.fullstory.com';
+  window['_fs_org'] = 'j15r.com';
+  (function(m,n,e,t,l,o,g,y){
+    g=m[e]=function(a,b){g.q?g.q.push([a,b]):g._api(a,b);};g.q=[];
+    o=n.createElement(t);o.async=1;o.src='https://'+_fs_host+'/s/fs.js';
+    y=n.getElementsByTagName(t)[0];y.parentNode.insertBefore(o,y);
+    g.identify=function(i,v){g(l,{uid:i});if(v)g(l,v)};g.setUserVars=function(v){FS(l,v)};
+    g.clearUserCookie=function(d,i){d=n.domain;while(1){n.cookie='fs_uid=;domain='+d+
+    ';path=/;expires='+new Date(0);i=d.indexOf('.');if(i<0)break;d=d.slice(i+1)}}
+  })(window,document,'FS','script','user');
+  </script>
 {{end}}
 `
 
